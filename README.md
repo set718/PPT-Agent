@@ -61,7 +61,6 @@ AI大赛相关Code/
 ├── app.py              # Streamlit Web界面
 ├── text_to_ppt.py      # 命令行版本
 ├── run_app.py          # Web应用启动脚本
-├── create_test_ppt.py  # 测试PPT创建工具
 ├── requirements.txt    # 项目依赖
 └── README.md           # 项目说明
 ```

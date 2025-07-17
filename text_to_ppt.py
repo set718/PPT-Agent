@@ -310,11 +310,11 @@ def main():
         choice = input().strip().lower()
         
         if choice in ['y', 'yes', '是', '是的']:
-            # 创建测试PPT
-            from create_test_ppt import create_test_ppt
-            ppt_path = create_test_ppt()
+            print("\n抱歉，测试PPT创建功能已移除。")
+            print("请将您的PPT模板文件放置在指定路径，或修改代码中的路径设置。")
+            sys.exit(1)
         else:
-            print("\n程序退出。请确认PPT文件路径或创建测试文件。")
+            print("\n程序退出。请确认PPT文件路径。")
             sys.exit(1)
     else:
         print(f"\n✅ 已找到PPT文件: {os.path.basename(ppt_path)}")

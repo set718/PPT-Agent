@@ -101,6 +101,9 @@ class StreamlitPPTGenerator:
     
     def analyze_existing_ppt(self):
         """分析现有PPT的结构，特别关注占位符"""
+        if not self.presentation:
+            return {"total_slides": 0, "slides": []}
+            
         slides_info = []
         for i, slide in enumerate(self.presentation.slides):
             slide_info = {
@@ -155,6 +158,9 @@ class StreamlitPPTGenerator:
     
     def process_text_with_deepseek(self, user_text):
         """使用DeepSeek API分析如何将用户文本填入PPT模板的占位符"""
+        if not self.ppt_structure:
+            return {"assignments": []}
+            
         # 创建现有PPT结构的描述，重点关注占位符
         ppt_description = f"现有PPT共有{self.ppt_structure['total_slides']}张幻灯片:\n"
         
@@ -172,37 +178,30 @@ class StreamlitPPTGenerator:
             else:
                 ppt_description += f" (无占位符)\n"
         
-        system_prompt = f"""你是一个专业的PPT模板填充专家。我有一个包含占位符的PPT模板和用户提供的文本，请分析如何将用户文本精确填入对应的占位符位置。
+        system_prompt = f"""你是一个专业的PPT模板填充专家。请分析用户文本的结构，并根据占位符的语义含义进行智能匹配。
 
 现有PPT结构：
 {ppt_description}
 
-**占位符说明：**
-- {{title}} = 主标题内容
-- {{content_1}}, {{content_2}}, {{content_3}}, {{content_4}}, {{content_5}}, {{content_6}} = 时间点或分类标题
-- {{bullet_1}}, {{bullet_2}} = 每个content下的具体活动或要点
+**通用填充逻辑：**
+1. **语义分析**：根据占位符名称的语义含义判断应该填入什么内容
+2. **结构识别**：自动识别文本的层次结构（标题、分类、要点等）
+3. **智能匹配**：将文本内容匹配到语义最相符的占位符
 
-**时间表格式识别规则：**
-1. **标题识别**：文本开头的概括性词汇（如"日程表"、"时间安排"等）-> {{title}}
-2. **时间点识别**：时间格式（如"8:00"、"9:00"、"12:00"等）-> {{content_1}}, {{content_2}}, {{content_3}}...
-3. **活动识别**：每个时间点后的活动项目 -> {{bullet_1}}, {{bullet_2}}
-
-**解析示例：**
-输入："日程表 8：00 起床、洗漱 9：00吃早饭、自习"
-解析为：
-- "日程表" -> {{title}}
-- "8：00" -> {{content_1}}
-- "起床" -> {{bullet_1}} (content_1下)
-- "洗漱" -> {{bullet_2}} (content_1下)  
-- "9：00" -> {{content_2}}
-- "吃早饭" -> {{bullet_1}} (content_2下)
-- "自习" -> {{bullet_2}} (content_2下)
+**占位符语义规则：**
+- `title` = 主标题或文档标题
+- `subtitle` = 副标题
+- `content_X` = 分类标题、章节标题、时间点等结构性内容
+- `content_X_bullet_Y` = 属于特定content的具体要点
+- `bullet_X` = 独立的要点列表
+- `description` = 描述性文字
+- `conclusion` = 结论性内容
 
 **重要原则：**
-1. 仔细分析用户文本的时间表结构
-2. 将时间点填入content占位符，将活动填入对应的bullet占位符
-3. 保持用户原始文本内容完全不变
-4. 优先填充已有的占位符，按顺序使用content_1, content_2, content_3...
+1. 保持用户原始文本内容完全不变
+2. 基于占位符名称的语义含义进行匹配
+3. 自动识别文本的层次结构
+4. 优先使用已有占位符，按逻辑顺序填充
 
 请按照以下JSON格式返回：
 {{
@@ -211,40 +210,18 @@ class StreamlitPPTGenerator:
       "slide_index": 0,
       "action": "replace_placeholder",
       "placeholder": "title",
-      "content": "标题内容",
-      "reason": "识别为主标题"
-    }},
-    {{
-      "slide_index": 0,
-      "action": "replace_placeholder",
-      "placeholder": "content_1",
-      "content": "8：00",
-      "reason": "第一个时间点"
-    }},
-    {{
-      "slide_index": 0,
-      "action": "replace_placeholder",
-      "placeholder": "bullet_1",
-      "content": "起床",
-      "reason": "第一个时间点的第一个活动"
-    }},
-    {{
-      "slide_index": 0,
-      "action": "replace_placeholder",
-      "placeholder": "bullet_2", 
-      "content": "洗漱",
-      "reason": "第一个时间点的第二个活动"
+      "content": "识别出的标题内容",
+      "reason": "语义匹配原因"
     }}
   ]
 }}
 
 分析要求：
-1. 识别文本中的标题、时间点、活动项目
-2. 将时间点按顺序匹配到content_1, content_2, content_3...
-3. 将每个时间点的活动按顺序匹配到bullet_1, bullet_2
-4. action必须是"replace_placeholder"
-5. placeholder必须是模板中实际存在的占位符名称
-6. 只返回JSON格式，不要其他文字"""
+1. 自动分析文本结构和语义
+2. 根据占位符名称含义进行智能匹配
+3. action必须是"replace_placeholder"
+4. placeholder必须是模板中实际存在的占位符名称
+5. 只返回JSON格式，不要其他文字"""
         
         try:
             response = self.client.chat.completions.create(
@@ -302,6 +279,9 @@ class StreamlitPPTGenerator:
     
     def apply_text_assignments(self, assignments):
         """根据分配方案替换PPT模板中的占位符"""
+        if not self.presentation or not self.ppt_structure:
+            return ["❌ PPT文件未正确加载"]
+            
         assignments_list = assignments.get('assignments', [])
         results = []
         
@@ -418,6 +398,9 @@ class StreamlitPPTGenerator:
     
     def add_new_slide(self, title, content):
         """添加新幻灯片"""
+        if not self.presentation:
+            return False
+            
         # 使用标题和内容布局
         slide_layout = self.presentation.slide_layouts[1]
         slide = self.presentation.slides.add_slide(slide_layout)
@@ -438,6 +421,9 @@ class StreamlitPPTGenerator:
     
     def get_ppt_bytes(self):
         """获取修改后的PPT字节数据"""
+        if not self.presentation:
+            raise ValueError("PPT文件未正确加载")
+            
         # 创建output目录
         output_dir = "temp_output"
         os.makedirs(output_dir, exist_ok=True)
@@ -530,24 +516,25 @@ def main():
                 
                 # 显示PPT信息
                 ppt_info = generator.ppt_structure
-                st.markdown('<div class="info-box">', unsafe_allow_html=True)
-                st.markdown(f"**📊 PPT信息：** 共有 {ppt_info['total_slides']} 张幻灯片")
-                
-                # 显示幻灯片和占位符信息
-                total_placeholders = 0
-                for i, slide in enumerate(ppt_info['slides']):
-                    title = slide['title'] if slide['title'] else "（无标题）"
-                    placeholders = slide.get('placeholders', {})
-                    total_placeholders += len(placeholders)
+                if ppt_info:
+                    st.markdown('<div class="info-box">', unsafe_allow_html=True)
+                    st.markdown(f"**📊 PPT信息：** 共有 {ppt_info['total_slides']} 张幻灯片")
                     
-                    if placeholders:
-                        placeholder_list = ', '.join([f"{{{name}}}" for name in placeholders.keys()])
-                        st.markdown(f"• 第{slide['slide_index']+1}页: {title} - 占位符: {placeholder_list}")
-                    else:
-                        st.markdown(f"• 第{slide['slide_index']+1}页: {title} - 无占位符")
-                
-                st.markdown(f"**🎯 总共找到 {total_placeholders} 个占位符**")
-                st.markdown('</div>', unsafe_allow_html=True)
+                    # 显示幻灯片和占位符信息
+                    total_placeholders = 0
+                    for i, slide in enumerate(ppt_info['slides']):
+                        title = slide['title'] if slide['title'] else "（无标题）"
+                        placeholders = slide.get('placeholders', {})
+                        total_placeholders += len(placeholders)
+                        
+                        if placeholders:
+                            placeholder_list = ', '.join([f"{{{name}}}" for name in placeholders.keys()])
+                            st.markdown(f"• 第{slide['slide_index']+1}页: {title} - 占位符: {placeholder_list}")
+                        else:
+                            st.markdown(f"• 第{slide['slide_index']+1}页: {title} - 无占位符")
+                    
+                    st.markdown(f"**🎯 总共找到 {total_placeholders} 个占位符**")
+                    st.markdown('</div>', unsafe_allow_html=True)
                 
                 st.markdown("---")
                 

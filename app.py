@@ -162,7 +162,7 @@ class StreamlitPPTGenerator:
             return {"assignments": []}
             
         # 创建现有PPT结构的描述，重点关注占位符
-        ppt_description = f"现有PPT共有{self.ppt_structure['total_slides']}张幻灯片:\n"
+        ppt_description = f"现有PPT共有{['total_slides']}张幻灯片:\n"
         
         for slide in self.ppt_structure['slides']:
             ppt_description += f"\n第{slide['slide_index']+1}页:"
@@ -178,30 +178,36 @@ class StreamlitPPTGenerator:
             else:
                 ppt_description += f" (无占位符)\n"
         
-        system_prompt = f"""你是一个专业的PPT模板填充专家。请分析用户文本的结构，并根据占位符的语义含义进行智能匹配。
+        system_prompt = f"""你是一个专业的PPT内容优化专家。请分析用户文本，并根据PPT模板结构进行智能适配和优化。
 
 现有PPT结构：
 {ppt_description}
 
-**通用填充逻辑：**
-1. **语义分析**：根据占位符名称的语义含义判断应该填入什么内容
-2. **结构识别**：自动识别文本的层次结构（标题、分类、要点等）
-3. **智能匹配**：将文本内容匹配到语义最相符的占位符
+**核心任务：**
+1. **结构化适配**：根据PPT模板的占位符结构，将用户文本进行合理的结构化调整
+2. **内容优化**：可以适当精简、重组或格式化文本，使其更适合PPT呈现
+3. **语言润色**：可以优化语言表达，使其更加简洁明了，适合幻灯片展示
+
+**操作原则：**
+- ✅ **可以做的**：重新组织文本结构、精简冗余内容、优化表达方式、调整语言风格
+- ✅ **可以做的**：根据占位符特点调整内容长度和格式（如将长段落拆分为要点）
+- ❌ **不能做的**：添加用户未提供的信息、编造数据、从外部知识添加内容
+- ❌ **不能做的**：改变用户文本的核心意思和关键信息
 
 **占位符语义规则：**
-- `title` = 主标题或文档标题
-- `subtitle` = 副标题
-- `content_X` = 分类标题、章节标题、时间点等结构性内容
-- `content_X_bullet_Y` = 属于特定content的具体要点
-- `bullet_X` = 独立的要点列表
-- `description` = 描述性文字
-- `conclusion` = 结论性内容
+- `title` = 主标题或文档标题（简洁有力）
+- `subtitle` = 副标题（补充说明）
+- `content_X` = 分类标题、章节标题、时间点等结构性内容（清晰明确）
+- `content_X_bullet_Y` = 属于特定content的具体要点（简洁扼要）
+- `bullet_X` = 独立的要点列表（重点突出）
+- `description` = 描述性文字（详细但不冗长）
+- `conclusion` = 结论性内容（总结性强）
 
-**重要原则：**
-1. 保持用户原始文本内容完全不变
-2. 基于占位符名称的语义含义进行匹配
-3. 自动识别文本的层次结构
-4. 优先使用已有占位符，按逻辑顺序填充
+**优化策略：**
+1. **标题类占位符**：提炼核心概念，简洁有力
+2. **要点类占位符**：每个要点保持简短，突出关键信息
+3. **内容类占位符**：根据上下文长度合理调整详细程度
+4. **结构性调整**：将长文本合理拆分到多个相关占位符中
 
 请按照以下JSON格式返回：
 {{
@@ -210,18 +216,19 @@ class StreamlitPPTGenerator:
       "slide_index": 0,
       "action": "replace_placeholder",
       "placeholder": "title",
-      "content": "识别出的标题内容",
-      "reason": "语义匹配原因"
+      "content": "优化后的标题内容",
+      "reason": "提炼核心概念，适配标题占位符"
     }}
   ]
 }}
 
 分析要求：
-1. 自动分析文本结构和语义
-2. 根据占位符名称含义进行智能匹配
-3. action必须是"replace_placeholder"
-4. placeholder必须是模板中实际存在的占位符名称
-5. 只返回JSON格式，不要其他文字"""
+1. 基于用户文本进行结构化分析和适配优化
+2. 根据占位符语义特点调整内容呈现方式
+3. 保持核心信息完整，但可优化表达形式
+4. action必须是"replace_placeholder"
+5. placeholder必须是模板中实际存在的占位符名称
+6. 只返回JSON格式，不要其他文字"""
         
         try:
             response = self.client.chat.completions.create(

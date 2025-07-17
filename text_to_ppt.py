@@ -81,6 +81,18 @@ class TextToPPTGenerator:
         for result in results:
             print(result)
         
+        # 美化演示文稿
+        print("\n正在美化PPT布局...")
+        beautify_results = self.ppt_processor.beautify_presentation()
+        
+        # 打印美化结果
+        summary = beautify_results['summary']
+        print(f"[INFO] 美化完成:")
+        print(f"   删除未填充占位符: {summary['removed_placeholders_count']} 个")
+        print(f"   重新排版幻灯片: {summary['reorganized_slides_count']} 页")
+        print(f"   删除空幻灯片: {summary['removed_empty_slides_count']} 页")
+        print(f"   最终幻灯片数: {summary['final_slide_count']} 页")
+        
         # 保存修改后的PPT
         return FileManager.save_ppt_to_file(self.presentation)
     

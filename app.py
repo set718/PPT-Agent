@@ -124,7 +124,41 @@ class StreamlitPPTGenerator:
             return ["❌ PPT文件未正确加载"]
         
         log_user_action("应用文本分配", f"分配数量: {len(assignments.get('assignments', []))}")
-        return self.ppt_processor.apply_assignments(assignments)
+        results = self.ppt_processor.apply_assignments(assignments)
+        
+        # 美化演示文稿
+        st.info("正在美化PPT布局...")
+        beautify_results = self.ppt_processor.beautify_presentation()
+        
+        # 显示美化结果
+        summary = beautify_results['summary']
+        st.success("PPT美化完成！")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("删除占位符", summary['removed_placeholders_count'])
+        with col2:
+            st.metric("重新排版", summary['reorganized_slides_count'])
+        with col3:
+            st.metric("删除空页", summary['removed_empty_slides_count'])
+        with col4:
+            st.metric("最终页数", summary['final_slide_count'])
+        
+        # 显示详细结果
+        if summary['removed_placeholders_count'] > 0:
+            with st.expander("🧹 查看清理详情"):
+                for item in beautify_results['beautify_results']['removed_placeholders']:
+                    st.write(f"• 第{item['slide_index']+1}页: 删除了 {item['removed_count']} 个未填充占位符")
+                    for placeholder in item['removed_placeholders']:
+                        st.write(f"  - {{{placeholder}}}")
+        
+        if summary['reorganized_slides_count'] > 0:
+            with st.expander("🎨 查看重排版详情"):
+                for item in beautify_results['beautify_results']['reorganized_slides']:
+                    layout_change = item['layout_change']
+                    st.write(f"• 第{item['slide_index']+1}页: 使用 {layout_change['layout_type']} 布局重新排版了 {layout_change['shape_count']} 个元素")
+        
+        return results
     
     
     

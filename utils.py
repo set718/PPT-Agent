@@ -16,6 +16,7 @@ from openai import OpenAI
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from config import get_config
+from ppt_beautifier import PPTBeautifier
 
 class PPTAnalyzer:
     """PPT分析器"""
@@ -242,6 +243,8 @@ class PPTProcessor:
         """初始化PPT处理器"""
         self.presentation = presentation
         self.ppt_structure = PPTAnalyzer.analyze_ppt_structure(presentation)
+        self.beautifier = PPTBeautifier(presentation)
+        self.filled_placeholders = {}  # 记录已填充的占位符
     
     def apply_assignments(self, assignments: Dict[str, Any]) -> List[str]:
         """
@@ -274,6 +277,11 @@ class PPTProcessor:
                             content
                         )
                         if success:
+                            # 记录已填充的占位符
+                            if slide_index not in self.filled_placeholders:
+                                self.filled_placeholders[slide_index] = set()
+                            self.filled_placeholders[slide_index].add(placeholder)
+                            
                             results.append(f"✓ 已替换第{slide_index+1}页的 {{{placeholder}}} 占位符: {assignment.get('reason', '')}")
                         else:
                             results.append(f"✗ 替换第{slide_index+1}页的 {{{placeholder}}} 占位符失败")
@@ -294,6 +302,29 @@ class PPTProcessor:
                 results.append(f"✓ 已新增幻灯片「{title}」: {assignment.get('reason', '')}")
         
         return results
+    
+    def beautify_presentation(self) -> Dict[str, Any]:
+        """
+        美化演示文稿，清理未填充的占位符并重新排版
+        
+        Returns:
+            Dict: 美化结果
+        """
+        beautify_results = self.beautifier.cleanup_and_beautify(self.filled_placeholders)
+        optimization_results = self.beautifier.optimize_slide_sequence()
+        
+        return {
+            'beautify_results': beautify_results,
+            'optimization_results': optimization_results,
+            'summary': {
+                'removed_placeholders_count': sum(
+                    item['removed_count'] for item in beautify_results['removed_placeholders']
+                ),
+                'reorganized_slides_count': len(beautify_results['reorganized_slides']),
+                'removed_empty_slides_count': len(optimization_results['removed_empty_slides']),
+                'final_slide_count': optimization_results['final_slide_count']
+            }
+        }
     
     def _replace_placeholder_in_slide(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
         """在特定的文本框中替换占位符"""

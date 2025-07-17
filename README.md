@@ -61,20 +61,50 @@ AI大赛相关Code/
 ├── app.py              # Streamlit Web界面
 ├── text_to_ppt.py      # 命令行版本
 ├── run_app.py          # Web应用启动脚本
+├── config.py           # 配置管理模块
+├── utils.py            # 工具函数和共用组件
+├── logger.py           # 日志管理模块
 ├── requirements.txt    # 项目依赖
+├── config.json         # 配置文件（可选）
 └── README.md           # 项目说明
 ```
 
 ## 模板配置
 
-当前配置的PPT模板路径为：
+### 默认模板路径
 ```
 D:\jiayihan\Desktop\ppt format V1_2.pptx
 ```
 
-如需更改模板路径，请修改：
-- `app.py` 中的 `PRESET_PPT_PATH` 变量
-- `text_to_ppt.py` 中 `main()` 函数里的 `ppt_path` 变量
+### 配置方式
+您可以通过以下方式修改模板路径：
+
+1. **修改config.py** (推荐)
+```python
+# 在config.py中修改default_ppt_template参数
+default_ppt_template: str = "您的PPT模板路径"
+```
+
+2. **创建config.json配置文件** (推荐)
+```json
+{
+  "default_ppt_template": "D:\\path\\to\\your\\template.pptx",
+  "ai_temperature": 0.3,
+  "ai_max_tokens": 2000
+}
+```
+
+3. **环境变量**
+```bash
+export PPT_TEMPLATE_PATH="D:\path\to\your\template.pptx"
+```
+
+### 配置验证
+程序启动时会自动验证PPT模板文件的有效性，包括：
+- 文件是否存在
+- 文件格式是否正确(.pptx)
+- 文件是否可以正常打开
+- 文件是否包含有效的幻灯片
 
 ## 适用场景
 
@@ -90,19 +120,57 @@ D:\jiayihan\Desktop\ppt format V1_2.pptx
 3. 如果模板文件不存在，应用会显示错误提示
 4. 生成的PPT文件会保存在 `output/` 目录（命令行版本）或提供下载（Web版本）
 
+## 新功能特性
+
+### 🔧 配置管理
+- **统一配置系统**：通过config.py管理所有配置项
+- **多种配置方式**：支持代码配置、JSON文件配置、环境变量配置
+- **配置验证**：启动时自动验证配置有效性
+
+### 📝 日志系统
+- **彩色日志**：终端输出支持彩色显示
+- **日志分级**：支持DEBUG、INFO、WARNING、ERROR、CRITICAL
+- **日志轮转**：自动管理日志文件大小和数量
+- **性能监控**：记录函数执行时间和API调用性能
+
+### 🛠️ 错误处理
+- **详细错误信息**：提供更详细的错误描述和解决建议
+- **优雅降级**：API调用失败时自动使用备用方案
+- **文件验证**：启动前验证PPT文件有效性
+
+### ⚡ 性能优化
+- **代码重构**：消除重复代码，提高代码复用性
+- **模块化设计**：将功能拆分为独立的工具模块
+- **资源管理**：优化临时文件创建和清理
+
 ## 故障排除
 
-### 模板文件不存在
-- 检查路径 `D:\jiayihan\Desktop\ppt format V1_2.pptx` 是否正确
-- 确认文件确实存在于该位置
-- 如果需要，可以修改代码中的路径配置
+### 配置问题
+- **模板文件不存在**：检查config.py中的default_ppt_template路径设置
+- **配置文件错误**：确认config.json格式正确，或删除该文件使用默认配置
+- **路径格式**：Windows路径需要使用双反斜杠(\\)或正斜杠(/)
 
-### API调用失败
-- 检查DeepSeek API密钥是否正确
-- 确认网络连接正常
-- 查看API配额是否充足
+### API调用问题
+- **API密钥错误**：检查DeepSeek API密钥是否正确设置
+- **网络连接**：确认可以正常访问api.deepseek.com
+- **API配额**：查看API使用配额是否充足
+- **请求超时**：可以在config.py中调整ai_max_tokens参数
 
-### PPT处理错误
-- 确认PPT文件格式为 `.pptx`
-- 检查PPT文件是否损坏
-- 尝试用较短的文本进行测试 
+### PPT处理问题
+- **文件格式**：确认PPT文件格式为.pptx
+- **文件损坏**：尝试用Microsoft PowerPoint打开文件验证
+- **占位符格式**：确认PPT中的占位符格式为{placeholder_name}
+- **权限问题**：确保程序有读写PPT文件的权限
+
+### 调试模式
+```bash
+# 启用调试日志
+export LOG_LEVEL=DEBUG
+python text_to_ppt.py
+```
+
+### 日志查看
+```bash
+# 查看应用日志
+tail -f app.log
+``` 

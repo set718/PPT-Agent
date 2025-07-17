@@ -10,20 +10,23 @@ import os
 import tempfile
 import io
 from datetime import datetime
-from openai import OpenAI
 from pptx import Presentation
 from pptx.util import Inches, Pt
 import json
 import re
+from config import get_config
+from utils import AIProcessor, PPTProcessor, FileManager, PPTAnalyzer
+from logger import get_logger, log_user_action, log_file_operation, LogContext
 
-# 预设的PPT模板路径
-PRESET_PPT_PATH = r"D:\jiayihan\Desktop\ppt format V1_2.pptx"
+# 获取配置
+config = get_config()
+logger = get_logger()
 
 # 页面配置
 st.set_page_config(
-    page_title="文本转PPT填充器",
-    page_icon="📊",
-    layout="wide",
+    page_title=config.web_title,
+    page_icon=config.web_icon,
+    layout=config.web_layout,
     initial_sidebar_state="expanded"
 )
 
@@ -78,385 +81,61 @@ class StreamlitPPTGenerator:
     def __init__(self, api_key):
         """初始化生成器"""
         self.api_key = api_key
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url="https://api.deepseek.com"
-        )
+        self.ai_processor = AIProcessor(api_key)
         self.presentation = None
+        self.ppt_processor = None
         self.ppt_structure = None
+        logger.info(f"初始化PPT生成器，API密钥: {'已设置' if api_key else '未设置'}")
     
     def load_ppt_from_path(self, ppt_path):
         """从文件路径加载PPT"""
-        try:
-            if not os.path.exists(ppt_path):
-                st.error(f"PPT模板文件不存在: {ppt_path}")
+        with LogContext(f"加载PPT文件: {ppt_path}"):
+            try:
+                # 验证文件
+                is_valid, error_msg = FileManager.validate_ppt_file(ppt_path)
+                if not is_valid:
+                    st.error(f"PPT文件验证失败: {error_msg}")
+                    log_file_operation("load_ppt", ppt_path, "error", error_msg)
+                    return False
+                
+                self.presentation = Presentation(ppt_path)
+                self.ppt_processor = PPTProcessor(self.presentation)
+                self.ppt_structure = self.ppt_processor.ppt_structure
+                
+                log_file_operation("load_ppt", ppt_path, "success")
+                return True
+            except Exception as e:
+                st.error(f"加载PPT文件失败: {e}")
+                log_file_operation("load_ppt", ppt_path, "error", str(e))
                 return False
-            
-            self.presentation = Presentation(ppt_path)
-            self.ppt_structure = self.analyze_existing_ppt()
-            return True
-        except Exception as e:
-            st.error(f"加载PPT文件失败: {e}")
-            return False
     
-    def analyze_existing_ppt(self):
-        """分析现有PPT的结构，特别关注占位符"""
-        if not self.presentation:
-            return {"total_slides": 0, "slides": []}
-            
-        slides_info = []
-        for i, slide in enumerate(self.presentation.slides):
-            slide_info = {
-                "slide_index": i,
-                "title": "",
-                "placeholders": {},  # 存储占位符信息
-                "text_shapes": [],
-                "has_content": False
-            }
-            
-            # 分析幻灯片中的文本框和占位符
-            for shape in slide.shapes:
-                if hasattr(shape, "text"):
-                    current_text = shape.text.strip()
-                    if current_text:
-                        # 检查是否包含占位符
-                        import re
-                        placeholder_pattern = r'\{([^}]+)\}'
-                        placeholders = re.findall(placeholder_pattern, current_text)
-                        
-                        if placeholders:
-                            # 这个文本框包含占位符
-                            for placeholder in placeholders:
-                                slide_info["placeholders"][placeholder] = {
-                                    "shape": shape,
-                                    "original_text": current_text,
-                                    "placeholder": placeholder
-                                }
-                        
-                        # 如果是简短文本且没有占位符，可能是标题
-                        if not placeholders and len(current_text) < 100:
-                            if slide_info["title"] == "":
-                                slide_info["title"] = current_text
-                        
-                        slide_info["has_content"] = True
-                    
-                    # 记录所有可编辑的文本形状
-                    if hasattr(shape, "text_frame"):
-                        slide_info["text_shapes"].append({
-                            "shape_id": shape.shape_id if hasattr(shape, "shape_id") else len(slide_info["text_shapes"]),
-                            "current_text": shape.text,
-                            "shape": shape,
-                            "has_placeholder": bool(re.findall(r'\{([^}]+)\}', shape.text)) if shape.text else False
-                        })
-            
-            slides_info.append(slide_info)
-        
-        return {
-            "total_slides": len(self.presentation.slides),
-            "slides": slides_info
-        }
     
     def process_text_with_deepseek(self, user_text):
         """使用DeepSeek API分析如何将用户文本填入PPT模板的占位符"""
         if not self.ppt_structure:
             return {"assignments": []}
-            
-        # 创建现有PPT结构的描述，重点关注占位符
-        ppt_description = f"现有PPT共有{['total_slides']}张幻灯片:\n"
         
-        for slide in self.ppt_structure['slides']:
-            ppt_description += f"\n第{slide['slide_index']+1}页:"
-            if slide['title']:
-                ppt_description += f" 标题「{slide['title']}」"
-            
-            # 列出所有占位符
-            if slide['placeholders']:
-                ppt_description += f"\n  包含占位符: "
-                for placeholder_name, placeholder_info in slide['placeholders'].items():
-                    ppt_description += f"{{{placeholder_name}}} "
-                ppt_description += "\n"
-            else:
-                ppt_description += f" (无占位符)\n"
-        
-        system_prompt = f"""你是一个专业的PPT内容优化专家。请分析用户文本，并根据PPT模板结构进行智能适配和优化。
-
-现有PPT结构：
-{ppt_description}
-
-**核心任务：**
-1. **结构化适配**：根据PPT模板的占位符结构，将用户文本进行合理的结构化调整
-2. **内容优化**：可以适当精简、重组或格式化文本，使其更适合PPT呈现
-3. **语言润色**：可以优化语言表达，使其更加简洁明了，适合幻灯片展示
-
-**操作原则：**
-- ✅ **可以做的**：重新组织文本结构、精简冗余内容、优化表达方式、调整语言风格
-- ✅ **可以做的**：根据占位符特点调整内容长度和格式（如将长段落拆分为要点）
-- ❌ **不能做的**：添加用户未提供的信息、编造数据、从外部知识添加内容
-- ❌ **不能做的**：改变用户文本的核心意思和关键信息
-
-**占位符语义规则：**
-- `title` = 主标题或文档标题（简洁有力）
-- `subtitle` = 副标题（补充说明）
-- `content_X` = 分类标题、章节标题、时间点等结构性内容（清晰明确）
-- `content_X_bullet_Y` = 属于特定content的具体要点（简洁扼要）
-- `bullet_X` = 独立的要点列表（重点突出）
-- `description` = 描述性文字（详细但不冗长）
-- `conclusion` = 结论性内容（总结性强）
-
-**优化策略：**
-1. **标题类占位符**：提炼核心概念，简洁有力
-2. **要点类占位符**：每个要点保持简短，突出关键信息
-3. **内容类占位符**：根据上下文长度合理调整详细程度
-4. **结构性调整**：将长文本合理拆分到多个相关占位符中
-
-请按照以下JSON格式返回：
-{{
-  "assignments": [
-    {{
-      "slide_index": 0,
-      "action": "replace_placeholder",
-      "placeholder": "title",
-      "content": "优化后的标题内容",
-      "reason": "提炼核心概念，适配标题占位符"
-    }}
-  ]
-}}
-
-分析要求：
-1. 基于用户文本进行结构化分析和适配优化
-2. 根据占位符语义特点调整内容呈现方式
-3. 保持核心信息完整，但可优化表达形式
-4. action必须是"replace_placeholder"
-5. placeholder必须是模板中实际存在的占位符名称
-6. 只返回JSON格式，不要其他文字"""
-        
-        try:
-            response = self.client.chat.completions.create(
-                model="deepseek-chat",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_text}
-                ],
-                temperature=0.3,  # 降低温度以获得更精确的结果
-                max_tokens=2000
-            )
-            
-            content = response.choices[0].message.content
-            if content:
-                content = content.strip()
-            else:
-                content = ""
-            
-            # 提取JSON内容（如果有代码块包围）
-            json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
-            if json_match:
-                content = json_match.group(1)
-            
-            try:
-                return json.loads(content)
-            except json.JSONDecodeError:
-                st.error(f"AI返回的JSON格式有误，内容：{content}")
-                # 返回基础分配方案
-                return {
-                    "assignments": [
-                        {
-                            "slide_index": 0,
-                            "action": "replace_placeholder",
-                            "placeholder": "content",
-                            "content": user_text,
-                            "reason": "JSON解析失败，默认填入content占位符"
-                        }
-                    ]
-                }
-        
-        except Exception as e:
-            st.error(f"调用DeepSeek API时出错: {e}")
-            # 返回基础分配方案
-            return {
-                "assignments": [
-                    {
-                        "slide_index": 0,
-                        "action": "replace_placeholder", 
-                        "placeholder": "content",
-                        "content": user_text,
-                        "reason": f"API调用失败，默认填入content占位符。错误: {e}"
-                    }
-                ]
-            }
+        log_user_action("AI文本分析", f"文本长度: {len(user_text)}字符")
+        return self.ai_processor.analyze_text_for_ppt(user_text, self.ppt_structure)
     
     def apply_text_assignments(self, assignments):
         """根据分配方案替换PPT模板中的占位符"""
-        if not self.presentation or not self.ppt_structure:
+        if not self.presentation or not self.ppt_processor:
             return ["❌ PPT文件未正确加载"]
-            
-        assignments_list = assignments.get('assignments', [])
-        results = []
         
-        for assignment in assignments_list:
-            action = assignment.get('action')
-            content = assignment.get('content', '')
-            slide_index = assignment.get('slide_index', 0)
-            
-            if action == 'replace_placeholder':
-                placeholder = assignment.get('placeholder', '')
-                if 0 <= slide_index < len(self.presentation.slides):
-                    slide = self.presentation.slides[slide_index]
-                    slide_info = self.ppt_structure['slides'][slide_index]
-                    
-                    # 检查该占位符是否存在
-                    if placeholder in slide_info['placeholders']:
-                        success = self.replace_placeholder_in_slide(
-                            slide_info['placeholders'][placeholder], 
-                            content
-                        )
-                        if success:
-                            results.append(f"✓ 已替换第{slide_index+1}页的 {{{placeholder}}} 占位符: {assignment.get('reason', '')}")
-                        else:
-                            results.append(f"✗ 替换第{slide_index+1}页的 {{{placeholder}}} 占位符失败")
-                    else:
-                        results.append(f"✗ 第{slide_index+1}页不存在 {{{placeholder}}} 占位符")
-                else:
-                    results.append(f"✗ 幻灯片索引 {slide_index+1} 超出范围")
-            
-            elif action == 'update':  # 兼容旧的格式
-                if 0 <= slide_index < len(self.presentation.slides):
-                    slide = self.presentation.slides[slide_index]
-                    self.update_slide_content(slide, content)
-                    results.append(f"✓ 已更新第{slide_index+1}页: {assignment.get('reason', '')}")
-                
-            elif action == 'add_new':  # 兼容旧的格式
-                title = assignment.get('title', '新增内容')
-                self.add_new_slide(title, content)
-                results.append(f"✓ 已新增幻灯片「{title}」: {assignment.get('reason', '')}")
-        
-        return results
+        log_user_action("应用文本分配", f"分配数量: {len(assignments.get('assignments', []))}")
+        return self.ppt_processor.apply_assignments(assignments)
     
-    def replace_placeholder_in_slide(self, placeholder_info, new_content):
-        """在特定的文本框中替换占位符"""
-        try:
-            shape = placeholder_info['shape']
-            original_text = placeholder_info['original_text']
-            placeholder_name = placeholder_info['placeholder']
-            
-            st.write(f"🔧 调试：正在替换占位符 {{{placeholder_name}}}")
-            st.write(f"   原文本: '{original_text}'")
-            st.write(f"   新内容: '{new_content}'")
-            
-            # 检查当前文本框的实际内容
-            current_text = shape.text if hasattr(shape, 'text') else ""
-            st.write(f"   当前文本框内容: '{current_text}'")
-            
-            # 构建要替换的占位符模式
-            placeholder_pattern = f"{{{placeholder_name}}}"
-            
-            # 使用当前文本框内容进行替换（而不是original_text）
-            if placeholder_pattern in current_text:
-                updated_text = current_text.replace(placeholder_pattern, new_content)
-                st.write(f"   替换后文本: '{updated_text}'")
-                
-                # 更新文本框内容
-                if hasattr(shape, "text_frame") and shape.text_frame:
-                    tf = shape.text_frame
-                    tf.clear()
-                    
-                    # 添加新内容
-                    p = tf.paragraphs[0]
-                    p.text = updated_text
-                    
-                    # 保持字体大小
-                    if hasattr(p, 'font') and hasattr(p.font, 'size'):
-                        if not p.font.size:
-                            p.font.size = Pt(16)
-                else:
-                    # 直接设置text属性
-                    shape.text = updated_text
-                
-                st.write(f"   ✅ 替换成功")
-                return True
-            else:
-                st.write(f"   ❌ 在当前文本中未找到占位符 {placeholder_pattern}")
-                return False
-                
-        except Exception as e:
-            st.error(f"替换占位符时出错: {e}")
-            st.write(f"   错误详情: {str(e)}")
-            return False
     
-    def update_slide_content(self, slide, content):
-        """更新幻灯片内容"""
-        # 查找可用的文本框
-        text_shapes = []
-        for shape in slide.shapes:
-            if hasattr(shape, "text_frame") and shape.text_frame:
-                text_shapes.append(shape)
-        
-        if text_shapes:
-            # 使用最后一个可用的文本框（通常是主要内容区域）
-            target_shape = text_shapes[-1] if len(text_shapes) > 1 else text_shapes[0]
-            
-            # 清空现有内容并添加新内容
-            tf = target_shape.text_frame
-            tf.clear()
-            
-            # 添加内容
-            p = tf.paragraphs[0]
-            p.text = content
-            p.font.size = Pt(16)
     
-    def add_new_slide(self, title, content):
-        """添加新幻灯片"""
-        if not self.presentation:
-            return False
-            
-        # 使用标题和内容布局
-        slide_layout = self.presentation.slide_layouts[1]
-        slide = self.presentation.slides.add_slide(slide_layout)
-        
-        # 设置标题
-        if slide.shapes.title:
-            slide.shapes.title.text = title
-        
-        # 设置内容
-        if len(slide.placeholders) > 1:
-            content_placeholder = slide.placeholders[1]
-            tf = content_placeholder.text_frame
-            tf.clear()
-            
-            p = tf.paragraphs[0]
-            p.text = content
-            p.font.size = Pt(16)
     
     def get_ppt_bytes(self):
         """获取修改后的PPT字节数据"""
         if not self.presentation:
             raise ValueError("PPT文件未正确加载")
-            
-        # 创建output目录
-        output_dir = "temp_output"
-        os.makedirs(output_dir, exist_ok=True)
         
-        # 保存到项目目录下的临时文件
-        import time
-        timestamp = str(int(time.time() * 1000))
-        temp_filename = f"temp_ppt_{timestamp}.pptx"
-        temp_filepath = os.path.join(output_dir, temp_filename)
-        
-        try:
-            # 保存文件
-            self.presentation.save(temp_filepath)
-            
-            # 读取字节数据
-            with open(temp_filepath, 'rb') as f:
-                ppt_bytes = f.read()
-            
-            return ppt_bytes
-        finally:
-            # 清理临时文件
-            try:
-                if os.path.exists(temp_filepath):
-                    os.remove(temp_filepath)
-            except Exception:
-                pass  # 如果删除失败也没关系，只是临时文件
+        log_user_action("获取PPT字节数据")
+        return FileManager.save_ppt_to_bytes(self.presentation)
 
 def main():
     # 页面标题
@@ -483,14 +162,15 @@ def main():
         
         # 模板信息
         st.subheader("📄 PPT模板")
-        st.markdown(f"**当前模板：** `{os.path.basename(PRESET_PPT_PATH)}`")
-        st.markdown(f"**模板路径：** `{PRESET_PPT_PATH}`")
+        st.markdown(f"**当前模板：** `{os.path.basename(config.default_ppt_template)}`")
+        st.markdown(f"**模板路径：** `{config.default_ppt_template}`")
         
         # 检查模板文件状态
-        if os.path.exists(PRESET_PPT_PATH):
+        is_valid, error_msg = FileManager.validate_ppt_file(config.default_ppt_template)
+        if is_valid:
             st.markdown('<div class="success-box">✅ 模板文件存在</div>', unsafe_allow_html=True)
         else:
-            st.markdown('<div class="error-box">❌ 模板文件不存在</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="error-box">❌ 模板文件问题: {error_msg}</div>', unsafe_allow_html=True)
         
         st.markdown("---")
         
@@ -507,10 +187,11 @@ def main():
     # 主界面
     if api_key:
         # 检查模板文件
-        if not os.path.exists(PRESET_PPT_PATH):
-            st.markdown('<div class="error-box">❌ PPT模板文件不存在</div>', unsafe_allow_html=True)
-            st.error(f"找不到模板文件: {PRESET_PPT_PATH}")
-            st.info("请确保模板文件存在于指定路径")
+        is_valid, error_msg = FileManager.validate_ppt_file(config.default_ppt_template)
+        if not is_valid:
+            st.markdown('<div class="error-box">❌ PPT模板文件问题</div>', unsafe_allow_html=True)
+            st.error(f"模板文件验证失败: {error_msg}")
+            st.info("请确保模板文件存在且格式正确")
             return
         
         # 初始化生成器
@@ -518,7 +199,7 @@ def main():
         
         # 加载PPT模板
         with st.spinner("正在加载PPT模板..."):
-            if generator.load_ppt_from_path(PRESET_PPT_PATH):
+            if generator.load_ppt_from_path(config.default_ppt_template):
                 st.success("✅ PPT模板加载成功！")
                 
                 # 显示PPT信息

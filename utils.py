@@ -8,7 +8,6 @@
 import os
 import re
 import json
-import tempfile
 import time
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple
@@ -137,9 +136,15 @@ class AIProcessor:
             # 提取JSON内容
             return self._extract_json_from_response(content, user_text)
             
+        except ConnectionError as e:
+            print(f"网络连接错误: {e}")
+            return self._create_fallback_assignment(user_text, f"网络连接错误: {e}")
+        except TimeoutError as e:
+            print(f"请求超时: {e}")
+            return self._create_fallback_assignment(user_text, f"请求超时: {e}")
         except Exception as e:
             print(f"调用AI API时出错: {e}")
-            return self._create_fallback_assignment(user_text, str(e))
+            return self._create_fallback_assignment(user_text, f"API调用失败: {e}")
     
     def _create_ppt_description(self, ppt_structure: Dict[str, Any]) -> str:
         """创建PPT结构描述"""
@@ -218,9 +223,10 @@ class AIProcessor:
         
         try:
             return json.loads(content)
-        except json.JSONDecodeError:
-            print(f"AI返回的JSON格式有误，内容：{content}")
-            return self._create_fallback_assignment(user_text, "JSON解析失败")
+        except json.JSONDecodeError as e:
+            print(f"AI返回的JSON格式有误，错误：{e}")
+            print(f"返回内容：{content}")
+            return self._create_fallback_assignment(user_text, f"JSON解析失败: {e}")
     
     def _create_fallback_assignment(self, user_text: str, error_msg: str) -> Dict[str, Any]:
         """创建备用分配方案"""

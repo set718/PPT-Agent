@@ -30,3 +30,10 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 3: i
 2025-07-17 17:42:31 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_5', 'content_5_bullet_1', 'content_5_bullet_2']
 2025-07-17 17:42:31 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_6', 'content_6_bullet_1', 'content_6_bullet_2']
 2025-07-17 17:42:31 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-07-17 18:00:03 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_1_bullet_1', 'content_1_bullet_2']
+2025-07-17 18:00:03 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_2', 'content_2_bullet_1', 'content_2_bullet_2']
+2025-07-17 18:00:03 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_3', 'content_3_bullet_1', 'content_3_bullet_2']
+2025-07-17 18:00:03 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_4', 'content_4_bullet_1', 'content_4_bullet_2']
+2025-07-17 18:00:03 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_5', 'content_5_bullet_1', 'content_5_bullet_2']
+2025-07-17 18:00:03 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_6', 'content_6_bullet_1', 'content_6_bullet_2']
+2025-07-17 18:00:03 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1

@@ -14,11 +14,10 @@ class Config:
     """项目配置类"""
     
     # API配置
-    deepseek_api_key: Optional[str] = None
     deepseek_base_url: str = "https://api.deepseek.com"
     
     # PPT模板配置
-    default_ppt_template: str = r"D:\jiayihan\Desktop\ppt format V1_2.pptx"
+    default_ppt_template: str = os.path.join(os.getcwd(), "templates", "ppt_template.pptx")
     
     # 输出配置
     output_dir: str = "output"
@@ -42,24 +41,63 @@ class Config:
     web_icon: str = "📊"
     web_layout: str = "wide"
     
+    # PPT布局配置
+    layout_margins: Dict[str, float] = field(default_factory=lambda: {
+        'slide_margin_left': 0.5,      # 幻灯片左边距（英寸）
+        'slide_margin_right': 0.5,     # 幻灯片右边距（英寸）
+        'slide_margin_top': 1.5,       # 幻灯片上边距（英寸）
+        'slide_margin_bottom': 0.5,    # 幻灯片下边距（英寸）
+        'shape_spacing': 0.1,          # 形状间距（英寸）
+        'shape_margin': 0.1,           # 形状内边距（英寸）
+    })
+    
+    # 字体大小配置
+    font_sizes: Dict[str, int] = field(default_factory=lambda: {
+        'large_area': 14,   # 大区域字体大小（磅）
+        'medium_area': 12,  # 中等区域字体大小（磅）
+        'small_area': 10,   # 小区域字体大小（磅）
+        'default': 16,      # 默认字体大小（磅）
+    })
+    
+    # 区域阈值配置
+    layout_thresholds: Dict[str, float] = field(default_factory=lambda: {
+        'large_area': 2.0,  # 大区域阈值（平方英寸）
+        'medium_area': 1.0, # 中等区域阈值（平方英寸）
+    })
+    
     def __post_init__(self):
         """初始化后处理"""
-        # 从环境变量获取API密钥
-        if not self.deepseek_api_key:
-            self.deepseek_api_key = os.getenv('DEEPSEEK_API_KEY')
+        
+        # 如果默认模板路径不存在，尝试查找其他可能的位置
+        if not os.path.exists(self.default_ppt_template):
+            possible_paths = [
+                r"D:\jiayihan\Desktop\ppt format V1_2.pptx",  # 原始位置
+                os.path.join(os.getcwd(), "ppt format V1_2.pptx"),  # 当前目录
+                os.path.join(os.path.dirname(__file__), "templates", "ppt_template.pptx"),  # 相对于脚本位置
+                os.path.join(os.path.dirname(__file__), "ppt format V1_2.pptx"),  # 脚本同级目录
+            ]
+            
+            for path in possible_paths:
+                if os.path.exists(path):
+                    self.default_ppt_template = path
+                    break
         
         # 创建输出目录
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(self.temp_output_dir, exist_ok=True)
+        
+        # 创建模板目录
+        template_dir = os.path.dirname(self.default_ppt_template)
+        if template_dir and not os.path.exists(template_dir):
+            try:
+                os.makedirs(template_dir, exist_ok=True)
+            except OSError:
+                pass  # 无法创建目录，稍后在验证中处理
     
     def validate(self) -> Dict[str, Any]:
         """验证配置有效性"""
         errors = {}
         warnings = {}
-        
-        # 检查API密钥
-        if not self.deepseek_api_key:
-            errors['deepseek_api_key'] = "API密钥未设置"
         
         # 检查PPT模板文件
         if not os.path.exists(self.default_ppt_template):
@@ -82,7 +120,6 @@ class Config:
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典"""
         return {
-            'deepseek_api_key': '***' if self.deepseek_api_key else None,
             'deepseek_base_url': self.deepseek_base_url,
             'default_ppt_template': self.default_ppt_template,
             'output_dir': self.output_dir,
@@ -129,21 +166,30 @@ def load_config_from_file(file_path: str) -> None:
         for key, value in data.items():
             if hasattr(config, key):
                 setattr(config, key, value)
+    except json.JSONDecodeError as e:
+        print(f"配置文件JSON格式错误: {e}")
+    except FileNotFoundError:
+        print(f"配置文件不存在: {file_path}")
+    except PermissionError:
+        print(f"无权限访问配置文件: {file_path}")
     except Exception as e:
-        print(f"加载配置文件失败: {e}")
+        print(f"加载配置文件时发生未知错误: {e}")
 
 def save_config_to_file(file_path: str) -> None:
     """保存配置到文件"""
     try:
         import json
         data = config.to_dict()
-        # 不保存敏感信息
-        data.pop('deepseek_api_key', None)
+        # 配置文件不包含敏感信息
         
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+    except PermissionError:
+        print(f"无权限写入配置文件: {file_path}")
+    except OSError as e:
+        print(f"文件系统错误: {e}")
     except Exception as e:
-        print(f"保存配置文件失败: {e}")
+        print(f"保存配置文件时发生未知错误: {e}")
 
 # 在导入时尝试加载配置文件
 load_config_from_file('config.json')

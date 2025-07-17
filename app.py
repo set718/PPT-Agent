@@ -7,8 +7,6 @@
 
 import streamlit as st
 import os
-import tempfile
-import io
 from datetime import datetime
 from pptx import Presentation
 from pptx.util import Inches, Pt
@@ -191,6 +189,10 @@ def main():
         if not api_key:
             st.markdown('<div class="warning-box">⚠️ 请先输入API密钥才能使用功能</div>', unsafe_allow_html=True)
             st.markdown("获取API密钥：[DeepSeek平台](https://platform.deepseek.com/api_keys)")
+        else:
+            # 验证API密钥格式
+            if not api_key.startswith('sk-'):
+                st.markdown('<div class="warning-box">⚠️ API密钥格式可能不正确，请确认是否以"sk-"开头</div>', unsafe_allow_html=True)
         
         st.markdown("---")
         
@@ -218,8 +220,8 @@ def main():
         5. 下载更新后的PPT文件
         """)
     
-    # 主界面
-    if api_key:
+    # 主界面 - 只有输入API密钥后才显示功能
+    if api_key and api_key.strip():
         # 检查模板文件
         is_valid, error_msg = FileManager.validate_ppt_file(config.default_ppt_template)
         if not is_valid:
@@ -327,6 +329,14 @@ def main():
     else:
         # 未输入API密钥时的提示
         st.info("👈 请在左侧输入您的DeepSeek API密钥开始使用")
+        st.markdown("### 💡 如何获取API密钥")
+        st.markdown("""
+        1. 访问 [DeepSeek平台](https://platform.deepseek.com/api_keys)
+        2. 注册或登录账号
+        3. 在API密钥管理页面创建新的API密钥
+        4. 复制API密钥（格式：sk-xxxxxxxxxxxxx）
+        5. 粘贴到左侧输入框中
+        """)
         
         # 功能介绍
         col1, col2 = st.columns(2)

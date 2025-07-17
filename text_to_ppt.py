@@ -29,9 +29,9 @@ class TextToPPTGenerator:
         self.logger = get_logger()
         
         # 初始化API处理器
-        self.api_key = api_key or self.config.deepseek_api_key
+        self.api_key = api_key
         if not self.api_key:
-            raise ValueError("请设置DEEPSEEK_API_KEY环境变量或提供API密钥")
+            raise ValueError("请提供DeepSeek API密钥")
         
         self.ai_processor = AIProcessor(self.api_key)
         
@@ -147,21 +147,28 @@ def main():
         print(f"\n[OK] 已找到PPT文件: {os.path.basename(ppt_path)}")
         log_system_info(f"PPT文件验证成功: {ppt_path}")
     
-    # 检查API密钥
-    if not config.deepseek_api_key:
-        print("\n[ERROR] 错误：未找到DEEPSEEK_API_KEY")
-        print("\n请设置您的DeepSeek API密钥：")
-        print("方法1: 设置环境变量")
-        print("   export DEEPSEEK_API_KEY=your_api_key_here")
-        print("\n方法2: 创建.env文件")
-        print("   DEEPSEEK_API_KEY=your_api_key_here")
-        print("\n方法3: 修改config.py中的配置")
-        print("\n获取API密钥：https://platform.deepseek.com/api_keys")
+    # 获取用户输入的API密钥
+    print("\n" + "="*50)
+    print("请输入您的DeepSeek API密钥")
+    print("获取地址：https://platform.deepseek.com/api_keys")
+    print("="*50)
+    
+    api_key = input("请输入API密钥（sk-开头）: ").strip()
+    
+    if not api_key:
+        print("\n[ERROR] 未输入API密钥，程序退出")
         sys.exit(1)
+    
+    if not api_key.startswith('sk-'):
+        print("\n[WARNING] API密钥格式可能不正确，请确认是否以'sk-'开头")
+        confirm = input("是否继续？(y/n): ").strip().lower()
+        if confirm not in ['y', 'yes', '是']:
+            print("程序退出")
+            sys.exit(1)
     
     try:
         # 初始化生成器
-        generator = TextToPPTGenerator(config.deepseek_api_key, ppt_path)
+        generator = TextToPPTGenerator(api_key, ppt_path)
         
         # 显示现有PPT信息
         ppt_info = generator.ppt_structure

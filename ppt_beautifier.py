@@ -12,6 +12,7 @@ from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from logger import get_logger
+from config import get_config
 
 class PPTBeautifier:
     """PPT美化器"""
@@ -19,6 +20,7 @@ class PPTBeautifier:
     def __init__(self, presentation: Presentation):
         self.presentation = presentation
         self.logger = get_logger()
+        self.config = get_config()
         
     def cleanup_and_beautify(self, filled_placeholders: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -137,10 +139,11 @@ class PPTBeautifier:
             slide_height = self.presentation.slide_height
             
             # 计算可用区域（排除标题区域）
-            available_width = slide_width - Inches(1)  # 左右边距
-            available_height = slide_height - Inches(2)  # 上下边距（考虑标题）
-            available_top = Inches(1.5)  # 标题下方开始位置
-            available_left = Inches(0.5)  # 左边距
+            margins = self.config.layout_margins
+            available_width = slide_width - Inches(margins['slide_margin_left'] + margins['slide_margin_right'])
+            available_height = slide_height - Inches(margins['slide_margin_top'] + margins['slide_margin_bottom'])
+            available_top = Inches(margins['slide_margin_top'])
+            available_left = Inches(margins['slide_margin_left'])
             
             shape_count = len(shapes)
             
@@ -172,14 +175,16 @@ class PPTBeautifier:
         """
         2x2布局排列
         """
-        shape_width = width / 2 - Inches(0.2)  # 形状间距
-        shape_height = height / 2 - Inches(0.2)
+        spacing = Inches(self.config.layout_margins['shape_spacing'])
+        shape_width = width / 2 - spacing
+        shape_height = height / 2 - spacing
         
+        half_spacing = spacing / 2
         positions = [
             (left, top),  # 左上
-            (left + width/2 + Inches(0.1), top),  # 右上
-            (left, top + height/2 + Inches(0.1)),  # 左下
-            (left + width/2 + Inches(0.1), top + height/2 + Inches(0.1))  # 右下
+            (left + width/2 + half_spacing, top),  # 右上
+            (left, top + height/2 + half_spacing),  # 左下
+            (left + width/2 + half_spacing, top + height/2 + half_spacing)  # 右下
         ]
         
         for i, shape in enumerate(shapes[:4]):
@@ -203,14 +208,15 @@ class PPTBeautifier:
         """
         2x3布局排列
         """
-        shape_width = width / 3 - Inches(0.15)
-        shape_height = height / 2 - Inches(0.2)
+        spacing = Inches(self.config.layout_margins['shape_spacing'])
+        shape_width = width / 3 - spacing
+        shape_height = height / 2 - spacing
         
         positions = []
         for row in range(2):
             for col in range(3):
-                x = left + col * (width/3 + Inches(0.1))
-                y = top + row * (height/2 + Inches(0.1))
+                x = left + col * (width/3 + spacing/3)
+                y = top + row * (height/2 + spacing/2)
                 positions.append((x, y))
         
         for i, shape in enumerate(shapes[:6]):
@@ -233,14 +239,15 @@ class PPTBeautifier:
         """
         3x3布局排列
         """
-        shape_width = width / 3 - Inches(0.15)
-        shape_height = height / 3 - Inches(0.15)
+        spacing = Inches(self.config.layout_margins['shape_spacing'])
+        shape_width = width / 3 - spacing
+        shape_height = height / 3 - spacing
         
         positions = []
         for row in range(3):
             for col in range(3):
-                x = left + col * (width/3 + Inches(0.1))
-                y = top + row * (height/3 + Inches(0.1))
+                x = left + col * (width/3 + spacing/3)
+                y = top + row * (height/3 + spacing/3)
                 positions.append((x, y))
         
         for i, shape in enumerate(shapes[:9]):
@@ -270,12 +277,15 @@ class PPTBeautifier:
             # 根据形状大小决定字体大小
             area = (shape_width / Inches(1)) * (shape_height / Inches(1))
             
-            if area > 2:
-                font_size = Pt(14)
-            elif area > 1:
-                font_size = Pt(12)
+            thresholds = self.config.layout_thresholds
+            font_sizes = self.config.font_sizes
+            
+            if area > thresholds['large_area']:
+                font_size = Pt(font_sizes['large_area'])
+            elif area > thresholds['medium_area']:
+                font_size = Pt(font_sizes['medium_area'])
             else:
-                font_size = Pt(10)
+                font_size = Pt(font_sizes['small_area'])
             
             # 应用字体大小
             for paragraph in shape.text_frame.paragraphs:
@@ -287,10 +297,11 @@ class PPTBeautifier:
             
             # 调整文本框边距
             text_frame = shape.text_frame
-            text_frame.margin_left = Inches(0.1)
-            text_frame.margin_right = Inches(0.1)
-            text_frame.margin_top = Inches(0.1)
-            text_frame.margin_bottom = Inches(0.1)
+            margin = Inches(self.config.layout_margins['shape_margin'])
+            text_frame.margin_left = margin
+            text_frame.margin_right = margin
+            text_frame.margin_top = margin
+            text_frame.margin_bottom = margin
             
         except Exception as e:
             self.logger.error(f"调整文本大小时出错: {e}")

@@ -179,18 +179,30 @@ class StreamlitPPTGenerator:
 
 **占位符说明：**
 - {{title}} = 主标题内容
-- {{content}} = 主要内容/正文
-- {{bullet_1}}, {{bullet_2}}, {{bullet_3}} = 要点列表
-- {{subtitle}} = 副标题
-- {{description}} = 描述性文字
-- {{conclusion}} = 结论
-- 其他 {{占位符}} = 根据名称推断用途
+- {{content_1}}, {{content_2}}, {{content_3}}, {{content_4}}, {{content_5}}, {{content_6}} = 时间点或分类标题
+- {{bullet_1}}, {{bullet_2}} = 每个content下的具体活动或要点
+
+**时间表格式识别规则：**
+1. **标题识别**：文本开头的概括性词汇（如"日程表"、"时间安排"等）-> {{title}}
+2. **时间点识别**：时间格式（如"8:00"、"9:00"、"12:00"等）-> {{content_1}}, {{content_2}}, {{content_3}}...
+3. **活动识别**：每个时间点后的活动项目 -> {{bullet_1}}, {{bullet_2}}
+
+**解析示例：**
+输入："日程表 8：00 起床、洗漱 9：00吃早饭、自习"
+解析为：
+- "日程表" -> {{title}}
+- "8：00" -> {{content_1}}
+- "起床" -> {{bullet_1}} (content_1下)
+- "洗漱" -> {{bullet_2}} (content_1下)  
+- "9：00" -> {{content_2}}
+- "吃早饭" -> {{bullet_1}} (content_2下)
+- "自习" -> {{bullet_2}} (content_2下)
 
 **重要原则：**
-1. 仔细分析用户文本的结构和内容
-2. 将文本内容精确匹配到合适的占位符
+1. 仔细分析用户文本的时间表结构
+2. 将时间点填入content占位符，将活动填入对应的bullet占位符
 3. 保持用户原始文本内容完全不变
-4. 优先填充已有的占位符，而不是创建新幻灯片
+4. 优先填充已有的占位符，按顺序使用content_1, content_2, content_3...
 
 请按照以下JSON格式返回：
 {{
@@ -199,25 +211,39 @@ class StreamlitPPTGenerator:
       "slide_index": 0,
       "action": "replace_placeholder",
       "placeholder": "title",
-      "content": "要填入该占位符的原始文本片段",
-      "reason": "选择该占位符的原因"
+      "content": "标题内容",
+      "reason": "识别为主标题"
     }},
     {{
-      "slide_index": 1,
-      "action": "replace_placeholder", 
-      "placeholder": "content",
-      "content": "要填入该占位符的原始文本片段",
-      "reason": "选择该占位符的原因"
+      "slide_index": 0,
+      "action": "replace_placeholder",
+      "placeholder": "content_1",
+      "content": "8：00",
+      "reason": "第一个时间点"
+    }},
+    {{
+      "slide_index": 0,
+      "action": "replace_placeholder",
+      "placeholder": "bullet_1",
+      "content": "起床",
+      "reason": "第一个时间点的第一个活动"
+    }},
+    {{
+      "slide_index": 0,
+      "action": "replace_placeholder",
+      "placeholder": "bullet_2", 
+      "content": "洗漱",
+      "reason": "第一个时间点的第二个活动"
     }}
   ]
 }}
 
 分析要求：
-1. 识别用户文本中的标题、内容、要点等部分
-2. 将每部分内容匹配到最合适的占位符
-3. action必须是"replace_placeholder"
-4. placeholder必须是模板中实际存在的占位符名称
-5. 提供清晰的匹配理由
+1. 识别文本中的标题、时间点、活动项目
+2. 将时间点按顺序匹配到content_1, content_2, content_3...
+3. 将每个时间点的活动按顺序匹配到bullet_1, bullet_2
+4. action必须是"replace_placeholder"
+5. placeholder必须是模板中实际存在的占位符名称
 6. 只返回JSON格式，不要其他文字"""
         
         try:
@@ -325,29 +351,48 @@ class StreamlitPPTGenerator:
             original_text = placeholder_info['original_text']
             placeholder_name = placeholder_info['placeholder']
             
-            # 替换占位符
-            updated_text = original_text.replace(f"{{{placeholder_name}}}", new_content)
+            st.write(f"🔧 调试：正在替换占位符 {{{placeholder_name}}}")
+            st.write(f"   原文本: '{original_text}'")
+            st.write(f"   新内容: '{new_content}'")
             
-            # 更新文本框内容
-            if hasattr(shape, "text_frame") and shape.text_frame:
-                tf = shape.text_frame
-                tf.clear()
+            # 检查当前文本框的实际内容
+            current_text = shape.text if hasattr(shape, 'text') else ""
+            st.write(f"   当前文本框内容: '{current_text}'")
+            
+            # 构建要替换的占位符模式
+            placeholder_pattern = f"{{{placeholder_name}}}"
+            
+            # 使用当前文本框内容进行替换（而不是original_text）
+            if placeholder_pattern in current_text:
+                updated_text = current_text.replace(placeholder_pattern, new_content)
+                st.write(f"   替换后文本: '{updated_text}'")
                 
-                # 添加新内容
-                p = tf.paragraphs[0]
-                p.text = updated_text
+                # 更新文本框内容
+                if hasattr(shape, "text_frame") and shape.text_frame:
+                    tf = shape.text_frame
+                    tf.clear()
+                    
+                    # 添加新内容
+                    p = tf.paragraphs[0]
+                    p.text = updated_text
+                    
+                    # 保持字体大小
+                    if hasattr(p, 'font') and hasattr(p.font, 'size'):
+                        if not p.font.size:
+                            p.font.size = Pt(16)
+                else:
+                    # 直接设置text属性
+                    shape.text = updated_text
                 
-                # 保持字体大小
-                if hasattr(p, 'font') and hasattr(p.font, 'size'):
-                    if not p.font.size:
-                        p.font.size = Pt(16)
+                st.write(f"   ✅ 替换成功")
+                return True
             else:
-                # 直接设置text属性
-                shape.text = updated_text
-            
-            return True
+                st.write(f"   ❌ 在当前文本中未找到占位符 {placeholder_pattern}")
+                return False
+                
         except Exception as e:
             st.error(f"替换占位符时出错: {e}")
+            st.write(f"   错误详情: {str(e)}")
             return False
     
     def update_slide_content(self, slide, content):
@@ -529,6 +574,10 @@ def main():
                 if process_button and user_text.strip():
                     with st.spinner("正在使用DeepSeek AI分析文本结构..."):
                         assignments = generator.process_text_with_deepseek(user_text)
+                    
+                    # 显示AI分析结果（调试信息）
+                    with st.expander("🔍 查看AI分析结果", expanded=True):
+                        st.json(assignments)
                     
                     with st.spinner("正在将文本填入PPT..."):
                         results = generator.apply_text_assignments(assignments)

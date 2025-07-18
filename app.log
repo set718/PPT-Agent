@@ -37,3 +37,51 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 3: i
 2025-07-17 18:00:03 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_5', 'content_5_bullet_1', 'content_5_bullet_2']
 2025-07-17 18:00:03 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_6', 'content_6_bullet_1', 'content_6_bullet_2']
 2025-07-17 18:00:03 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-07-18 14:01:40 - ppt_generator - INFO - 初始化PPT生成器，API密钥: 已设置
+2025-07-18 14:01:40 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:01:41 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:01:41 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.04s
+2025-07-18 14:01:59 - ppt_generator - INFO - 初始化PPT生成器，API密钥: 已设置
+2025-07-18 14:01:59 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:01:59 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:01:59 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.07s
+2025-07-18 14:02:11 - ppt_generator - INFO - 初始化PPT生成器，API密钥: 已设置
+2025-07-18 14:02:11 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:02:11 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:02:11 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.07s
+2025-07-18 14:02:11 - ppt_generator - INFO - 用户操作: AI文本分析 - 文本长度: 79字符
+2025-07-18 14:02:50 - ppt_generator - INFO - 用户操作: 应用文本分配 - 分配数量: 13
+2025-07-18 14:02:50 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_5', 'content_5_bullet_1', 'content_5_bullet_2']
+2025-07-18 14:02:50 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_6', 'content_6_bullet_1', 'content_6_bullet_2']
+2025-07-18 14:02:50 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-07-18 14:02:50 - ppt_generator - INFO - 用户操作: 获取PPT字节数据
+2025-07-18 14:03:30 - ppt_generator - INFO - 初始化PPT生成器，API密钥: 已设置
+2025-07-18 14:03:30 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:03:30 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:03:30 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.07s
+2025-07-18 14:20:51 - ppt_generator - INFO - 初始化PPT生成器，API密钥: 已设置
+2025-07-18 14:20:51 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:20:51 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:20:51 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.04s
+2025-07-18 14:21:05 - ppt_generator - INFO - 初始化PPT生成器，API密钥: 已设置
+2025-07-18 14:21:05 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:21:05 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:21:05 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.07s
+2025-07-18 14:21:21 - ppt_generator - INFO - 初始化PPT生成器，API密钥: 已设置
+2025-07-18 14:21:21 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:21:21 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:21:21 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.07s
+2025-07-18 14:21:21 - ppt_generator - INFO - 用户操作: AI文本分析 - 文本长度: 79字符
+2025-07-18 14:22:01 - ppt_generator - INFO - 用户操作: 应用文本分配 - 分配数量: 15
+2025-07-18 14:22:01 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_3_bullet_2']
+2025-07-18 14:22:01 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_4_bullet_2']
+2025-07-18 14:22:01 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_5', 'content_5_bullet_1', 'content_5_bullet_2']
+2025-07-18 14:22:01 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['number5']
+2025-07-18 14:22:01 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['content_6', 'content_6_bullet_1', 'content_6_bullet_2']
+2025-07-18 14:22:01 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['number6']
+2025-07-18 14:22:01 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-07-18 14:22:01 - ppt_generator - INFO - 用户操作: 获取PPT字节数据
+2025-07-18 14:22:37 - ppt_generator - INFO - 初始化PPT生成器，API密钥: 已设置
+2025-07-18 14:22:37 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:22:37 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:22:37 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.06s

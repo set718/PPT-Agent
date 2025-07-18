@@ -136,7 +136,7 @@ def get_logger() -> Logger:
     """获取日志器实例"""
     return _logger_instance
 
-def log_function_call(func_name: str, args: tuple = None, kwargs: dict = None):
+def log_function_call(func_name: str, args: tuple = (), kwargs: dict = {}):
     """记录函数调用"""
     logger = get_logger()
     args_str = f"args={args}" if args else ""
@@ -144,11 +144,15 @@ def log_function_call(func_name: str, args: tuple = None, kwargs: dict = None):
     param_str = ", ".join(filter(None, [args_str, kwargs_str]))
     logger.debug(f"调用函数: {func_name}({param_str})")
 
-def log_api_call(api_name: str, status: str, duration: float = None, error: str = None):
+def log_api_call(
+    api_name: str,
+    status: str,
+    duration: float = 0.0,
+    error: str = ""
+):
     """记录API调用"""
     logger = get_logger()
     duration_str = f"耗时: {duration:.2f}s" if duration else ""
-    
     if status == "success":
         logger.info(f"API调用成功: {api_name} {duration_str}")
     elif status == "error":
@@ -156,7 +160,7 @@ def log_api_call(api_name: str, status: str, duration: float = None, error: str 
     else:
         logger.warning(f"API调用状态未知: {api_name} {duration_str}")
 
-def log_file_operation(operation: str, file_path: str, status: str, error: str = None):
+def log_file_operation(operation: str, file_path: str, status: str, error: str = ""):
     """记录文件操作"""
     logger = get_logger()
     
@@ -167,7 +171,7 @@ def log_file_operation(operation: str, file_path: str, status: str, error: str =
     else:
         logger.warning(f"文件操作状态未知: {operation} - {file_path}")
 
-def log_user_action(action: str, details: str = None):
+def log_user_action(action: str, details: str = ""):
     """记录用户操作"""
     logger = get_logger()
     details_str = f" - {details}" if details else ""
@@ -178,7 +182,7 @@ def log_system_info(info: str):
     logger = get_logger()
     logger.info(f"系统信息: {info}")
 
-def log_performance(operation: str, duration: float, additional_info: str = None):
+def log_performance(operation: str, duration: float, additional_info: str = ""):
     """记录性能信息"""
     logger = get_logger()
     info_str = f" - {additional_info}" if additional_info else ""
@@ -243,8 +247,11 @@ class LogContext:
     
     def __exit__(self, exc_type, exc_val, exc_tb):
         end_time = datetime.now()
-        duration = (end_time - self.start_time).total_seconds()
-        
+        if self.start_time is not None:
+            duration = (end_time - self.start_time).total_seconds()
+        else:
+            duration = 0.0
+
         if exc_type is None:
             self.logger.info(f"操作完成: {self.operation} 耗时 {duration:.2f}s")
         else:

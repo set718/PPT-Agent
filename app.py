@@ -114,7 +114,12 @@ class StreamlitPPTGenerator:
             return {"assignments": []}
         
         log_user_action("AI文本分析", f"文本长度: {len(user_text)}字符")
-        return self.ai_processor.analyze_text_for_ppt(user_text, self.ppt_structure)
+        
+        # 获取增强的结构信息
+        enhanced_info = self.ppt_processor.get_enhanced_structure_info()
+        
+        # 使用增强信息进行分析
+        return self.ai_processor.analyze_text_for_ppt(user_text, self.ppt_structure, enhanced_info)
     
     def apply_text_assignments(self, assignments):
         """根据分配方案替换PPT模板中的占位符"""

@@ -85,3 +85,15 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 3: i
 2025-07-18 14:22:37 - ppt_generator - INFO - 开始操作: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx
 2025-07-18 14:22:37 - ppt_generator - INFO - 文件操作成功: load_ppt - D:\jiayihan\Desktop\ppt format V1_2.pptx
 2025-07-18 14:22:37 - ppt_generator - INFO - 操作完成: 加载PPT文件: D:\jiayihan\Desktop\ppt format V1_2.pptx 耗时 0.06s
+2025-07-18 14:42:05 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-18 14:42:05 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-18 14:42:05 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:42:05 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-07-18 14:42:39 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-18 14:42:39 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-18 14:42:39 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:42:39 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-07-18 14:53:05 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-18 14:53:05 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-18 14:53:06 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-18 14:53:06 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s

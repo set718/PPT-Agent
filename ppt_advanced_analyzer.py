@@ -8,13 +8,17 @@ PPT高级分析器模块
 
 import os
 import re
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional, Tuple, TYPE_CHECKING
 from dataclasses import dataclass
-from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.text import PP_ALIGN
 from logger import get_logger
+
+if TYPE_CHECKING:
+    from pptx.presentation import Presentation
+else:
+    from pptx import Presentation
 
 @dataclass
 class ElementPosition:
@@ -93,8 +97,8 @@ class PPTStructureAnalyzer:
         elements = []
         
         # 获取幻灯片尺寸
-        slide_width = self.presentation.slide_width
-        slide_height = self.presentation.slide_height
+        slide_width = float(self.presentation.slide_width or 0)
+        slide_height = float(self.presentation.slide_height or 0)
         
         for shape in slide.shapes:
             element_info = self._extract_element_info(shape, slide_width, slide_height)

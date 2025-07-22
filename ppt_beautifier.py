@@ -6,22 +6,26 @@ PPT美化器模块
 """
 
 import re
-from typing import Dict, List, Any, Tuple
-from pptx import Presentation
+from typing import Dict, List, Any, Tuple, TYPE_CHECKING
 from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from logger import get_logger
 from config import get_config
 
+if TYPE_CHECKING:
+    from pptx.presentation import Presentation
+else:
+    from pptx import Presentation
+
 class PPTBeautifier:
     """PPT美化器"""
-    
+
     def __init__(self, presentation: Presentation):
         self.presentation = presentation
         self.logger = get_logger()
         self.config = get_config()
-        
+
     def cleanup_and_beautify(self, filled_placeholders: Dict[str, Any]) -> Dict[str, Any]:
         """
         清理未填充的占位符并美化布局
@@ -86,7 +90,7 @@ class PPTBeautifier:
                 if placeholder_matches:
                     # 检查是否已被填充
                     is_filled = any(
-                        placeholder in filled_placeholders.get(slide_idx, {}) 
+                        placeholder in filled_placeholders.get(str(slide_idx), {}) 
                         for placeholder in placeholder_matches
                     )
                     
@@ -131,12 +135,12 @@ class PPTBeautifier:
             Dict: 布局变化信息
         """
         if not shapes:
-            return None
+            return {}
         
         try:
             # 获取幻灯片尺寸
-            slide_width = self.presentation.slide_width
-            slide_height = self.presentation.slide_height
+            slide_width = float(self.presentation.slide_width or 0)
+            slide_height = float(self.presentation.slide_height or 0)
             
             # 计算可用区域（排除标题区域）
             margins = self.config.layout_margins
@@ -169,7 +173,7 @@ class PPTBeautifier:
             
         except Exception as e:
             self.logger.error(f"重新排版时出错: {e}")
-            return None
+            return {}
     
     def _arrange_2x2_layout(self, shapes: List, left: float, top: float, width: float, height: float) -> Dict[str, Any]:
         """
@@ -322,11 +326,13 @@ class PPTBeautifier:
             # 检查幻灯片是否为空
             has_content = False
             for shape in slide.shapes:
-                if hasattr(shape, 'text') and shape.text.strip():
-                    # 检查是否还有未填充的占位符
-                    if not re.search(r'\{[^}]+\}', shape.text):
-                        has_content = True
-                        break
+                if hasattr(shape, 'text'):
+                    shape_text = getattr(shape, 'text', '')
+                    if shape_text and shape_text.strip():
+                        # 检查是否还有未填充的占位符
+                        if not re.search(r'\{[^}]+\}', shape_text):
+                            has_content = True
+                            break
                 elif shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
                     has_content = True
                     break

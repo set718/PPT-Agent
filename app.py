@@ -2,16 +2,21 @@
 # -*- coding: utf-8 -*-
 """
 文本转PPT填充器 - Streamlit Web界面
-使用DeepSeek AI将文本填入现有PPT文件
+使用OpenAI GPT-4V将文本填入现有PPT文件
 """
 
 import streamlit as st
 import os
 from datetime import datetime
-from pptx import Presentation
+from typing import TYPE_CHECKING
 from pptx.util import Inches, Pt
 import json
 import re
+
+if TYPE_CHECKING:
+    from pptx.presentation import Presentation
+else:
+    from pptx import Presentation
 from config import get_config
 from utils import AIProcessor, PPTProcessor, FileManager, PPTAnalyzer
 from logger import get_logger, log_user_action, log_file_operation, LogContext
@@ -24,7 +29,7 @@ logger = get_logger()
 st.set_page_config(
     page_title=config.web_title,
     page_icon=config.web_icon,
-    layout=config.web_layout,
+    layout=config.web_layout if config.web_layout in ("centered", "wide") else "centered",
     initial_sidebar_state="expanded"
 )
 
@@ -96,7 +101,7 @@ class StreamlitPPTGenerator:
                     log_file_operation("load_ppt", ppt_path, "error", error_msg)
                     return False
                 
-                self.presentation = Presentation(ppt_path)
+                self.presentation = Presentation(ppt_path)  # type: ignore
                 self.ppt_processor = PPTProcessor(self.presentation)
                 self.ppt_structure = self.ppt_processor.ppt_structure
                 
@@ -109,8 +114,8 @@ class StreamlitPPTGenerator:
     
     
     def process_text_with_deepseek(self, user_text):
-        """使用DeepSeek API分析如何将用户文本填入PPT模板的占位符"""
-        if not self.ppt_structure:
+        """使用OpenAI API分析如何将用户文本填入PPT模板的占位符"""
+        if not self.ppt_structure or not self.ppt_processor:
             return {"assignments": []}
         
         log_user_action("AI文本分析", f"文本长度: {len(user_text)}字符")
@@ -177,7 +182,7 @@ class StreamlitPPTGenerator:
 def main():
     # 页面标题
     st.markdown('<div class="main-header">📊 文本转PPT填充器</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">使用DeepSeek AI智能将您的文本填入预设PPT模板</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">使用OpenAI GPT-4V智能将您的文本填入预设PPT模板</div>', unsafe_allow_html=True)
     
     # 侧边栏配置
     with st.sidebar:
@@ -185,15 +190,15 @@ def main():
         
         # API密钥输入
         api_key = st.text_input(
-            "DeepSeek API密钥",
+            "OpenAI API密钥",
             type="password",
-            help="请输入您的DeepSeek API密钥",
+            help="请输入您的OpenAI API密钥",
             placeholder="sk-..."
         )
         
         if not api_key:
             st.markdown('<div class="warning-box">⚠️ 请先输入API密钥才能使用功能</div>', unsafe_allow_html=True)
-            st.markdown("获取API密钥：[DeepSeek平台](https://platform.deepseek.com/api_keys)")
+            st.markdown("获取API密钥：[OpenAI平台](https://platform.openai.com/api-keys)")
         else:
             # 验证API密钥格式
             if not api_key.startswith('sk-'):
@@ -218,7 +223,7 @@ def main():
         # 使用说明
         st.subheader("📖 使用说明")
         st.markdown("""
-        1. 输入DeepSeek API密钥
+        1. 输入OpenAI API密钥
         2. 确保PPT模板文件存在
         3. 输入要填入的文本内容
         4. 点击"开始处理"按钮
@@ -288,7 +293,7 @@ def main():
                 
                 # 处理文本
                 if process_button and user_text.strip():
-                    with st.spinner("正在使用DeepSeek AI分析文本结构..."):
+                    with st.spinner("正在使用OpenAI GPT-4V分析文本结构..."):
                         assignments = generator.process_text_with_deepseek(user_text)
                     
                     # 显示AI分析结果（调试信息）
@@ -333,10 +338,10 @@ def main():
     
     else:
         # 未输入API密钥时的提示
-        st.info("👈 请在左侧输入您的DeepSeek API密钥开始使用")
+        st.info("👈 请在左侧输入您的OpenAI API密钥开始使用")
         st.markdown("### 💡 如何获取API密钥")
         st.markdown("""
-        1. 访问 [DeepSeek平台](https://platform.deepseek.com/api_keys)
+        1. 访问 [OpenAI平台](https://platform.openai.com/api-keys)
         2. 注册或登录账号
         3. 在API密钥管理页面创建新的API密钥
         4. 复制API密钥（格式：sk-xxxxxxxxxxxxx）

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 文本转PPT填充器 - 用户版Web界面
-使用DeepSeek AI将文本填入现有PPT文件
+使用OpenAI GPT-4V将文本填入现有PPT文件
 """
 
 import streamlit as st
@@ -121,8 +121,8 @@ class UserPPTGenerator:
                 log_file_operation("load_ppt_user", ppt_path, "error", str(e))
                 return False, str(e)
     
-    def process_text_with_deepseek(self, user_text):
-        """使用DeepSeek API分析如何将用户文本填入PPT模板的占位符"""
+    def process_text_with_openai(self, user_text):
+        """使用OpenAI API分析如何将用户文本填入PPT模板的占位符"""
         if not self.ppt_structure:
             return {"assignments": []}
         
@@ -161,14 +161,14 @@ def main():
     col1, col2 = st.columns([2, 1])
     with col1:
         api_key = st.text_input(
-            "请输入您的DeepSeek API密钥",
+            "请输入您的OpenAI API密钥",
             type="password",
             placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
             help="API密钥用于AI文本分析，不会被保存"
         )
     with col2:
         st.markdown("**获取API密钥**")
-        st.markdown("[🔗 DeepSeek平台](https://platform.deepseek.com/api_keys)")
+        st.markdown("[🔗 OpenAI平台](https://platform.openai.com/api-keys)")
     
     # 检查API密钥
     if not api_key or not api_key.strip():
@@ -183,7 +183,7 @@ def main():
         with col1:
             st.markdown("""
             **第一步：准备API密钥** 🔑
-            - 注册DeepSeek账号
+            - 注册OpenAI账号
             - 获取API密钥
             - 在上方输入密钥
             """)
@@ -334,7 +334,7 @@ def main():
             status_text.text("🤖 AI正在分析您的内容...")
             progress_bar.progress(25)
             
-            assignments = generator.process_text_with_deepseek(user_text)
+            assignments = generator.process_text_with_openai(user_text)
             
             # 步骤2：填充PPT
             status_text.text("📝 正在将内容填入PPT模板...")
@@ -402,7 +402,7 @@ def main():
     st.markdown("---")
     st.markdown(
         '<div style="text-align: center; color: #666; padding: 2rem;">'
-        '💡 由DeepSeek AI驱动 | 🎨 专业PPT自动生成'
+        '💡 由OpenAI GPT-4V驱动 | 🎨 专业PPT自动生成'
         '</div>', 
         unsafe_allow_html=True
     )

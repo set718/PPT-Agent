@@ -90,13 +90,13 @@ class AIProcessor:
     def __init__(self, api_key: str = None):
         """初始化AI处理器"""
         config = get_config()
-        self.api_key = api_key or config.deepseek_api_key
+        self.api_key = api_key or config.openai_api_key
         if not self.api_key:
-            raise ValueError("请设置DeepSeek API密钥")
+            raise ValueError("请设置OpenAI API密钥")
         
         self.client = OpenAI(
             api_key=self.api_key,
-            base_url=config.deepseek_base_url
+            base_url=config.openai_base_url
         )
         self.config = config
     

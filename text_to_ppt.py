@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 文本转PPT工具
-使用DeepSeek API处理文本并生成PowerPoint演示文稿
+使用OpenAI GPT-4V API处理文本并生成PowerPoint演示文稿
 """
 
 import os
@@ -22,7 +22,7 @@ class TextToPPTGenerator:
         初始化文本转PPT生成器
         
         Args:
-            api_key (str): DeepSeek API密钥
+            api_key (str): OpenAI API密钥
             ppt_path (str): 现有PPT文件路径
         """
         self.config = get_config()
@@ -31,7 +31,7 @@ class TextToPPTGenerator:
         # 初始化API处理器
         self.api_key = api_key
         if not self.api_key:
-            raise ValueError("请提供DeepSeek API密钥")
+            raise ValueError("请提供OpenAI API密钥")
         
         self.ai_processor = AIProcessor(self.api_key)
         
@@ -51,7 +51,7 @@ class TextToPPTGenerator:
     
     def process_text_with_deepseek(self, user_text):
         """
-        使用DeepSeek API分析如何将用户文本填入现有PPT的合适位置
+        使用OpenAI API分析如何将用户文本填入现有PPT的合适位置
         
         Args:
             user_text (str): 用户输入的文本
@@ -114,7 +114,7 @@ class TextToPPTGenerator:
             str: 修改后的PPT文件路径
         """
         with LogContext(f"生成PPT文本填充"):
-            print("正在使用DeepSeek API分析文本结构...")
+            print("正在使用OpenAI API分析文本结构...")
             assignments = self.process_text_with_deepseek(user_text)
             
             print("正在将您的原始文本填入现有PPT...")
@@ -129,7 +129,7 @@ def main():
     
     print("=" * 50)
     print("        文本转PPT填充器")
-    print("    使用DeepSeek AI将文本填入现有PPT")
+    print("    使用OpenAI GPT-4V将文本填入现有PPT")
     print("=" * 50)
     
     # 获取PPT文件路径
@@ -154,7 +154,7 @@ def main():
     
     # 获取用户输入的API密钥
     print("\n" + "="*50)
-    print("请输入您的DeepSeek API密钥")
+    print("请输入您的OpenAI API密钥")
     print("获取地址：https://platform.deepseek.com/api_keys")
     print("="*50)
     

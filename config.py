@@ -14,7 +14,8 @@ class Config:
     """项目配置类"""
     
     # API配置
-    deepseek_base_url: str = "https://api.deepseek.com"
+    openai_base_url: str = "https://api.openai.com/v1"
+    openai_api_key: str = ""
     
     # PPT模板配置
     default_ppt_template: str = os.path.join(os.getcwd(), "templates", "ppt_template.pptx")
@@ -24,7 +25,7 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "deepseek-chat"
+    ai_model: str = "gpt-4-vision-preview"
     ai_temperature: float = 0.3
     ai_max_tokens: int = 2000
     
@@ -120,7 +121,7 @@ class Config:
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典"""
         return {
-            'deepseek_base_url': self.deepseek_base_url,
+            'openai_base_url': self.openai_base_url,
             'default_ppt_template': self.default_ppt_template,
             'output_dir': self.output_dir,
             'temp_output_dir': self.temp_output_dir,

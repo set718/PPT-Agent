@@ -1,6 +1,6 @@
 # 文本转PPT填充器
 
-使用DeepSeek AI智能将您的文本填入预设PPT模板的自动化工具。
+使用OpenAI GPT-4V智能将您的文本填入预设PPT模板的自动化工具。
 
 ## 功能特点
 
@@ -21,14 +21,14 @@ pip install -r requirements.txt
 ### 1. 准备工作
 
 确保您有：
-- DeepSeek API密钥（从 [DeepSeek平台](https://platform.deepseek.com/api_keys) 获取）
+- OpenAI API密钥（从 [OpenAI平台](https://platform.openai.com/api-keys) 获取）
 - PPT模板文件（程序会自动查找，或您可以指定路径）
 
 ### 获取API密钥步骤：
-1. 访问 [DeepSeek平台](https://platform.deepseek.com/api_keys)
+1. 访问 [OpenAI平台](https://platform.openai.com/api-keys)
 2. 注册或登录账号
 3. 在API密钥管理页面创建新的API密钥
-4. 复制API密钥（格式：sk-xxxxxxxxxxxxx）
+4. 复制API密钥（格式：sk-proj-xxxxxxxxxxxxx）
 5. 在使用时输入到程序中
 
 ### 2. Web界面（推荐）
@@ -45,7 +45,7 @@ streamlit run app.py
 
 然后：
 1. 在浏览器中打开应用（通常是 http://localhost:8501）
-2. **在左侧输入您的DeepSeek API密钥**（必须步骤）
+2. **在左侧输入您的OpenAI API密钥**（必须步骤）
 3. 确认PPT模板文件状态（应显示"✅ 模板文件存在"）
 4. 在文本框中输入您的内容
 5. 点击"开始处理"
@@ -173,8 +173,8 @@ export PPT_TEMPLATE_PATH="D:\path\to\your\template.pptx"
 - **路径格式**：Windows路径需要使用双反斜杠(\\)或正斜杠(/)
 
 ### API调用问题
-- **API密钥错误**：确认输入的DeepSeek API密钥正确，格式应以"sk-"开头
-- **网络连接**：确认可以正常访问api.deepseek.com
+- **API密钥错误**：确认输入的OpenAI API密钥正确，格式应以"sk-"开头
+- **网络连接**：确认可以正常访问api.openai.com
 - **API配额**：查看API使用配额是否充足
 - **请求超时**：可以在config.py中调整ai_max_tokens参数
 

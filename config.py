@@ -14,7 +14,7 @@ class Config:
     """项目配置类"""
     
     # API配置
-    openai_base_url: str = "https://api.openai.com/v1"
+    openai_base_url: str = "https://openrouter.ai/api/v1"
     openai_api_key: str = ""
     
     # PPT模板配置
@@ -25,7 +25,7 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "gpt-4-vision-preview"
+    ai_model: str = "openai/gpt-4-vision-preview"
     ai_temperature: float = 0.3
     ai_max_tokens: int = 2000
     

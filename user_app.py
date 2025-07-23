@@ -140,7 +140,41 @@ class UserPPTGenerator:
         # 美化演示文稿（静默执行）
         beautify_results = self.ppt_processor.beautify_presentation()
         
-        return True, results
+        return True, results, beautify_results
+    
+    def apply_visual_optimization(self, ppt_path: str, enable_visual_optimization: bool = True):
+        """
+        应用视觉优化
+        
+        Args:
+            ppt_path: PPT文件路径
+            enable_visual_optimization: 是否启用视觉优化
+            
+        Returns:
+            Dict: 优化结果
+        """
+        if not self.ppt_processor:
+            return {"error": "PPT处理器未初始化"}
+        
+        try:
+            # 初始化视觉分析器
+            if enable_visual_optimization:
+                success = self.ppt_processor.initialize_visual_analyzer(self.api_key)
+                if not success:
+                    return {"error": "视觉分析器初始化失败"}
+            
+            # 执行美化，包含视觉优化
+            log_user_action("用户界面视觉优化", f"启用状态: {enable_visual_optimization}")
+            beautify_results = self.ppt_processor.beautify_presentation(
+                enable_visual_optimization=enable_visual_optimization,
+                ppt_path=ppt_path if enable_visual_optimization else None
+            )
+            
+            return beautify_results
+            
+        except Exception as e:
+            log_user_action("用户界面视觉优化失败", str(e))
+            return {"error": f"视觉优化失败: {e}"}
     
     def get_ppt_bytes(self):
         """获取修改后的PPT字节数据"""
@@ -149,6 +183,99 @@ class UserPPTGenerator:
         
         log_user_action("用户界面获取PPT字节数据")
         return FileManager.save_ppt_to_bytes(self.presentation)
+
+def display_processing_summary(optimization_results, enable_visual_optimization):
+    """显示处理结果摘要"""
+    if not optimization_results or "error" in optimization_results:
+        if "error" in optimization_results:
+            st.warning(f"⚠️ 处理过程中出现问题: {optimization_results['error']}")
+        return
+    
+    summary = optimization_results.get('summary', {})
+    
+    # 基础处理信息
+    st.markdown("### 📊 处理结果摘要")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        final_slide_count = summary.get('final_slide_count', 0)
+        st.metric("📑 最终页数", final_slide_count)
+    
+    with col2:
+        removed_placeholders = summary.get('removed_placeholders_count', 0)
+        st.metric("🧹 清理占位符", removed_placeholders)
+    
+    with col3:
+        removed_empty_slides = summary.get('removed_empty_slides_count', 0)
+        st.metric("🗑️ 删除空页", removed_empty_slides)
+    
+    with col4:
+        reorganized_slides = summary.get('reorganized_slides_count', 0)
+        st.metric("🔄 重新排版", reorganized_slides)
+    
+    # 视觉优化结果（如果启用）
+    if enable_visual_optimization:
+        visual_analysis = optimization_results.get('visual_analysis')
+        visual_optimization = optimization_results.get('visual_optimization')
+        
+        if visual_analysis and "error" not in visual_analysis:
+            st.markdown("### 🎨 视觉质量分析")
+            
+            overall_analysis = visual_analysis.get('overall_analysis', {})
+            visual_score = overall_analysis.get('weighted_score', 0)
+            grade = overall_analysis.get('grade', '未知')
+            
+            col1, col2 = st.columns([1, 2])
+            
+            with col1:
+                st.metric("🏆 视觉质量评分", f"{visual_score:.1f}/10", grade)
+                
+                if visual_optimization and visual_optimization.get('success'):
+                    optimizations_applied = visual_optimization.get('total_optimizations', 0)
+                    st.metric("🔧 应用优化", f"{optimizations_applied}项")
+            
+            with col2:
+                # 显示评分详情
+                scores = overall_analysis.get('scores', {})
+                if scores:
+                    st.markdown("**各项评分详情:**")
+                    score_descriptions = {
+                        "layout_balance": "布局平衡度",
+                        "color_harmony": "色彩协调性", 
+                        "typography": "字体排版",
+                        "visual_hierarchy": "视觉层次",
+                        "white_space": "留白使用",
+                        "overall_aesthetics": "整体美观度"
+                    }
+                    
+                    for criterion, score in scores.items():
+                        if criterion in score_descriptions:
+                            desc = score_descriptions[criterion]
+                            progress_value = min(score / 10.0, 1.0)
+                            st.progress(progress_value, f"{desc}: {score:.1f}/10")
+            
+            # 显示改进建议
+            strengths = overall_analysis.get('strengths', [])
+            weaknesses = overall_analysis.get('weaknesses', [])
+            
+            if strengths or weaknesses:
+                with st.expander("📋 详细分析结果", expanded=False):
+                    if strengths:
+                        st.markdown("**✅ 设计优点:**")
+                        for strength in strengths[:3]:
+                            st.markdown(f"• {strength}")
+                    
+                    if weaknesses:
+                        st.markdown("**⚠️ 待改进点:**")
+                        for weakness in weaknesses[:3]:
+                            st.markdown(f"• {weakness}")
+        
+        elif visual_analysis and "error" in visual_analysis:
+            st.warning(f"🔍 视觉分析遇到问题: {visual_analysis['error']}")
+    
+    else:
+        st.info("💡 提示：启用AI视觉优化可获得更详细的美观度分析和自动布局优化")
 
 def main():
     # 页面标题
@@ -161,14 +288,14 @@ def main():
     col1, col2 = st.columns([2, 1])
     with col1:
         api_key = st.text_input(
-            "请输入您的OpenAI API密钥",
+            "请输入您的OpenRouter API密钥",
             type="password",
-            placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-            help="API密钥用于AI文本分析，不会被保存"
+            placeholder="sk-or-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            help="通过OpenRouter访问GPT-4V，API密钥不会被保存"
         )
     with col2:
         st.markdown("**获取API密钥**")
-        st.markdown("[🔗 OpenAI平台](https://platform.openai.com/api-keys)")
+        st.markdown("[🔗 OpenRouter平台](https://openrouter.ai/keys)")
     
     # 检查API密钥
     if not api_key or not api_key.strip():
@@ -183,7 +310,7 @@ def main():
         with col1:
             st.markdown("""
             **第一步：准备API密钥** 🔑
-            - 注册OpenAI账号
+            - 注册OpenRouter账号
             - 获取API密钥
             - 在上方输入密钥
             """)
@@ -263,8 +390,8 @@ def main():
         return
     
     # 验证API密钥格式
-    if not api_key.startswith('sk-'):
-        st.markdown('<div class="warning-box">⚠️ API密钥格式可能不正确，请确认是否以"sk-"开头</div>', unsafe_allow_html=True)
+    if not (api_key.startswith('sk-or-') or api_key.startswith('sk-')):
+        st.markdown('<div class="warning-box">⚠️ API密钥格式可能不正确，OpenRouter密钥通常以"sk-or-"开头</div>', unsafe_allow_html=True)
         return
     
     # 检查模板文件
@@ -311,13 +438,31 @@ def main():
         word_count = len(user_text.split())
         st.caption(f"📊 字符数：{char_count} | 词数：{word_count}")
     
+    # 高级选项
+    st.markdown("### ⚙️ 高级选项")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        enable_visual_optimization = st.checkbox(
+            "🎨 启用AI视觉优化",
+            value=False,
+            help="使用GPT-4V分析PPT视觉效果并自动优化布局（需要额外时间）"
+        )
+    
+    with col2:
+        if enable_visual_optimization:
+            st.info("🔍 视觉优化将分析每页PPT的美观度并自动调整布局")
+        else:
+            st.info("✨ 只进行基础美化处理")
+    
     # 处理按钮
     st.markdown("### 🚀 生成PPT")
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
+        button_text = "🎨 开始制作PPT (含视觉优化)" if enable_visual_optimization else "🎨 开始制作PPT"
         process_button = st.button(
-            "🎨 开始制作PPT",
+            button_text,
             type="primary",
             use_container_width=True,
             disabled=not user_text.strip()
@@ -332,23 +477,37 @@ def main():
         try:
             # 步骤1：AI分析
             status_text.text("🤖 AI正在分析您的内容...")
-            progress_bar.progress(25)
+            progress_bar.progress(20)
             
             assignments = generator.process_text_with_openai(user_text)
             
             # 步骤2：填充PPT
             status_text.text("📝 正在将内容填入PPT模板...")
-            progress_bar.progress(50)
+            progress_bar.progress(40)
             
-            success, results = generator.apply_text_assignments(assignments)
+            success, results, basic_beautify = generator.apply_text_assignments(assignments)
             
             if not success:
                 st.error("处理过程中出现错误，请重试")
                 return
             
-            # 步骤3：美化优化
-            status_text.text("🎨 正在美化PPT布局...")
-            progress_bar.progress(75)
+            # 步骤3：视觉优化（如果启用）
+            if enable_visual_optimization:
+                status_text.text("🔍 正在进行AI视觉分析...")
+                progress_bar.progress(60)
+                
+                # 应用视觉优化
+                optimization_results = generator.apply_visual_optimization(
+                    config.default_ppt_template, 
+                    enable_visual_optimization
+                )
+                
+                status_text.text("🎨 正在应用视觉优化建议...")
+                progress_bar.progress(80)
+            else:
+                status_text.text("🎨 正在美化PPT布局...")
+                progress_bar.progress(60)
+                optimization_results = basic_beautify
             
             # 步骤4：准备下载
             status_text.text("📦 正在准备下载文件...")
@@ -363,6 +522,9 @@ def main():
             st.markdown("**🎉 PPT制作完成！**")
             st.markdown("您的内容已成功转换为精美的PPT演示文稿")
             st.markdown('</div>', unsafe_allow_html=True)
+            
+            # 显示处理结果摘要
+            display_processing_summary(optimization_results, enable_visual_optimization)
             
             # 提供下载
             st.markdown("### 💾 下载您的PPT")
@@ -402,7 +564,7 @@ def main():
     st.markdown("---")
     st.markdown(
         '<div style="text-align: center; color: #666; padding: 2rem;">'
-        '💡 由OpenAI GPT-4V驱动 | 🎨 专业PPT自动生成'
+        '💡 由OpenRouter GPT-4V驱动 | 🎨 专业PPT自动生成'
         '</div>', 
         unsafe_allow_html=True
     )

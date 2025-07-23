@@ -190,15 +190,15 @@ def main():
         
         # API密钥输入
         api_key = st.text_input(
-            "OpenAI API密钥",
+            "OpenRouter API密钥",
             type="password",
-            help="请输入您的OpenAI API密钥",
+            help="请输入您的OpenRouter API密钥",
             placeholder="sk-..."
         )
         
         if not api_key:
             st.markdown('<div class="warning-box">⚠️ 请先输入API密钥才能使用功能</div>', unsafe_allow_html=True)
-            st.markdown("获取API密钥：[OpenAI平台](https://platform.openai.com/api-keys)")
+            st.markdown("获取API密钥：[OpenRouter平台](https://openrouter.ai/keys)")
         else:
             # 验证API密钥格式
             if not api_key.startswith('sk-'):
@@ -223,7 +223,7 @@ def main():
         # 使用说明
         st.subheader("📖 使用说明")
         st.markdown("""
-        1. 输入OpenAI API密钥
+        1. 输入OpenRouter API密钥
         2. 确保PPT模板文件存在
         3. 输入要填入的文本内容
         4. 点击"开始处理"按钮
@@ -338,10 +338,10 @@ def main():
     
     else:
         # 未输入API密钥时的提示
-        st.info("👈 请在左侧输入您的OpenAI API密钥开始使用")
+        st.info("👈 请在左侧输入您的OpenRouter API密钥开始使用")
         st.markdown("### 💡 如何获取API密钥")
         st.markdown("""
-        1. 访问 [OpenAI平台](https://platform.openai.com/api-keys)
+        1. 访问 [OpenRouter平台](https://openrouter.ai/keys)
         2. 注册或登录账号
         3. 在API密钥管理页面创建新的API密钥
         4. 复制API密钥（格式：sk-xxxxxxxxxxxxx）

@@ -17,6 +17,7 @@ from pptx.util import Inches, Pt
 from config import get_config
 from ppt_beautifier import PPTBeautifier
 from ppt_advanced_analyzer import PPTStructureAnalyzer, PositionExtractor, SmartLayoutAdjuster, create_advanced_ppt_analysis
+from ppt_visual_analyzer import PPTVisualAnalyzer, VisualLayoutOptimizer
 
 class PPTAnalyzer:
     """PPT分析器"""
@@ -92,7 +93,7 @@ class AIProcessor:
         config = get_config()
         self.api_key = api_key or config.openai_api_key
         if not self.api_key:
-            raise ValueError("请设置OpenAI API密钥")
+            raise ValueError("请设置OpenRouter API密钥")
         
         self.client = OpenAI(
             api_key=self.api_key,
@@ -549,6 +550,10 @@ class PPTProcessor:
         self.structure_analyzer = self.advanced_analysis['analyzers']['structure_analyzer'] if 'analyzers' in self.advanced_analysis else None
         self.position_extractor = self.advanced_analysis['analyzers']['position_extractor'] if 'analyzers' in self.advanced_analysis else None
         self.layout_adjuster = self.advanced_analysis['analyzers']['layout_adjuster'] if 'analyzers' in self.advanced_analysis else None
+        
+        # 视觉分析器（需要API密钥时才初始化）
+        self.visual_analyzer = None
+        self.visual_optimizer = None
     
     def get_enhanced_structure_info(self) -> Dict[str, Any]:
         """获取增强的PPT结构信息"""
@@ -582,6 +587,79 @@ class PPTProcessor:
                     })
         
         return enhanced_info
+    
+    def initialize_visual_analyzer(self, api_key: str) -> bool:
+        """
+        初始化视觉分析器
+        
+        Args:
+            api_key: OpenAI API密钥
+            
+        Returns:
+            bool: 初始化是否成功
+        """
+        try:
+            self.visual_analyzer = PPTVisualAnalyzer(api_key)
+            self.visual_optimizer = VisualLayoutOptimizer(self.visual_analyzer)
+            return True
+        except Exception as e:
+            print(f"视觉分析器初始化失败: {e}")
+            return False
+    
+    def analyze_visual_quality(self, ppt_path: str) -> Dict[str, Any]:
+        """
+        分析PPT视觉质量
+        
+        Args:
+            ppt_path: PPT文件路径
+            
+        Returns:
+            Dict: 视觉分析结果
+        """
+        if not self.visual_analyzer:
+            return {"error": "视觉分析器未初始化，请先提供API密钥"}
+        
+        try:
+            return self.visual_analyzer.analyze_presentation_visual_quality(ppt_path)
+        except Exception as e:
+            return {"error": f"视觉分析失败: {e}"}
+    
+    def apply_visual_optimizations(self, visual_analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        应用视觉优化建议
+        
+        Args:
+            visual_analysis: 视觉分析结果
+            
+        Returns:
+            Dict: 优化结果
+        """
+        if not self.visual_optimizer:
+            return {"error": "视觉优化器未初始化"}
+        
+        try:
+            slide_analyses = visual_analysis.get("slide_analyses", [])
+            optimization_results = []
+            
+            for slide_analysis in slide_analyses:
+                slide_index = slide_analysis.get("slide_index", 0)
+                result = self.visual_optimizer.optimize_slide_layout(
+                    self.presentation, slide_index, slide_analysis
+                )
+                optimization_results.append(result)
+            
+            return {
+                "success": True,
+                "optimization_results": optimization_results,
+                "total_optimizations": sum(
+                    len(r.get("optimizations_applied", [])) 
+                    for r in optimization_results 
+                    if r.get("success")
+                )
+            }
+            
+        except Exception as e:
+            return {"error": f"视觉优化失败: {e}"}
     
     def apply_assignments(self, assignments: Dict[str, Any]) -> List[str]:
         """
@@ -640,17 +718,22 @@ class PPTProcessor:
         
         return results
     
-    def beautify_presentation(self) -> Dict[str, Any]:
+    def beautify_presentation(self, enable_visual_optimization: bool = False, ppt_path: str = None) -> Dict[str, Any]:
         """
         美化演示文稿，清理未填充的占位符并重新排版
         
+        Args:
+            enable_visual_optimization: 是否启用视觉优化
+            ppt_path: PPT文件路径（视觉分析需要）
+            
         Returns:
             Dict: 美化结果
         """
         beautify_results = self.beautifier.cleanup_and_beautify(self.filled_placeholders)
         optimization_results = self.beautifier.optimize_slide_sequence()
         
-        return {
+        # 基础美化结果
+        result = {
             'beautify_results': beautify_results,
             'optimization_results': optimization_results,
             'summary': {
@@ -662,6 +745,30 @@ class PPTProcessor:
                 'final_slide_count': optimization_results['final_slide_count']
             }
         }
+        
+        # 如果启用视觉优化且视觉分析器可用
+        if enable_visual_optimization and self.visual_analyzer and ppt_path:
+            try:
+                print("🎨 执行视觉质量分析...")
+                visual_analysis = self.analyze_visual_quality(ppt_path)
+                
+                if "error" not in visual_analysis:
+                    print("🔧 应用视觉优化建议...")
+                    visual_optimization = self.apply_visual_optimizations(visual_analysis)
+                    
+                    result['visual_analysis'] = visual_analysis
+                    result['visual_optimization'] = visual_optimization
+                    result['summary']['visual_optimizations_applied'] = visual_optimization.get('total_optimizations', 0)
+                    
+                    overall_score = visual_analysis.get('overall_analysis', {}).get('weighted_score', 0)
+                    result['summary']['visual_quality_score'] = overall_score
+                else:
+                    result['visual_analysis'] = {"error": visual_analysis.get("error")}
+                    
+            except Exception as e:
+                result['visual_analysis'] = {"error": f"视觉分析过程中出错: {e}"}
+        
+        return result
     
     def _replace_placeholder_in_slide(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
         """在特定的文本框中替换占位符"""
@@ -877,5 +984,5 @@ def is_valid_api_key(api_key: str) -> bool:
     if not api_key:
         return False
     
-    # 简单验证：以sk-开头，长度合理
-    return api_key.startswith('sk-') and len(api_key) > 20
+    # 简单验证：支持OpenRouter (sk-or-) 和标准 (sk-) 格式
+    return (api_key.startswith('sk-or-') or api_key.startswith('sk-')) and len(api_key) > 20

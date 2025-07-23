@@ -115,7 +115,7 @@ def show_openrouter_info():
     print("2. OpenRouter密钥格式: sk-or-xxxxxxxxxx")
     print("3. 支持多种AI模型，包括GPT-4V")
     print("4. 按使用量计费，需要预充值")
-    print("5. 支持的模型格式: openai/gpt-4-vision-preview")
+    print("5. 支持的模型格式: openai/gpt-4o")
     print()
 
 if __name__ == "__main__":

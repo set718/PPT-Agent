@@ -55,11 +55,14 @@ class PPTAnalyzer:
                         
                         if placeholders:
                             # 这个文本框包含占位符
+                            # 为了避免多个占位符在同一个文本框中的冲突，
+                            # 我们记录这个文本框的所有占位符
                             for placeholder in placeholders:
                                 slide_info["placeholders"][placeholder] = {
                                     "shape": shape,
                                     "original_text": current_text,
-                                    "placeholder": placeholder
+                                    "placeholder": placeholder,
+                                    "all_placeholders": placeholders  # 记录同一文本框中的所有占位符
                                 }
                         
                         # 如果是简短文本且没有占位符，可能是标题
@@ -93,11 +96,15 @@ class AIProcessor:
         config = get_config()
         self.api_key = api_key or config.openai_api_key
         if not self.api_key:
-            raise ValueError("请设置OpenRouter API密钥")
+            raise ValueError("请设置API密钥")
+        
+        # 根据当前选择的模型获取对应的base_url
+        model_info = config.get_model_info()
+        base_url = model_info.get('base_url', config.openai_base_url)
         
         self.client = OpenAI(
             api_key=self.api_key,
-            base_url=config.openai_base_url
+            base_url=base_url
         )
         self.config = config
     
@@ -143,14 +150,14 @@ class AIProcessor:
             return self._extract_json_from_response(content, user_text)
             
         except ConnectionError as e:
-            print(f"网络连接错误: {e}")
-            return self._create_fallback_assignment(user_text, f"网络连接错误: {e}")
+            print("网络连接错误: %s", str(e))
+            return self._create_fallback_assignment(user_text, f"网络连接错误: {str(e)}")
         except TimeoutError as e:
-            print(f"请求超时: {e}")
-            return self._create_fallback_assignment(user_text, f"请求超时: {e}")
+            print("请求超时: %s", str(e))
+            return self._create_fallback_assignment(user_text, f"请求超时: {str(e)}")
         except Exception as e:
-            print(f"调用AI API时出错: {e}")
-            return self._create_fallback_assignment(user_text, f"API调用失败: {e}")
+            print("调用AI API时出错: %s", str(e))
+            return self._create_fallback_assignment(user_text, f"API调用失败: {str(e)}")
     
     def _create_ppt_description(self, ppt_structure: Dict[str, Any]) -> str:
         """创建PPT结构描述"""
@@ -351,25 +358,30 @@ class AIProcessor:
     
     def _build_system_prompt(self, ppt_description: str) -> str:
         """构建系统提示"""
-        return f"""你是一个专业的PPT内容优化专家，具备丰富的视觉设计经验和高级布局分析能力。请分析用户文本，并根据PPT模板的深度结构分析进行智能适配和优化，重点关注内容的美观性和视觉效果。
+        return """你是一个专业的PPT内容分析专家。你的任务是将用户提供的文本内容智能分配到PPT模板的合适占位符中。
+
+**重要原则：**
+1. 只使用用户提供的文本内容，不生成新内容
+2. 可以对文本进行适当的优化、精简或重新组织
+3. 根据占位符的语义含义选择最合适的内容片段
+4. 不是所有占位符都必须填充，只填充有合适内容的占位符
 
 现有PPT高级结构分析：
-{ppt_description}
+%s""" % ppt_description + """
 
 **核心任务：**
-1. **结构化适配**：根据PPT模板的占位符结构，将用户文本进行合理的结构化调整
-2. **内容优化**：可以适当精简、重组或格式化文本，使其更适合PPT呈现
-3. **语言润色**：可以优化语言表达，使其更加简洁明了，适合幻灯片展示
-4. **美观性设计**：确保文本内容符合视觉美观要求，提升整体呈现效果
-5. **高级布局优化**：利用提供的高级分析信息，优化内容分配和视觉层次
+1. **内容分析**：理解用户提供的文本结构和主要信息点
+2. **智能匹配**：将文本内容分配到最合适的占位符中
+3. **适度优化**：对文本进行必要的精简和重组，但保持原意
+4. **结构清晰**：确保分配后的内容逻辑清晰，层次分明
 
 **操作原则：**
-- ✅ **可以做的**：重新组织文本结构、精简冗余内容、优化表达方式、调整语言风格
-- ✅ **可以做的**：根据占位符特点调整内容长度和格式（如将长段落拆分为要点）
-- ✅ **可以做的**：根据高级分析结果调整内容优先级和分配策略
-- ✅ **可以做的**：利用视觉权重信息优化重要内容的位置分配
-- ❌ **不能做的**：添加用户未提供的信息、编造数据、从外部知识添加内容
-- ❌ **不能做的**：改变用户文本的核心意思和关键信息
+- ✅ **可以做的**：从用户文本中提取合适的片段填入占位符
+- ✅ **可以做的**：适当精简、重组文本使其更适合PPT展示
+- ✅ **可以做的**：调整语言表达，使其更简洁明了
+- ❌ **不能做的**：生成用户未提供的新信息
+- ❌ **不能做的**：强行填满所有占位符
+- ❌ **不能做的**：改变用户文本的核心含义
 
 **高级分析信息使用指南：**
 1. **整体设计分析**：参考整体风格、设计一致性和平均指标，确保内容风格匹配
@@ -485,27 +497,46 @@ class AIProcessor:
    - 长内容优先通过精简语言控制长度
    - 必要时可使用分号分隔多个要点
 
-分析要求：
-1. 基于用户文本进行结构化分析和适配优化
-2. 根据占位符语义特点调整内容呈现方式
-3. 保持核心信息完整，但可优化表达形式
-4. 严格遵循美观性设计原则，确保视觉效果
-5. 严格控制文本长度，遵循字数限制建议
-6. 确保格式规范，符合PPT展示要求
-7. **充分利用高级分析信息**：
-   - 优先填充视觉权重高的占位符
-   - 根据布局类型调整内容结构
-   - 考虑内容密度避免过度拥挤
-   - 保持视觉平衡和层次清晰度
-   - 参考布局建议优化分配策略
-8. **智能内容分配**：
-   - 将最重要的核心信息分配给高权重占位符
-   - 根据元素位置信息合理安排内容层次
-   - 考虑视觉区域分布优化阅读体验
-9. action必须是"replace_placeholder"
-10. placeholder必须是模板中实际存在的占位符名称
-11. reason字段应该体现高级分析的考量
-12. 只返回JSON格式，不要其他文字"""
+**分析要求：**
+1. 仔细阅读用户提供的文本内容
+2. 分析PPT模板中各个占位符的语义含义
+3. 从用户文本中提取最合适的内容片段分配给相应占位符
+4. 优先填充重要的占位符（如title、主要content）
+5. 对于细节性的占位符（如bullet点），只在有合适内容时才填充
+6. 保持原文的核心意思，只做必要的格式调整
+
+**输出格式：**
+只返回JSON格式，包含assignments数组，每个元素包含：
+- slide_index: 幻灯片索引（从0开始）
+- action: "replace_placeholder"
+- placeholder: 占位符名称（必须存在于模板中）
+- content: 从用户文本提取的内容（经过适当优化）
+- reason: 选择此内容的理由
+
+**示例：**
+如果用户文本是"人工智能发展历程包括三个阶段"，模板有title和content_1占位符，则：
+```json
+{
+  "assignments": [
+    {
+      "slide_index": 0,
+      "action": "replace_placeholder",
+      "placeholder": "title",
+      "content": "人工智能发展历程",
+      "reason": "提取主题作为标题"
+    },
+    {
+      "slide_index": 0,
+      "action": "replace_placeholder", 
+      "placeholder": "content_1",
+      "content": "包括三个重要发展阶段",
+      "reason": "提取核心内容并简化表达"
+    }
+  ]
+}
+```
+
+只返回JSON，不要其他文字。"""
     
     def _extract_json_from_response(self, content: str, user_text: str) -> Dict[str, Any]:
         """从AI响应中提取JSON"""
@@ -517,9 +548,9 @@ class AIProcessor:
         try:
             return json.loads(content)
         except json.JSONDecodeError as e:
-            print(f"AI返回的JSON格式有误，错误：{e}")
-            print(f"返回内容：{content}")
-            return self._create_fallback_assignment(user_text, f"JSON解析失败: {e}")
+            print("AI返回的JSON格式有误，错误：%s", str(e))
+            print("返回内容：%s", content)
+            return self._create_fallback_assignment(user_text, f"JSON解析失败: {str(e)}")
     
     def _create_fallback_assignment(self, user_text: str, error_msg: str) -> Dict[str, Any]:
         """创建备用分配方案"""
@@ -530,7 +561,7 @@ class AIProcessor:
                     "action": "replace_placeholder",
                     "placeholder": "content",
                     "content": user_text,
-                    "reason": f"API调用失败或解析错误，默认填入content占位符。错误: {error_msg}"
+                    "reason": "API调用失败或解析错误，默认填入content占位符。错误: " + str(error_msg)
                 }
             ]
         }
@@ -590,7 +621,7 @@ class PPTProcessor:
     
     def initialize_visual_analyzer(self, api_key: str) -> bool:
         """
-        初始化视觉分析器
+        初始化视觉分析器（仅在启用视觉分析时）
         
         Args:
             api_key: OpenAI API密钥
@@ -598,17 +629,26 @@ class PPTProcessor:
         Returns:
             bool: 初始化是否成功
         """
+        # 检查配置是否启用视觉分析
+        config = get_config()
+        if not config.enable_visual_analysis:
+            print(f"[INFO] 当前模型 {config.ai_model} 不支持视觉分析，跳过视觉分析器初始化")
+            self.visual_analyzer = None
+            self.visual_optimizer = None
+            return True  # 返回True表示按配置正确初始化
+        
         try:
             self.visual_analyzer = PPTVisualAnalyzer(api_key)
             self.visual_optimizer = VisualLayoutOptimizer(self.visual_analyzer)
+            print(f"[INFO] 视觉分析器初始化成功，使用模型: {config.ai_model}")
             return True
         except Exception as e:
-            print(f"视觉分析器初始化失败: {e}")
+            print("视觉分析器初始化失败: %s", str(e))
             return False
     
     def analyze_visual_quality(self, ppt_path: str) -> Dict[str, Any]:
         """
-        分析PPT视觉质量
+        分析PPT视觉质量（如果启用了视觉分析功能）
         
         Args:
             ppt_path: PPT文件路径
@@ -616,6 +656,21 @@ class PPTProcessor:
         Returns:
             Dict: 视觉分析结果
         """
+        config = get_config()
+        
+        if not config.enable_visual_analysis:
+            # 视觉分析被禁用，返回简单的默认分析结果
+            return {
+                "analysis_skipped": True,
+                "reason": f"当前使用的模型 {config.ai_model} 不支持视觉分析功能",
+                "slides_analysis": [],
+                "overall_quality": {
+                    "visual_appeal": 0.5,
+                    "content_balance": 0.5,
+                    "consistency": 0.5
+                }
+            }
+        
         if not self.visual_analyzer:
             return {"error": "视觉分析器未初始化，请先提供API密钥"}
         
@@ -697,24 +752,24 @@ class PPTProcessor:
                                 self.filled_placeholders[slide_index] = set()
                             self.filled_placeholders[slide_index].add(placeholder)
                             
-                            results.append(f"✓ 已替换第{slide_index+1}页的 {{{placeholder}}} 占位符: {assignment.get('reason', '')}")
+                            results.append(f"SUCCESS: 已替换第{slide_index+1}页的 {{{placeholder}}} 占位符: {assignment.get('reason', '')}")
                         else:
-                            results.append(f"✗ 替换第{slide_index+1}页的 {{{placeholder}}} 占位符失败")
+                            results.append(f"ERROR: 替换第{slide_index+1}页的 {{{placeholder}}} 占位符失败")
                     else:
-                        results.append(f"✗ 第{slide_index+1}页不存在 {{{placeholder}}} 占位符")
+                        results.append(f"ERROR: 第{slide_index+1}页不存在 {{{placeholder}}} 占位符")
                 else:
-                    results.append(f"✗ 幻灯片索引 {slide_index+1} 超出范围")
+                    results.append(f"ERROR: 幻灯片索引 {slide_index+1} 超出范围")
             
             elif action == 'update':
                 if 0 <= slide_index < len(self.presentation.slides):
                     slide = self.presentation.slides[slide_index]
                     self._update_slide_content(slide, content)
-                    results.append(f"✓ 已更新第{slide_index+1}页: {assignment.get('reason', '')}")
+                    results.append(f"SUCCESS: 已更新第{slide_index+1}页: {assignment.get('reason', '')}")
                 
             elif action == 'add_new':
                 title = assignment.get('title', '新增内容')
                 self._add_new_slide(title, content)
-                results.append(f"✓ 已新增幻灯片「{title}」: {assignment.get('reason', '')}")
+                results.append(f"SUCCESS: 已新增幻灯片「{title}」: {assignment.get('reason', '')}")
         
         return results
     
@@ -784,7 +839,13 @@ class PPTProcessor:
             
             # 使用当前文本框内容进行替换
             if placeholder_pattern in current_text:
-                updated_text = current_text.replace(placeholder_pattern, new_content)
+                # 对于多个占位符的情况，只替换第一次出现的
+                updated_text = current_text.replace(placeholder_pattern, new_content, 1)
+                
+                print(f"替换占位符: {placeholder_pattern}")
+                print(f"原文本: '{current_text}'")
+                print(f"新内容: '{new_content}'")
+                print(f"更新后: '{updated_text}'")
                 
                 # 更新文本框内容
                 if hasattr(shape, "text_frame") and shape.text_frame:
@@ -805,10 +866,11 @@ class PPTProcessor:
                 
                 return True
             else:
+                print(f"占位符 {placeholder_pattern} 在文本 '{current_text}' 中未找到")
                 return False
                 
         except Exception as e:
-            print(f"替换占位符时出错: {e}")
+            print("替换占位符时出错: %s", str(e))
             return False
     
     def _update_slide_content(self, slide, content: str):

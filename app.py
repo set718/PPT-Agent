@@ -188,21 +188,60 @@ def main():
     with st.sidebar:
         st.header("⚙️ 配置")
         
-        # API密钥输入
+        # 模型选择
+        st.subheader("🤖 AI模型选择")
+        
+        available_models = config.available_models
+        model_options = {}
+        for model_key, model_info in available_models.items():
+            display_name = f"{model_info['name']} ({model_info['cost']}成本)"
+            if not model_info['supports_vision']:
+                display_name += " - ⚠️ 无视觉分析"
+            model_options[display_name] = model_key
+        
+        selected_display = st.selectbox(
+            "选择AI模型",
+            options=list(model_options.keys()),
+            index=0,
+            help="不同模型有不同的功能和成本"
+        )
+        
+        selected_model = model_options[selected_display]
+        model_info = available_models[selected_model]
+        
+        # 显示模型信息
+        st.info(f"**{model_info['name']}**: {model_info['description']}")
+        
+        if not model_info['supports_vision']:
+            st.warning("⚠️ 注意：此模型不支持视觉分析功能，将跟过PPT美观度分析步骤")
+        
+        # 动态更新配置
+        if selected_model != config.ai_model:
+            config.set_model(selected_model)
+        
+        st.markdown("---")
+        
+        # API密钥输入（根据选择的模型动态显示）
+        current_model_info = config.get_model_info()
+        api_provider = current_model_info.get('api_provider', 'OpenRouter')
+        api_key_url = current_model_info.get('api_key_url', 'https://openrouter.ai/keys')
+        
         api_key = st.text_input(
-            "OpenRouter API密钥",
+            f"{api_provider} API密钥",
             type="password",
-            help="请输入您的OpenRouter API密钥",
-            placeholder="sk-..."
+            help=f"请输入您的{api_provider} API密钥",
+            placeholder="sk-..." if api_provider == "OpenRouter" else "请输入API密钥"
         )
         
         if not api_key:
             st.markdown('<div class="warning-box">⚠️ 请先输入API密钥才能使用功能</div>', unsafe_allow_html=True)
-            st.markdown("获取API密钥：[OpenRouter平台](https://openrouter.ai/keys)")
+            st.markdown(f"获取API密钥：[{api_provider}平台]({api_key_url})")
         else:
             # 验证API密钥格式
-            if not api_key.startswith('sk-'):
-                st.markdown('<div class="warning-box">⚠️ API密钥格式可能不正确，请确认是否以"sk-"开头</div>', unsafe_allow_html=True)
+            if api_provider == "OpenRouter" and not api_key.startswith('sk-'):
+                st.markdown('<div class="warning-box">⚠️ OpenRouter API密钥格式可能不正确，请确认是否以"sk-"开头</div>', unsafe_allow_html=True)
+            elif api_provider == "DeepSeek" and not api_key.startswith('sk-'):
+                st.markdown('<div class="warning-box">⚠️ DeepSeek API密钥格式可能不正确，请确认格式是否正确</div>', unsafe_allow_html=True)
         
         st.markdown("---")
         
@@ -223,11 +262,20 @@ def main():
         # 使用说明
         st.subheader("📖 使用说明")
         st.markdown("""
-        1. 输入OpenRouter API密钥
-        2. 确保PPT模板文件存在
-        3. 输入要填入的文本内容
-        4. 点击"开始处理"按钮
-        5. 下载更新后的PPT文件
+        1. **选择AI模型**：选择适合您需求的模型
+           - GPT-4o：功能完整，支持视觉分析，成本较高
+           - DeepSeek R1：成本较低，专注推理，但不支持视觉分析
+        2. **输入API密钥**：根据选择的模型输入相应的API密钥
+           - GPT-4o：需要OpenRouter API密钥
+           - DeepSeek R1：需要DeepSeek API密钥
+        3. **确认模板**：确保PPT模板文件存在
+        4. **输入文本**：输入要填入PPT的文本内容
+        5. **开始处理**：点击处理按钮
+        6. **下载PPT**：下载更新后的PPT文件
+        
+        💡 **模型选择建议**：
+        - 如果追求最佳效果且预算充足，选择GPT-4o
+        - 如果预算有限或主要做推理处理，选择DeepSeek R1
         """)
     
     # 主界面 - 只有输入API密钥后才显示功能
@@ -293,7 +341,15 @@ def main():
                 
                 # 处理文本
                 if process_button and user_text.strip():
-                    with st.spinner("正在使用OpenAI GPT-4V分析文本结构..."):
+                    # 根据选择的模型显示不同的提示信息
+                    current_model_info = config.get_model_info()
+                    model_name = current_model_info.get('name', 'AI模型')
+                    
+                    spinner_text = f"正在使用{model_name}分析文本结构..."
+                    if not current_model_info.get('supports_vision', False):
+                        spinner_text += "（跳过视觉分析步骤）"
+                    
+                    with st.spinner(spinner_text):
                         assignments = generator.process_text_with_deepseek(user_text)
                     
                     # 显示AI分析结果（调试信息）

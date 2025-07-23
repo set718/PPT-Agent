@@ -100,7 +100,7 @@ class Logger:
                 file_handler.setLevel(level)
                 self.logger.addHandler(file_handler)
             except Exception as e:
-                self.logger.error(f"无法创建文件日志处理器: {e}")
+                self.logger.error("无法创建文件日志处理器: %s", str(e))
         
         # 防止日志重复
         self.logger.propagate = False
@@ -156,7 +156,7 @@ def log_api_call(
     if status == "success":
         logger.info(f"API调用成功: {api_name} {duration_str}")
     elif status == "error":
-        logger.error(f"API调用失败: {api_name} {duration_str} 错误: {error}")
+        logger.error("API调用失败: %s %s 错误: %s", api_name, duration_str, error)
     else:
         logger.warning(f"API调用状态未知: {api_name} {duration_str}")
 
@@ -167,26 +167,30 @@ def log_file_operation(operation: str, file_path: str, status: str, error: str =
     if status == "success":
         logger.info(f"文件操作成功: {operation} - {file_path}")
     elif status == "error":
-        logger.error(f"文件操作失败: {operation} - {file_path} 错误: {error}")
+        logger.error("文件操作失败: %s - %s 错误: %s", operation, file_path, error)
     else:
         logger.warning(f"文件操作状态未知: {operation} - {file_path}")
 
 def log_user_action(action: str, details: str = ""):
     """记录用户操作"""
     logger = get_logger()
-    details_str = f" - {details}" if details else ""
-    logger.info(f"用户操作: {action}{details_str}")
+    if details:
+        logger.info("用户操作: %s - %s", action, details)
+    else:
+        logger.info("用户操作: %s", action)
 
 def log_system_info(info: str):
     """记录系统信息"""
     logger = get_logger()
-    logger.info(f"系统信息: {info}")
+    logger.info("系统信息: %s", info)
 
 def log_performance(operation: str, duration: float, additional_info: str = ""):
     """记录性能信息"""
     logger = get_logger()
-    info_str = f" - {additional_info}" if additional_info else ""
-    logger.info(f"性能: {operation} 耗时 {duration:.2f}s{info_str}")
+    if additional_info:
+        logger.info("性能: %s 耗时 %.2fs - %s", operation, duration, additional_info)
+    else:
+        logger.info("性能: %s 耗时 %.2fs", operation, duration)
 
 # 装饰器
 def log_execution_time(func):
@@ -209,7 +213,7 @@ def log_execution_time(func):
         except Exception as e:
             end_time = time.time()
             duration = end_time - start_time
-            logger.error(f"执行失败: {func.__name__} 耗时 {duration:.2f}s 错误: {e}")
+            logger.error("执行失败: %s 耗时 %.2fs 错误: %s", func.__name__, duration, str(e))
             raise
     
     return wrapper
@@ -255,7 +259,7 @@ class LogContext:
         if exc_type is None:
             self.logger.info(f"操作完成: {self.operation} 耗时 {duration:.2f}s")
         else:
-            self.logger.error(f"操作失败: {self.operation} 耗时 {duration:.2f}s 错误: {exc_val}")
+            self.logger.error("操作失败: %s 耗时 %.2fs 错误: %s", self.operation, duration, str(exc_val))
         
         return False  # 不抑制异常
 

@@ -25,9 +25,34 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "openai/gpt-4-vision-preview"
+    ai_model: str = "openai/gpt-4o"
     ai_temperature: float = 0.3
     ai_max_tokens: int = 2000
+    
+    # 模型选择配置
+    available_models: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
+        "openai/gpt-4o": {
+            "name": "GPT-4o",
+            "description": "OpenAI GPT-4o模型，支持视觉分析功能",
+            "supports_vision": True,
+            "cost": "较高",
+            "base_url": "https://openrouter.ai/api/v1",
+            "api_provider": "OpenRouter",
+            "api_key_url": "https://openrouter.ai/keys"
+        },
+        "deepseek/deepseek-r1": {
+            "name": "DeepSeek R1",
+            "description": "DeepSeek R1推理模型，成本较低但不支持视觉分析",
+            "supports_vision": False,
+            "cost": "较低",
+            "base_url": "https://api.deepseek.com/v1",
+            "api_provider": "DeepSeek",
+            "api_key_url": "https://platform.deepseek.com/api_keys"
+        }
+    })
+    
+    # 根据模型自动启用/禁用视觉分析
+    enable_visual_analysis: bool = True
     
     # 文件处理配置
     max_file_size_mb: int = 50
@@ -94,6 +119,28 @@ class Config:
                 os.makedirs(template_dir, exist_ok=True)
             except OSError:
                 pass  # 无法创建目录，稍后在验证中处理
+        
+        # 根据当前选择的模型自动设置视觉分析功能
+        self._update_visual_analysis_setting()
+    
+    def _update_visual_analysis_setting(self):
+        """根据当前模型自动设置视觉分析功能"""
+        if self.ai_model in self.available_models:
+            model_info = self.available_models[self.ai_model]
+            self.enable_visual_analysis = model_info.get('supports_vision', False)
+    
+    def set_model(self, model_name: str):
+        """设置AI模型并自动更新相关设置"""
+        if model_name in self.available_models:
+            self.ai_model = model_name
+            self._update_visual_analysis_setting()
+        else:
+            raise ValueError(f"不支持的模型: {model_name}。支持的模型: {list(self.available_models.keys())}")
+    
+    def get_model_info(self, model_name: Optional[str] = None) -> Dict[str, Any]:
+        """获取模型信息"""
+        model = model_name if model_name is not None else self.ai_model
+        return self.available_models.get(model, {})
     
     def validate(self) -> Dict[str, Any]:
         """验证配置有效性"""

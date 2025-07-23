@@ -12,7 +12,13 @@ import json
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
-import win32com.client
+try:
+    import win32com.client
+    import pythoncom
+    HAS_WIN32COM = True
+except ImportError:
+    HAS_WIN32COM = False
+    print("警告: win32com未安装，PPT截图功能将使用备用方法")
 from openai import OpenAI
 from pptx import Presentation
 from pptx.util import Inches, Pt
@@ -84,34 +90,52 @@ class PPTVisualAnalyzer:
         if not output_dir:
             output_dir = os.path.join(self.config.temp_output_dir, "ppt_images")
         
+        # 确保使用绝对路径
+        output_dir = os.path.abspath(output_dir)
         os.makedirs(output_dir, exist_ok=True)
         
-        try:
-            # 使用COM接口将PPT转换为图片
-            powerpoint = win32com.client.Dispatch("PowerPoint.Application")
-            powerpoint.Visible = 1
-            
-            presentation = powerpoint.Presentations.Open(os.path.abspath(ppt_path))
-            image_paths = []
-            
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            
-            for i, slide in enumerate(presentation.Slides):
-                # 导出为PNG图片
-                image_path = os.path.join(output_dir, f"slide_{timestamp}_{i+1}.png")
-                slide.Export(image_path, "PNG", 1920, 1080)  # 高分辨率导出
-                image_paths.append(image_path)
+        # 优先使用COM接口（如果可用）
+        if HAS_WIN32COM:
+            try:
+                # 初始化COM环境
+                pythoncom.CoInitialize()
                 
-            presentation.Close()
-            powerpoint.Quit()
-            
-            self.logger.info(f"成功转换PPT为{len(image_paths)}张图片")
-            return image_paths
-            
-        except Exception as e:
-            self.logger.error(f"PPT图片转换失败: {e}")
-            # 备用方法：使用python-pptx生成简单截图
-            return self._fallback_convert_to_images(ppt_path, output_dir)
+                # 使用COM接口将PPT转换为图片
+                powerpoint = win32com.client.Dispatch("PowerPoint.Application")
+                powerpoint.Visible = 1
+                
+                presentation = powerpoint.Presentations.Open(os.path.abspath(ppt_path))
+                image_paths = []
+                
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                
+                for i, slide in enumerate(presentation.Slides):
+                    # 导出为PNG图片
+                    image_path = os.path.join(output_dir, f"slide_{timestamp}_{i+1}.png")
+                    # PowerPoint需要绝对路径
+                    abs_image_path = os.path.abspath(image_path)
+                    slide.Export(abs_image_path, "PNG", 1920, 1080)  # 高分辨率导出
+                    image_paths.append(abs_image_path)
+                    
+                presentation.Close()
+                powerpoint.Quit()
+                
+                # 清理COM环境
+                pythoncom.CoUninitialize()
+                
+                self.logger.info(f"成功转换PPT为{len(image_paths)}张图片")
+                return image_paths
+                
+            except Exception as e:
+                # 发生错误时也要清理COM环境
+                try:
+                    pythoncom.CoUninitialize()
+                except:
+                    pass
+                self.logger.error(f"PPT图片转换失败: {e}")
+        
+        # 备用方法：使用python-pptx生成简单截图
+        return self._fallback_convert_to_images(ppt_path, output_dir)
     
     def _fallback_convert_to_images(self, ppt_path: str, output_dir: str) -> List[str]:
         """备用图片转换方法"""

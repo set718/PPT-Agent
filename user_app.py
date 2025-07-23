@@ -137,10 +137,57 @@ class UserPPTGenerator:
         log_user_action("用户界面应用文本分配", f"分配数量: {len(assignments.get('assignments', []))}")
         results = self.ppt_processor.apply_assignments(assignments)
         
-        # 美化演示文稿（静默执行）
-        beautify_results = self.ppt_processor.beautify_presentation()
+        # 文本填充完成，不立即美化
+        return True, results
+    
+    def cleanup_unfilled_placeholders(self):
+        """清理未填充的占位符"""
+        if not self.ppt_processor:
+            return {"error": "PPT处理器未初始化"}
         
-        return True, results, beautify_results
+        try:
+            log_user_action("用户界面清理占位符", f"已填充: {len(self.ppt_processor.filled_placeholders)}")
+            
+            # 手动清理占位符
+            cleanup_count = 0
+            for slide_idx, slide in enumerate(self.presentation.slides):
+                for shape in slide.shapes:
+                    if hasattr(shape, 'text') and shape.text:
+                        original_text = shape.text
+                        # 移除所有剩余的占位符模式 {xxx}
+                        import re
+                        cleaned_text = re.sub(r'\{[^}]+\}', '', original_text)
+                        if cleaned_text != original_text:
+                            shape.text = cleaned_text.strip()
+                            cleanup_count += 1
+            
+            return {
+                "success": True,
+                "cleaned_placeholders": cleanup_count,
+                "message": f"清理了{cleanup_count}个未填充的占位符"
+            }
+            
+        except Exception as e:
+            log_user_action("用户界面清理占位符失败", str(e))
+            return {"error": f"清理占位符失败: {e}"}
+    
+    def apply_basic_beautification(self):
+        """应用基础美化（不包含视觉分析）"""
+        if not self.ppt_processor:
+            return {"error": "PPT处理器未初始化"}
+        
+        try:
+            log_user_action("用户界面基础美化")
+            # 只进行基础的美化处理，不启用视觉优化
+            beautify_results = self.ppt_processor.beautify_presentation(
+                enable_visual_optimization=False
+            )
+            
+            return beautify_results
+            
+        except Exception as e:
+            log_user_action("用户界面基础美化失败", str(e))
+            return {"error": f"基础美化失败: {e}"}
     
     def apply_visual_optimization(self, ppt_path: str, enable_visual_optimization: bool = True):
         """
@@ -184,7 +231,7 @@ class UserPPTGenerator:
         log_user_action("用户界面获取PPT字节数据")
         return FileManager.save_ppt_to_bytes(self.presentation)
 
-def display_processing_summary(optimization_results, enable_visual_optimization):
+def display_processing_summary(optimization_results, cleanup_results, enable_visual_optimization):
     """显示处理结果摘要"""
     if not optimization_results or "error" in optimization_results:
         if "error" in optimization_results:
@@ -199,12 +246,13 @@ def display_processing_summary(optimization_results, enable_visual_optimization)
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        final_slide_count = summary.get('final_slide_count', 0)
+        final_slide_count = summary.get('final_slide_count', 1)  # 默认至少1页
         st.metric("📑 最终页数", final_slide_count)
     
     with col2:
-        removed_placeholders = summary.get('removed_placeholders_count', 0)
-        st.metric("🧹 清理占位符", removed_placeholders)
+        # 显示手动清理的占位符数量
+        cleanup_count = cleanup_results.get('cleaned_placeholders', 0) if cleanup_results else 0
+        st.metric("🧹 清理占位符", cleanup_count)
     
     with col3:
         removed_empty_slides = summary.get('removed_empty_slides_count', 0)
@@ -282,20 +330,74 @@ def main():
     st.markdown('<div class="main-header">🎨 AI PPT助手</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">智能将您的文本内容转换为精美的PPT演示文稿</div>', unsafe_allow_html=True)
     
+    # 模型选择区域
+    st.markdown("### 🤖 选择AI模型")
+    
+    available_models = config.available_models
+    model_options = {}
+    for model_key, model_info in available_models.items():
+        display_name = f"{model_info['name']} ({model_info['cost']}成本)"
+        if not model_info['supports_vision']:
+            display_name += " - ⚠️ 无视觉分析"
+        model_options[display_name] = model_key
+    
+    model_col1, model_col2 = st.columns([2, 1])
+    with model_col1:
+        selected_display = st.selectbox(
+            "选择适合您需求的AI模型：",
+            options=list(model_options.keys()),
+            index=0,
+            help="不同模型有不同的功能和成本特点"
+        )
+        
+        selected_model = model_options[selected_display]
+        model_info = available_models[selected_model]
+        
+        # 动态更新配置
+        if selected_model != config.ai_model:
+            config.set_model(selected_model)
+    
+    with model_col2:
+        st.markdown("**模型对比**")
+        if model_info['supports_vision']:
+            st.success("✅ 支持视觉分析\n✅ 效果更佳\n💰 成本较高")
+        else:
+            st.info("⚡ 响应更快\n💸 成本更低\n❌ 无视觉分析")
+    
+    # 显示当前选择的模型信息
+    if model_info['supports_vision']:
+        st.markdown('<div class="success-box">🎨 已选择具备视觉分析功能的模型，将为您提供最佳的PPT美化效果</div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="info-box">⚡ 已选择高效文本处理模型，将专注于内容智能分配，节省您的成本</div>', unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
     # API密钥输入区域
     st.markdown("### 🔑 开始使用")
     
+    # 根据选择的模型动态显示API密钥输入信息
+    current_model_info = config.get_model_info()
+    api_provider = current_model_info.get('api_provider', 'OpenRouter')
+    api_key_url = current_model_info.get('api_key_url', 'https://openrouter.ai/keys')
+    
     col1, col2 = st.columns([2, 1])
     with col1:
+        if api_provider == "OpenRouter":
+            placeholder_text = "sk-or-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            help_text = "通过OpenRouter访问AI模型，API密钥不会被保存"
+        else:  # DeepSeek
+            placeholder_text = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            help_text = f"通过{api_provider}平台访问AI模型，API密钥不会被保存"
+            
         api_key = st.text_input(
-            "请输入您的OpenRouter API密钥",
+            f"请输入您的{api_provider} API密钥",
             type="password",
-            placeholder="sk-or-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-            help="通过OpenRouter访问GPT-4V，API密钥不会被保存"
+            placeholder=placeholder_text,
+            help=help_text
         )
     with col2:
         st.markdown("**获取API密钥**")
-        st.markdown("[🔗 OpenRouter平台](https://openrouter.ai/keys)")
+        st.markdown(f"[🔗 {api_provider}平台]({api_key_url})")
     
     # 检查API密钥
     if not api_key or not api_key.strip():
@@ -304,28 +406,35 @@ def main():
         
         # 使用步骤
         st.markdown('<div class="steps-container">', unsafe_allow_html=True)
-        st.markdown("### 📝 三步轻松制作PPT")
+        st.markdown("### 📝 四步轻松制作PPT")
         
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.markdown("""
-            **第一步：准备API密钥** 🔑
-            - 注册OpenRouter账号
-            - 获取API密钥
-            - 在上方输入密钥
+            **第一步：选择模型** 🤖
+            - GPT-4o：功能完整，支持视觉分析
+            - DeepSeek R1：成本更低，专注推理处理
             """)
         
         with col2:
             st.markdown("""
-            **第二步：输入内容** ✏️
+            **第二步：准备API密钥** 🔑
+            - 根据选择的模型注册相应平台账号
+            - OpenRouter/DeepSeek获取API密钥
+            - 在上方输入密钥
+            """)
+        
+        with col3:
+            st.markdown("""
+            **第三步：输入内容** ✏️
             - 粘贴您的文本内容
             - 可以是任何主题
             - 无需特殊格式
             """)
         
-        with col3:
+        with col4:
             st.markdown("""
-            **第三步：生成下载** 🚀
+            **第四步：生成下载** 🚀
             - 点击开始处理
             - 等待AI智能分析
             - 下载精美PPT
@@ -389,10 +498,15 @@ def main():
         
         return
     
-    # 验证API密钥格式
-    if not (api_key.startswith('sk-or-') or api_key.startswith('sk-')):
-        st.markdown('<div class="warning-box">⚠️ API密钥格式可能不正确，OpenRouter密钥通常以"sk-or-"开头</div>', unsafe_allow_html=True)
-        return
+    # 验证API密钥格式（根据选择的API提供商）
+    if api_provider == "OpenRouter":
+        if not (api_key.startswith('sk-or-') or api_key.startswith('sk-')):
+            st.markdown('<div class="warning-box">⚠️ OpenRouter API密钥格式可能不正确，通常以"sk-or-"开头</div>', unsafe_allow_html=True)
+            return
+    elif api_provider == "DeepSeek":
+        if not api_key.startswith('sk-'):
+            st.markdown('<div class="warning-box">⚠️ DeepSeek API密钥格式可能不正确，请检查密钥格式</div>', unsafe_allow_html=True)
+            return
     
     # 检查模板文件
     is_valid, error_msg = FileManager.validate_ppt_file(config.default_ppt_template)
@@ -438,29 +552,46 @@ def main():
         word_count = len(user_text.split())
         st.caption(f"📊 字符数：{char_count} | 词数：{word_count}")
     
-    # 高级选项
+    # 高级选项（根据模型能力动态显示）
     st.markdown("### ⚙️ 高级选项")
+    
+    current_model_info = config.get_model_info()
+    supports_vision = current_model_info.get('supports_vision', False)
     
     col1, col2 = st.columns(2)
     with col1:
-        enable_visual_optimization = st.checkbox(
-            "🎨 启用AI视觉优化",
-            value=False,
-            help="使用GPT-4V分析PPT视觉效果并自动优化布局（需要额外时间）"
-        )
+        if supports_vision:
+            enable_visual_optimization = st.checkbox(
+                "🎨 启用AI视觉优化",
+                value=False,
+                help=f"使用{current_model_info['name']}分析PPT视觉效果并自动优化布局（需要额外时间）"
+            )
+        else:
+            enable_visual_optimization = False
+            st.info(f"⚠️ 当前模型 {current_model_info['name']} 不支持视觉优化功能")
     
     with col2:
-        if enable_visual_optimization:
-            st.info("🔍 视觉优化将分析每页PPT的美观度并自动调整布局")
+        if supports_vision:
+            if enable_visual_optimization:
+                st.info("🔍 视觉优化将分析每页PPT的美观度并自动调整布局")
+            else:
+                st.info("✨ 只进行基础美化处理")
         else:
-            st.info("✨ 只进行基础美化处理")
+            st.info("🚀 将进行高效的文本内容分配和基础美化")
     
     # 处理按钮
     st.markdown("### 🚀 生成PPT")
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        button_text = "🎨 开始制作PPT (含视觉优化)" if enable_visual_optimization else "🎨 开始制作PPT"
+        # 根据模型和选项动态生成按钮文本
+        if supports_vision and enable_visual_optimization:
+            button_text = f"🎨 开始制作PPT (含{current_model_info['name']}视觉优化)"
+        elif supports_vision:
+            button_text = f"🎨 开始制作PPT (使用{current_model_info['name']})"
+        else:
+            button_text = f"⚡ 开始制作PPT (使用{current_model_info['name']})"
+        
         process_button = st.button(
             button_text,
             type="primary",
@@ -485,16 +616,23 @@ def main():
             status_text.text("📝 正在将内容填入PPT模板...")
             progress_bar.progress(40)
             
-            success, results, basic_beautify = generator.apply_text_assignments(assignments)
+            success, results = generator.apply_text_assignments(assignments)
             
             if not success:
                 st.error("处理过程中出现错误，请重试")
                 return
             
-            # 步骤3：视觉优化（如果启用）
+            # 步骤3：清理未填充的占位符
+            status_text.text("🧹 正在清理未使用的占位符...")
+            progress_bar.progress(60)
+            
+            # 手动清理未填充的占位符
+            cleanup_results = generator.cleanup_unfilled_placeholders()
+            
+            # 步骤4：视觉优化（如果启用）
             if enable_visual_optimization:
                 status_text.text("🔍 正在进行AI视觉分析...")
-                progress_bar.progress(60)
+                progress_bar.progress(70)
                 
                 # 应用视觉优化
                 optimization_results = generator.apply_visual_optimization(
@@ -505,9 +643,10 @@ def main():
                 status_text.text("🎨 正在应用视觉优化建议...")
                 progress_bar.progress(80)
             else:
-                status_text.text("🎨 正在美化PPT布局...")
-                progress_bar.progress(60)
-                optimization_results = basic_beautify
+                status_text.text("🎨 正在进行基础美化...")
+                progress_bar.progress(70)
+                # 只进行基础美化，不包含视觉分析
+                optimization_results = generator.apply_basic_beautification()
             
             # 步骤4：准备下载
             status_text.text("📦 正在准备下载文件...")
@@ -524,7 +663,7 @@ def main():
             st.markdown('</div>', unsafe_allow_html=True)
             
             # 显示处理结果摘要
-            display_processing_summary(optimization_results, enable_visual_optimization)
+            display_processing_summary(optimization_results, cleanup_results, enable_visual_optimization)
             
             # 提供下载
             st.markdown("### 💾 下载您的PPT")
@@ -552,13 +691,13 @@ def main():
                 
             except Exception as e:
                 st.error("文件准备失败，请重试")
-                logger.error(f"用户界面文件生成错误: {e}")
+                logger.error("用户界面文件生成错误: %s", str(e))
                 
         except Exception as e:
             progress_bar.empty()
             status_text.empty()
             st.error("处理过程中出现错误，请检查您的API密钥或稍后重试")
-            logger.error(f"用户界面处理错误: {e}")
+            logger.error("用户界面处理错误: %s", str(e))
     
     # 页脚信息
     st.markdown("---")

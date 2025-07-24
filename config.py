@@ -18,9 +18,9 @@ class Config:
     openai_api_key: str = ""
     
     # PPT模板配置
-    default_ppt_template: str = os.path.join(os.getcwd(), "templates", "ppt_template.pptx")
+    default_ppt_template: str = os.path.join(os.path.dirname(__file__), "templates", "ppt_template.pptx")
     
-    # 输出配置
+    # 输出配置 - 云端部署时使用相对路径
     output_dir: str = "output"
     temp_output_dir: str = "temp_output"
     

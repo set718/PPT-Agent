@@ -588,3 +588,167 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 3: i
 2025-07-24 09:42:08 - ppt_generator - INFO - 开始提取位置信息
 2025-07-24 09:42:08 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
 2025-07-24 09:42:08 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-07-24 10:08:02 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 10:08:02 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 10:08:02 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 10:08:02 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 10:08:02 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 10:08:02 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 10:08:02 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-07-24 10:08:20 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 10:08:20 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 10:08:20 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 10:08:20 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 10:08:20 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 10:08:20 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 10:08:20 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-07-24 10:08:23 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 10:08:23 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 10:08:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 10:08:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 10:08:23 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 10:08:23 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 10:08:23 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.10s
+2025-07-24 10:08:25 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 10:08:25 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 10:08:25 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 10:08:25 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 10:08:25 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 10:08:25 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 10:08:25 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-07-24 10:08:25 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 80字符
+2025-07-24 10:08:31 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 7
+2025-07-24 10:08:31 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-07-24 10:08:32 - ppt_generator - INFO - 用户操作: 用户界面视觉优化 - 启用状态: True
+2025-07-24 10:08:32 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-07-24 10:08:32 - ppt_generator - INFO - 开始分析PPT视觉质量: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 10:08:37 - ppt_generator - INFO - 成功转换PPT为1张图片
+2025-07-24 10:08:37 - ppt_generator - INFO - 分析第1页幻灯片
+2025-07-24 10:08:54 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-07-24 10:09:20 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 10:09:20 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 10:09:20 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 10:09:20 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 10:09:20 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 10:09:20 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 10:09:20 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.15s
+2025-07-24 11:21:59 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:21:59 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:22:00 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:22:00 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:22:00 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:22:00 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:22:00 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.15s
+2025-07-24 11:22:24 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:22:24 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:22:24 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:22:24 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:22:24 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:22:24 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:22:24 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.10s
+2025-07-24 11:22:37 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:22:37 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:22:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:22:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:22:37 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:22:37 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:22:37 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.11s
+2025-07-24 11:29:13 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:29:13 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:29:13 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:29:13 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:29:13 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:29:13 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:29:13 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-07-24 11:29:15 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:29:15 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:29:16 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:29:16 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:29:16 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:29:16 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:29:16 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.09s
+2025-07-24 11:30:03 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:30:03 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:30:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:30:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:30:03 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:30:03 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:30:03 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-07-24 11:34:46 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:34:46 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:34:46 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:34:46 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:34:46 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:34:46 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:34:46 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-07-24 11:35:00 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:35:00 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:35:00 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:35:00 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:35:00 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:35:00 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:35:00 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-07-24 11:35:06 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:35:06 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:35:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:35:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:35:06 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:35:06 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:35:06 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.12s
+2025-07-24 11:35:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:35:28 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:35:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:35:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:35:28 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:35:28 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:35:28 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-07-24 11:35:32 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:35:32 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:35:32 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:35:32 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:35:32 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:35:32 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:35:32 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-07-24 11:35:33 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 3126
+2025-07-24 11:46:17 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 11:46:17 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 11:46:17 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 11:46:17 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 11:46:17 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 11:46:17 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 11:46:17 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-07-24 13:11:53 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 13:11:53 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 13:11:53 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 13:11:53 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 13:11:53 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 13:11:53 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 13:11:53 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.11s
+2025-07-24 13:59:16 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 13:59:16 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 13:59:16 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 13:59:16 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 13:59:16 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 13:59:16 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 13:59:16 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-07-24 14:52:43 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 14:52:43 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 14:52:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 14:52:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 14:52:43 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 14:52:43 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-24 14:52:43 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.11s
+2025-07-24 14:59:47 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 14:59:47 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 14:59:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 14:59:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 14:59:48 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 14:59:48 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-24 14:59:48 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.10s
+2025-07-24 14:59:51 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 14:59:51 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 14:59:51 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 14:59:51 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 14:59:51 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 14:59:51 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-24 14:59:51 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.09s

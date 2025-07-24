@@ -290,7 +290,25 @@ def main():
             return
         
         # 初始化生成器
-        generator = StreamlitPPTGenerator(api_key)
+        try:
+            with st.spinner("正在验证API密钥..."):
+                generator = StreamlitPPTGenerator(api_key)
+        except ValueError as e:
+            if "API密钥" in str(e):
+                st.error("❌ API密钥验证失败，请检查密钥是否正确")
+            else:
+                st.error(f"❌ 初始化失败: {str(e)}")
+            return
+        except Exception as e:
+            error_msg = str(e)
+            if "authentication" in error_msg.lower() or "unauthorized" in error_msg.lower():
+                st.error("❌ API密钥认证失败，请检查密钥是否正确或是否有足够余额")
+            elif "network" in error_msg.lower() or "connection" in error_msg.lower():
+                st.error("❌ 网络连接异常，请检查网络连接后重试")
+            else:
+                st.error("❌ 系统初始化异常，请稍后重试")
+            st.error(f"详细错误: {error_msg}")
+            return
         
         # 加载PPT模板
         with st.spinner("正在加载PPT模板..."):
@@ -350,8 +368,25 @@ def main():
                     if not current_model_info.get('supports_vision', False):
                         spinner_text += "（跳过视觉分析步骤）"
                     
-                    with st.spinner(spinner_text):
-                        assignments = generator.process_text_with_deepseek(user_text)
+                    try:
+                        with st.spinner(spinner_text):
+                            assignments = generator.process_text_with_deepseek(user_text)
+                    except ValueError as e:
+                        if "API密钥" in str(e):
+                            st.error("❌ API密钥验证失败，请检查密钥是否正确")
+                        else:
+                            st.error(f"❌ AI分析失败: {str(e)}")
+                        return
+                    except Exception as e:
+                        error_msg = str(e)
+                        if "rate limit" in error_msg.lower():
+                            st.error("❌ API请求频率超限，请稍后重试")
+                        elif "insufficient" in error_msg.lower() or "quota" in error_msg.lower():
+                            st.error("❌ API额度不足，请检查账户余额")
+                        else:
+                            st.error("❌ AI分析过程出现异常，请稍后重试")
+                        st.error(f"详细错误: {error_msg}")
+                        return
                     
                     # 显示AI分析结果（调试信息）
                     with st.expander("🔍 查看AI分析结果", expanded=True):

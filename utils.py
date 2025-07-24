@@ -100,13 +100,22 @@ class AIProcessor:
         
         # 根据当前选择的模型获取对应的base_url
         model_info = config.get_model_info()
-        base_url = model_info.get('base_url', config.openai_base_url)
+        self.base_url = model_info.get('base_url', config.openai_base_url)
         
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url=base_url
-        )
+        # 延迟初始化client，避免在创建时就验证API密钥
+        self.client = None
         self.config = config
+    
+    def _ensure_client(self):
+        """确保client已初始化"""
+        if self.client is None:
+            try:
+                self.client = OpenAI(
+                    api_key=self.api_key,
+                    base_url=self.base_url
+                )
+            except Exception as e:
+                raise ValueError(f"API密钥验证失败: {str(e)}")
     
     def analyze_text_for_ppt(self, user_text: str, ppt_structure: Dict[str, Any], enhanced_info: Dict[str, Any] = None) -> Dict[str, Any]:
         """
@@ -120,6 +129,9 @@ class AIProcessor:
         Returns:
             Dict: 文本分配方案
         """
+        # 确保client已初始化
+        self._ensure_client()
+        
         # 创建PPT结构描述
         if enhanced_info:
             ppt_description = self._create_enhanced_ppt_description(enhanced_info)

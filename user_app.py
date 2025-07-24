@@ -399,6 +399,27 @@ def main():
     with col2:
         st.markdown("**获取API密钥**")
         st.markdown(f"[🔗 {api_provider}平台]({api_key_url})")
+        
+        # API密钥测试按钮
+        if api_key and api_key.strip():
+            if st.button("🔍 测试API密钥", help="快速验证密钥是否有效"):
+                with st.spinner("正在验证API密钥..."):
+                    try:
+                        # 创建一个临时的AIProcessor来测试
+                        test_processor = AIProcessor(api_key.strip())
+                        test_processor._ensure_client()
+                        st.success("✅ API密钥验证通过！")
+                    except ValueError as e:
+                        st.error(f"❌ API密钥验证失败: {str(e)}")
+                    except Exception as e:
+                        error_msg = str(e)
+                        if "authentication" in error_msg.lower() or "unauthorized" in error_msg.lower():
+                            st.error("❌ API密钥认证失败，请检查密钥是否正确")
+                        elif "network" in error_msg.lower() or "connection" in error_msg.lower():
+                            st.error("❌ 网络连接异常，请检查网络连接")
+                        else:
+                            st.error("❌ 验证过程出现异常")
+                        st.error(f"详细错误: {error_msg}")
     
     # 检查API密钥
     if not api_key or not api_key.strip():
@@ -516,20 +537,43 @@ def main():
         return
     
     # 初始化生成器并加载模板
-    generator = UserPPTGenerator(api_key)
-    
-    with st.spinner("正在准备AI助手..."):
-        success, message = generator.load_ppt_from_path(config.default_ppt_template)
+    try:
+        with st.spinner("正在验证API密钥..."):
+            generator = UserPPTGenerator(api_key)
         
-    if not success:
-        st.markdown('<div class="error-box">❌ 系统初始化失败，请稍后再试</div>', unsafe_allow_html=True)
+        with st.spinner("正在准备AI助手..."):
+            success, message = generator.load_ppt_from_path(config.default_ppt_template)
+            
+        if not success:
+            st.markdown('<div class="error-box">❌ 系统初始化失败，请稍后再试</div>', unsafe_allow_html=True)
+            return
+            
+    except ValueError as e:
+        if "API密钥" in str(e):
+            st.markdown('<div class="error-box">❌ API密钥验证失败，请检查密钥是否正确</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="error-box">❌ 初始化失败: {str(e)}</div>', unsafe_allow_html=True)
+        return
+    except Exception as e:
+        error_msg = str(e)
+        if "authentication" in error_msg.lower() or "unauthorized" in error_msg.lower():
+            st.markdown('<div class="error-box">❌ API密钥认证失败，请检查密钥是否正确或是否有足够余额</div>', unsafe_allow_html=True)
+        elif "network" in error_msg.lower() or "connection" in error_msg.lower():
+            st.markdown('<div class="error-box">❌ 网络连接异常，请检查网络连接后重试</div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="error-box">❌ 系统初始化异常，请稍后重试</div>', unsafe_allow_html=True)
+        st.error(f"详细错误: {error_msg}")
         return
     
     st.markdown('<div class="success-box">✅ AI助手已准备就绪！</div>', unsafe_allow_html=True)
     
-    # 主要功能区域
+    # 功能选择选项卡
     st.markdown("---")
-    st.markdown("### 📝 输入您的内容")
+    tab1, tab2 = st.tabs(["🎨 智能PPT生成", "📑 AI智能分页（预览）"])
+    
+    with tab1:
+        # 现有的PPT生成功能
+        st.markdown("### 📝 输入您的内容")
     
     # 文本输入
     user_text = st.text_area(
@@ -611,7 +655,24 @@ def main():
             status_text.text("🤖 AI正在分析您的内容...")
             progress_bar.progress(20)
             
-            assignments = generator.process_text_with_openai(user_text)
+            try:
+                assignments = generator.process_text_with_openai(user_text)
+            except ValueError as e:
+                if "API密钥" in str(e):
+                    st.error("❌ API密钥验证失败，请检查密钥是否正确")
+                else:
+                    st.error(f"❌ AI分析失败: {str(e)}")
+                return
+            except Exception as e:
+                error_msg = str(e)
+                if "rate limit" in error_msg.lower():
+                    st.error("❌ API请求频率超限，请稍后重试")
+                elif "insufficient" in error_msg.lower() or "quota" in error_msg.lower():
+                    st.error("❌ API额度不足，请检查账户余额")
+                else:
+                    st.error("❌ AI分析过程出现异常，请稍后重试")
+                st.error(f"详细错误: {error_msg}")
+                return
             
             # 步骤2：填充PPT
             status_text.text("📝 正在将内容填入PPT模板...")
@@ -699,6 +760,143 @@ def main():
             status_text.empty()
             st.error("处理过程中出现错误，请检查您的API密钥或稍后重试")
             logger.error("用户界面处理错误: %s", str(e))
+    
+    with tab2:
+        # AI智能分页功能（新功能预览）
+        st.markdown("### 🚀 AI智能分页功能")
+        
+        st.markdown('<div class="info-box">📢 <strong>功能预览</strong><br>这是即将推出的完整工作流程的第一步。完整流程包括：用户输入 → AI智能分页 → Dify API模板匹配 → 文本填充 → 整合输出<br><br>🎨 <strong>模板库扩展：</strong>目前支持单页模板，后续将提供200+丰富模板，支持各种风格和场景的PPT制作<br><br>📋 <strong>分页规范：</strong>标题页仅提取标题和日期（其他内容固定），结尾页使用预设模板（无需生成），重点关注中间内容页的智能分割</div>', unsafe_allow_html=True)
+        
+        # 文本输入区域
+        st.markdown("#### 📝 输入要分页的文本内容")
+        
+        page_split_text = st.text_area(
+            "请输入您想要进行智能分页的文本内容：",
+            height=200,
+            placeholder="""例如：
+
+区块链技术发展报告
+
+区块链技术作为一种分布式账本技术，近年来得到了广泛关注和应用。它通过去中心化的方式，为数字资产交易和数据存储提供了新的解决方案。
+
+技术原理方面，区块链采用加密哈希、数字签名和共识机制等核心技术，确保数据的不可篡改性和系统的安全性。每个区块包含若干交易记录，通过链式结构连接形成完整的交易历史。
+
+应用场景非常广泛，包括数字货币、供应链管理、身份认证、智能合约等领域。比特币是最早的区块链应用，展示了这项技术的巨大潜力。
+
+未来发展趋势显示，区块链技术将向着更高的性能、更好的可扩展性和更广泛的应用场景发展。技术标准化、监管政策的完善也将推动整个行业的健康发展。""",
+            help="AI将分析文本结构，智能分割为适合PPT展示的多个页面",
+            key="page_split_text"
+        )
+        
+        # 分页选项和建议
+        col1, col2 = st.columns(2)
+        with col1:
+            target_pages = st.number_input(
+                "目标页面数量（可选）",
+                min_value=0,
+                max_value=30,
+                value=0,
+                help="设置为0时，AI将自动判断最佳页面数量。建议根据演示时间控制页数。"
+            )
+            
+            # 添加页数建议提示
+            st.markdown("""
+                         <div style="background-color: #f0f2f6; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.5rem;">
+             <small>💡 <strong>页数建议：</strong><br>
+             • 5分钟演示：3-5页（含标题页）<br>
+             • 10分钟演示：5-8页（含标题页）<br>
+             • 15分钟演示：8-12页（含标题页）<br>
+             • 30分钟演示：15-20页（含标题页）<br>
+             • 学术报告：20-30页（含标题页）<br>
+             <strong>注：</strong>结尾页使用固定模板，无需计入</small>
+             </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            if page_split_text:
+                char_count = len(page_split_text)
+                word_count = len(page_split_text.split())
+                st.metric("📊 文本统计", f"{char_count}字符 | {word_count}词")
+        
+        # 分页处理按钮
+        split_button = st.button(
+            "🤖 开始AI智能分页",
+            type="primary",
+            use_container_width=True,
+            disabled=not page_split_text.strip(),
+            help="AI将分析您的文本结构并智能分页"
+        )
+        
+        # 处理AI分页逻辑
+        if split_button and page_split_text.strip():
+            from ai_page_splitter import AIPageSplitter, PageContentFormatter
+            
+            try:
+                with st.spinner("🤖 AI正在分析文本结构并进行智能分页..."):
+                    # 初始化AI分页器
+                    page_splitter = AIPageSplitter(api_key)
+                    
+                    # 执行智能分页
+                    target_page_count = int(target_pages) if target_pages > 0 else None
+                    split_result = page_splitter.split_text_to_pages(page_split_text, target_page_count)
+                
+                if split_result.get('success'):
+                    st.markdown('<div class="success-box">✅ AI智能分页完成！</div>', unsafe_allow_html=True)
+                    
+                    # 显示分析摘要
+                    analysis = split_result.get('analysis', {})
+                    analysis_summary = PageContentFormatter.format_analysis_summary(analysis)
+                    st.markdown(analysis_summary)
+                    
+                    # 显示分页结果
+                    pages = split_result.get('pages', [])
+                    
+                    if pages:
+                        st.markdown("### 📄 分页预览结果")
+                        
+                        # 使用选项卡显示每一页
+                        page_tabs = st.tabs([f"第{page['page_number']}页" for page in pages])
+                        
+                        for i, (page_tab, page_data) in enumerate(zip(page_tabs, pages)):
+                            with page_tab:
+                                page_preview = PageContentFormatter.format_page_preview(page_data)
+                                st.markdown(page_preview)
+                                
+                                # 显示原始文本片段
+                                with st.expander("📖 查看原始文本片段", expanded=False):
+                                    original_segment = page_data.get('original_text_segment', '')
+                                    if original_segment:
+                                        st.text_area(
+                                            "原始文本片段：",
+                                            value=original_segment,
+                                            height=100,
+                                            disabled=True,
+                                            key=f"original_text_{i}"
+                                        )
+                                    else:
+                                        st.info("暂无对应的原始文本片段")
+                        
+                        # 下一步提示
+                        st.markdown("---")
+                        st.markdown('<div class="info-box">🔄 <strong>下一步开发计划</strong><br>• 扩展模板库：集成200+精美PPT模板（商务、学术、创意等风格）<br>• Dify API集成：智能匹配每页最适合的模板<br>• 批量文本填充：对每一页分别进行智能填充<br>• 多页面整合：生成风格统一的完整PPT<br>• 高级功能：模板风格选择、页面排序调整、批量导出</div>', unsafe_allow_html=True)
+                        
+                        # 调试信息（可选显示）
+                        with st.expander("🔍 查看完整分页数据（开发调试）", expanded=False):
+                            st.json(split_result)
+                    
+                    else:
+                        st.warning("⚠️ 分页结果为空，请检查输入文本")
+                        
+                else:
+                    st.error("❌ AI分页失败，请检查您的输入或稍后重试")
+                    
+                    # 显示错误信息（如果有）
+                    if 'error' in split_result:
+                        st.error(f"错误详情：{split_result['error']}")
+                    
+            except Exception as e:
+                st.error(f"❌ 处理过程中出现错误：{str(e)}")
+                logger.error("AI分页功能错误: %s", str(e))
     
     # 页脚信息
     st.markdown("---")

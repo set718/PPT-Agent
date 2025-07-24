@@ -67,20 +67,21 @@ class TextToPPTGenerator:
         # 使用增强信息进行分析
         return self.ai_processor.analyze_text_for_ppt(user_text, self.ppt_structure, enhanced_info)
     
-    def apply_text_assignments(self, assignments):
+    def apply_text_assignments(self, assignments, user_text: str = ""):
         """
-        根据分配方案修改现有PPT
+        根据分配方案修改现有PPT，并将原始文本添加到备注
         
         Args:
             assignments (dict): 文本分配方案
+            user_text (str): 用户原始文本（用于添加到备注）
             
         Returns:
             str: 修改后的PPT文件路径
         """
         log_user_action("应用文本分配", f"分配数量: {len(assignments.get('assignments', []))}")
         
-        # 应用分配
-        results = self.ppt_processor.apply_assignments(assignments)
+        # 应用分配并添加备注
+        results = self.ppt_processor.apply_assignments(assignments, user_text)
         
         # 打印结果
         for result in results:
@@ -117,8 +118,8 @@ class TextToPPTGenerator:
             print("正在使用OpenRouter API分析文本结构...")
             assignments = self.process_text_with_deepseek(user_text)
             
-            print("正在将您的原始文本填入现有PPT...")
-            filepath = self.apply_text_assignments(assignments)
+            print("正在将您的原始文本填入现有PPT并添加到备注...")
+            filepath = self.apply_text_assignments(assignments, user_text)
             
             return filepath
 

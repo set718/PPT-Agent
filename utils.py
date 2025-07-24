@@ -716,18 +716,24 @@ class PPTProcessor:
         except Exception as e:
             return {"error": f"视觉优化失败: {e}"}
     
-    def apply_assignments(self, assignments: Dict[str, Any]) -> List[str]:
+    def apply_assignments(self, assignments: Dict[str, Any], user_text: str = "") -> List[str]:
         """
         应用文本分配方案
         
         Args:
             assignments: 分配方案
+            user_text: 用户原始文本（可选，用于添加到幻灯片备注）
             
         Returns:
             List[str]: 处理结果列表
         """
         assignments_list = assignments.get('assignments', [])
         results = []
+        
+        # 如果提供了用户原始文本，则为幻灯片添加备注
+        if user_text.strip():
+            notes_results = self._add_notes_to_slides(assignments_list, user_text)
+            results.extend(notes_results)
         
         for assignment in assignments_list:
             action = assignment.get('action')
@@ -772,6 +778,131 @@ class PPTProcessor:
                 results.append(f"SUCCESS: 已新增幻灯片「{title}」: {assignment.get('reason', '')}")
         
         return results
+    
+    def _add_notes_to_slides(self, assignments_list: List[Dict], user_text: str) -> List[str]:
+        """
+        为幻灯片添加用户原始文本备注
+        
+        Args:
+            assignments_list: 分配方案列表
+            user_text: 用户原始文本
+            
+        Returns:
+            List[str]: 备注添加结果
+        """
+        results = []
+        
+        # 获取涉及的幻灯片索引
+        involved_slides = set()
+        for assignment in assignments_list:
+            slide_index = assignment.get('slide_index', 0)
+            if 0 <= slide_index < len(self.presentation.slides):
+                involved_slides.add(slide_index)
+        
+        # 如果只有一张幻灯片被涉及，将完整的用户文本添加到该幻灯片
+        if len(involved_slides) == 1:
+            slide_index = list(involved_slides)[0]
+            success = self._add_note_to_slide(slide_index, user_text)
+            if success:
+                results.append(f"NOTES: 已将原始文本添加到第{slide_index+1}页备注")
+            else:
+                results.append(f"NOTES ERROR: 添加备注到第{slide_index+1}页失败")
+        
+        # 如果涉及多张幻灯片，智能分割用户文本
+        elif len(involved_slides) > 1:
+            text_segments = self._split_text_for_slides(user_text, involved_slides, assignments_list)
+            for slide_index, text_segment in text_segments.items():
+                if text_segment.strip():
+                    success = self._add_note_to_slide(slide_index, text_segment)
+                    if success:
+                        results.append(f"NOTES: 已将相关文本添加到第{slide_index+1}页备注")
+                    else:
+                        results.append(f"NOTES ERROR: 添加备注到第{slide_index+1}页失败")
+        
+        return results
+    
+    def _add_note_to_slide(self, slide_index: int, note_text: str) -> bool:
+        """
+        为指定幻灯片添加备注
+        
+        Args:
+            slide_index: 幻灯片索引
+            note_text: 备注文本
+            
+        Returns:
+            bool: 是否成功添加备注
+        """
+        try:
+            slide = self.presentation.slides[slide_index]
+            
+            # 获取或创建备注页
+            if slide.has_notes_slide:
+                notes_slide = slide.notes_slide
+            else:
+                notes_slide = slide.notes_slide  # 这会自动创建notes_slide
+            
+            # 获取备注文本框
+            notes_text_frame = notes_slide.notes_text_frame
+            
+            # 设置备注内容
+            if notes_text_frame.text.strip():
+                # 如果已有备注，添加分隔符和新内容
+                notes_text_frame.text += f"\n\n【原始文本】\n{note_text}"
+            else:
+                # 如果没有备注，直接添加
+                notes_text_frame.text = f"【原始文本】\n{note_text}"
+            
+            return True
+            
+        except Exception as e:
+            print(f"添加备注失败: {e}")
+            return False
+    
+    def _split_text_for_slides(self, user_text: str, involved_slides: set, assignments_list: List[Dict]) -> Dict[int, str]:
+        """
+        智能分割用户文本，为不同幻灯片分配相关的文本段落
+        
+        Args:
+            user_text: 用户原始文本
+            involved_slides: 涉及的幻灯片索引集合
+            assignments_list: 分配方案列表
+            
+        Returns:
+            Dict[int, str]: 每张幻灯片对应的文本段落
+        """
+        # 按段落分割用户文本
+        paragraphs = [p.strip() for p in user_text.split('\n\n') if p.strip()]
+        if not paragraphs:
+            paragraphs = [user_text]
+        
+        # 为每张幻灯片分配文本段落
+        slide_texts = {}
+        sorted_slides = sorted(involved_slides)
+        
+        # 如果段落数量 >= 幻灯片数量，平均分配
+        if len(paragraphs) >= len(sorted_slides):
+            paragraphs_per_slide = len(paragraphs) // len(sorted_slides)
+            remainder = len(paragraphs) % len(sorted_slides)
+            
+            start_idx = 0
+            for i, slide_index in enumerate(sorted_slides):
+                end_idx = start_idx + paragraphs_per_slide
+                if i < remainder:
+                    end_idx += 1
+                
+                slide_paragraphs = paragraphs[start_idx:end_idx]
+                slide_texts[slide_index] = '\n\n'.join(slide_paragraphs)
+                start_idx = end_idx
+        else:
+            # 如果段落少于幻灯片，优先为前几张幻灯片分配
+            for i, slide_index in enumerate(sorted_slides):
+                if i < len(paragraphs):
+                    slide_texts[slide_index] = paragraphs[i]
+                else:
+                    # 剩余幻灯片分享最后一个段落或完整文本
+                    slide_texts[slide_index] = user_text if len(paragraphs) == 1 else paragraphs[-1]
+        
+        return slide_texts
     
     def beautify_presentation(self, enable_visual_optimization: bool = False, ppt_path: str = None) -> Dict[str, Any]:
         """

@@ -129,13 +129,14 @@ class UserPPTGenerator:
         log_user_action("用户界面AI文本分析", f"文本长度: {len(user_text)}字符")
         return self.ai_processor.analyze_text_for_ppt(user_text, self.ppt_structure)
     
-    def apply_text_assignments(self, assignments):
-        """根据分配方案替换PPT模板中的占位符"""
+    def apply_text_assignments(self, assignments, user_text: str = ""):
+        """根据分配方案替换PPT模板中的占位符，并将原始文本添加到备注"""
         if not self.presentation or not self.ppt_processor:
             return False, ["PPT文件未正确加载"]
         
         log_user_action("用户界面应用文本分配", f"分配数量: {len(assignments.get('assignments', []))}")
-        results = self.ppt_processor.apply_assignments(assignments)
+        # 传递用户原始文本，用于添加到幻灯片备注
+        results = self.ppt_processor.apply_assignments(assignments, user_text)
         
         # 文本填充完成，不立即美化
         return True, results
@@ -616,7 +617,7 @@ def main():
             status_text.text("📝 正在将内容填入PPT模板...")
             progress_bar.progress(40)
             
-            success, results = generator.apply_text_assignments(assignments)
+            success, results = generator.apply_text_assignments(assignments, user_text)
             
             if not success:
                 st.error("处理过程中出现错误，请重试")

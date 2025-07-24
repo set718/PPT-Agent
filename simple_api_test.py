@@ -1,28 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-简单的API测试脚本
+简单的API测试脚本 - 测试GPT-4o和其他模型
 """
 
 from openai import OpenAI
 
-# 在这里输入你的API密钥
-API_KEY = "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"  # 请替换为你的实际API密钥
+# 在这里输入你的OpenRouter API密钥
+API_KEY = "YOUR_API_KEY_HERE"  # 请替换为你的实际OpenRouter API密钥
 
-def test_gpt4v():
-    print("测试GPT-4 Vision Preview...")
+def test_api_models():
+    print("测试GPT-4o和其他可用模型...")
     
     client = OpenAI(
         api_key=API_KEY,
         base_url="https://openrouter.ai/api/v1"
     )
     
-    # 尝试几个可能可用的模型
+    # 按优先级测试可用的模型
     models_to_test = [
-        "openai/gpt-4-vision-preview",
-        "openai/gpt-4o",
-        "openai/gpt-4",
-        "anthropic/claude-3-haiku"
+        "openai/gpt-4o",              # 首选：GPT-4o
+        "openai/gpt-4",               # GPT-4
+        "openai/gpt-4-turbo",         # GPT-4 Turbo
+        "anthropic/claude-3-haiku"    # 备选：Claude
     ]
     
     for model in models_to_test:
@@ -31,14 +31,15 @@ def test_gpt4v():
             response = client.chat.completions.create(
                 model=model,
                 messages=[
-                    {"role": "user", "content": "请回复'API连接成功'"}
+                    {"role": "user", "content": "请回复'模型连接成功'"}
                 ],
                 max_tokens=20
             )
             
-            print("✅ 成功！")
-            print(f"使用模型: {model}")
-            print(f"响应: {response.choices[0].message.content}")
+            print("✅ 测试成功！")
+            print(f"✅ 推荐使用模型: {model}")
+            print(f"✅ AI响应: {response.choices[0].message.content}")
+            print(f"✅ 此模型可用于你的PPT项目")
             return True
             
         except Exception as e:
@@ -46,10 +47,14 @@ def test_gpt4v():
             continue
     
     print("❌ 所有模型都测试失败！")
+    print("请检查：")
+    print("1. API密钥是否正确")
+    print("2. 网络连接是否正常")
+    print("3. 账户余额是否充足")
     return False
 
 if __name__ == "__main__":
     if API_KEY == "YOUR_API_KEY_HERE":
         print("请先在脚本中设置你的API密钥！")
     else:
-        test_gpt4v()
+        test_api_models()

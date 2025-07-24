@@ -126,13 +126,14 @@ class StreamlitPPTGenerator:
         # 使用增强信息进行分析
         return self.ai_processor.analyze_text_for_ppt(user_text, self.ppt_structure, enhanced_info)
     
-    def apply_text_assignments(self, assignments):
-        """根据分配方案替换PPT模板中的占位符"""
+    def apply_text_assignments(self, assignments, user_text: str = ""):
+        """根据分配方案替换PPT模板中的占位符，并将原始文本添加到备注"""
         if not self.presentation or not self.ppt_processor:
             return ["❌ PPT文件未正确加载"]
         
         log_user_action("应用文本分配", f"分配数量: {len(assignments.get('assignments', []))}")
-        results = self.ppt_processor.apply_assignments(assignments)
+        # 传递用户原始文本，用于添加到幻灯片备注
+        results = self.ppt_processor.apply_assignments(assignments, user_text)
         
         # 美化演示文稿
         st.info("正在美化PPT布局...")
@@ -356,8 +357,8 @@ def main():
                     with st.expander("🔍 查看AI分析结果", expanded=True):
                         st.json(assignments)
                     
-                    with st.spinner("正在将文本填入PPT..."):
-                        results = generator.apply_text_assignments(assignments)
+                    with st.spinner("正在将文本填入PPT并添加原始文本到备注..."):
+                        results = generator.apply_text_assignments(assignments, user_text)
                     
                     # 显示处理结果
                     st.markdown('<div class="success-box">', unsafe_allow_html=True)

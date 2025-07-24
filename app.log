@@ -533,3 +533,58 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 3: i
 2025-07-23 16:09:27 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
 2025-07-23 16:09:27 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
 2025-07-23 17:22:39 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 09:19:57 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 09:19:57 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 09:19:57 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 09:25:40 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 09:25:40 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 09:25:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 09:25:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 09:25:40 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 09:25:40 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 09:25:40 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-07-24 09:26:12 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 09:26:12 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 09:26:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 09:26:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 09:26:12 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 09:26:12 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 09:26:12 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.13s
+2025-07-24 09:26:19 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 09:26:19 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 09:26:19 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 09:26:19 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 09:26:19 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 09:26:19 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 09:26:19 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.09s
+2025-07-24 09:26:22 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 09:26:22 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 09:26:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 09:26:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 09:26:22 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 09:26:22 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 09:26:22 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-07-24 09:26:22 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 80字符
+2025-07-24 09:26:23 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 1
+2025-07-24 09:26:23 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-07-24 09:26:24 - ppt_generator - INFO - 用户操作: 用户界面视觉优化 - 启用状态: True
+2025-07-24 09:26:24 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-07-24 09:26:24 - ppt_generator - INFO - 开始分析PPT视觉质量: D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 09:26:36 - ppt_generator - INFO - 成功转换PPT为1张图片
+2025-07-24 09:26:36 - ppt_generator - INFO - 分析第1页幻灯片
+2025-07-24 09:26:37 - ppt_generator - ERROR - 视觉分析失败: Error code: 401 - {'error': {'message': 'No auth credentials found', 'code': 401}}
+2025-07-24 09:26:37 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-07-24 09:32:47 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 09:32:47 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 09:32:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 09:32:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 09:32:47 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 09:32:47 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 09:32:47 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.17s
+2025-07-24 09:42:08 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-24 09:42:08 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-24 09:42:08 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-24 09:42:08 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-24 09:42:08 - ppt_generator - INFO - 开始提取位置信息
+2025-07-24 09:42:08 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\jiayihan\Desktop\ppt format V1_2.pptx
+2025-07-24 09:42:08 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s

@@ -126,7 +126,7 @@ def test_complete_flow():
     print("步骤3: 应用文本分配")
     print("-" * 30)
     
-    results = ppt_processor.apply_assignments(assignments)
+    results = ppt_processor.apply_assignments(assignments, test_text)
     
     print("填充结果:")
     for result in results:

@@ -88,10 +88,16 @@ class AIPageSplitter:
 4. **适量分配**：每页内容量适中，避免过于拥挤或空洞
 
 **分页策略：**
-- **标题页**：仅提取文档标题和日期信息（固定格式，不填充其他内容）
-- **内容页**：按主要观点、时间顺序或逻辑结构分页（这是分页的重点）
-- **概述页**：如果内容复杂，可在内容页前添加概述
+- **标题页（第1页）**：仅提取文档标题和日期信息，其他所有文本内容都延后到第二页开始处理
+- **内容页（第2页开始）**：从第二页开始处理所有实际内容，按主要观点、时间顺序或逻辑结构分页
+- **概述页**：如果内容复杂，可在第二页作为概述页
 - **结尾页**：不生成结尾页（使用预设的固定结尾页模板）
+
+**标题页处理规则：**
+- 只从文本开头提取标题信息（通常是第一行或最醒目的文字）
+- 自动生成或提取日期信息
+- 其余所有文本内容（包括副标题、简介、正文等）都保留给后续内容页处理
+- 标题页的original_text_segment只包含提取的标题部分
 
 **页面内容要求：**
 - 每页应该有清晰的**主题**
@@ -136,7 +142,7 @@ class AIPageSplitter:
        "title": "人工智能发展历程",
        "subtitle": "",
        "date": "2024年7月",
-       "content_summary": "文档标题页，仅包含标题和日期",
+       "content_summary": "文档标题页，仅从文本开头提取标题和日期，其他内容延后处理",
        "key_points": [
          "文档标题：人工智能发展历程",
          "日期：2024年7月"
@@ -146,16 +152,16 @@ class AIPageSplitter:
     {{
       "page_number": 2,
       "page_type": "content",
-      "title": "早期发展阶段",
-      "subtitle": "符号主义与专家系统",
-      "content_summary": "介绍AI早期的符号主义和专家系统阶段",
+      "title": "AI发展概述",
+      "subtitle": "技术演进的主要阶段",
+      "content_summary": "从第二页开始处理所有实际内容，介绍AI发展的各个阶段",
       "key_points": [
         "1950年代符号主义起始",
-        "强调逻辑推理和知识表示", 
-        "1980年代专家系统兴起",
-        "为现代AI奠定基础"
+        "1980年代专家系统兴起", 
+        "2010年代深度学习突破",
+        "当前大语言模型时代"
       ],
-      "original_text_segment": "对应的原文文本片段"
+      "original_text_segment": "人工智能技术发展经历了多个重要阶段。从1950年代的符号主义开始..."
     }}
   ]
 }}
@@ -167,9 +173,11 @@ class AIPageSplitter:
 - `content`: 内容页，具体的要点和详细内容（分页重点）
 
 **重要说明：**
-- 标题页只需提取标题和日期，其他元素（如作者、机构等）使用模板固定内容
+- **标题页处理**：第1页只提取文档标题和日期，所有其他文本内容（包括简介、背景、正文等）都保留给第2页及后续页面处理
+- **内容分配**：确保除了标题信息外，原文的所有实际内容都从第2页开始分配，不要在标题页中包含任何正文内容
+- **日期处理**：如果原文没有明确日期，自动生成当前年月
 - 不要生成结尾页，系统将使用预设的固定结尾页模板
-- 专注于内容页的智能分割，确保逻辑清晰、内容均衡
+- 专注于从第2页开始的内容页智能分割，确保逻辑清晰、内容均衡
 
 只返回JSON格式，不要其他文字。"""
     
@@ -241,48 +249,70 @@ class AIPageSplitter:
     
     def _create_fallback_split(self, user_text: str) -> Dict[str, Any]:
         """创建备用分页方案"""
-        # 简单按段落分割
-        paragraphs = [p.strip() for p in user_text.split('\n\n') if p.strip()]
-        if not paragraphs:
-            paragraphs = [user_text]
+        # 按行分割，找到标题
+        lines = [line.strip() for line in user_text.split('\n') if line.strip()]
+        if not lines:
+            lines = [user_text.strip()]
         
-        # 提取标题（第一行或第一个段落）
-        title = paragraphs[0] if paragraphs else "内容展示"
-        if len(title) > 30:
+        # 提取标题（通常是第一行，且相对较短）
+        title = lines[0] if lines else "内容展示"
+        if len(title) > 50:  # 如果第一行太长，可能不是标题，截取前面部分
             title = title[:30] + "..."
         
         pages = []
         
-        # 创建标题页（仅包含标题和日期）
+        # 创建标题页（仅包含从文本开头提取的标题和日期）
         import datetime
         current_date = datetime.datetime.now().strftime("%Y年%m月")
         
         pages.append({
             "page_number": 1,
-            "page_type": "title",
+            "page_type": "title", 
             "title": title,
             "subtitle": "",
             "date": current_date,
-            "content_summary": "文档标题页，仅包含标题和日期",
+            "content_summary": "文档标题页，仅从文本开头提取标题和日期，其他内容延后处理",
             "key_points": [f"文档标题：{title}", f"日期：{current_date}"],
-            "original_text_segment": paragraphs[0] if paragraphs else title
+            "original_text_segment": title  # 只包含标题部分
         })
         
-        # 将剩余段落分配到内容页
-        remaining_paragraphs = paragraphs[1:] if len(paragraphs) > 1 else []
+        # 将除标题外的所有内容分配到第2页开始的内容页
+        # 重新组织内容：去掉标题行后的所有文本
+        remaining_text = user_text
+        if lines and len(lines) > 1:
+            # 去掉第一行（标题），保留其余内容
+            title_end_pos = user_text.find(lines[0]) + len(lines[0])
+            remaining_text = user_text[title_end_pos:].strip()
+        
+        # 按段落分割剩余内容
+        remaining_paragraphs = [p.strip() for p in remaining_text.split('\n\n') if p.strip()]
+        if not remaining_paragraphs and remaining_text:
+            remaining_paragraphs = [remaining_text]
         
         page_num = 2
-        for i, paragraph in enumerate(remaining_paragraphs):
+        if remaining_paragraphs:
+            for i, paragraph in enumerate(remaining_paragraphs):
+                pages.append({
+                    "page_number": page_num,
+                    "page_type": "content",
+                    "title": f"内容 {page_num - 1}",
+                    "subtitle": "",
+                    "content_summary": f"第{page_num - 1}部分内容（从第2页开始处理实际内容）",
+                    "key_points": [paragraph[:50] + "..." if len(paragraph) > 50 else paragraph],
+                    "original_text_segment": paragraph
+                })
+                page_num += 1
+        else:
+            # 如果没有剩余内容，至少创建一个空的内容页
             pages.append({
-                "page_number": page_num,
+                "page_number": 2,
                 "page_type": "content",
-                "title": f"内容 {page_num - 1}",
+                "title": "内容页",
                 "subtitle": "",
-                "content_summary": f"第{page_num - 1}部分内容",
-                "key_points": [paragraph[:50] + "..." if len(paragraph) > 50 else paragraph],
-                "original_text_segment": paragraph
+                "content_summary": "从第2页开始处理实际内容，但当前文本只包含标题",
+                "key_points": ["内容待补充"],
+                "original_text_segment": "无额外内容"
             })
-            page_num += 1
         
         return {
             "success": True,

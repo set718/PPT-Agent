@@ -25,13 +25,13 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "openai/gpt-4o"
+    ai_model: str = "gpt-4o"
     ai_temperature: float = 0.3
     ai_max_tokens: int = 2000
     
     # 模型选择配置
     available_models: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
-        "openai/gpt-4o": {
+        "gpt-4o": {
             "name": "GPT-4o",
             "description": "OpenAI GPT-4o模型，支持视觉分析功能",
             "supports_vision": True,
@@ -40,9 +40,9 @@ class Config:
             "api_provider": "OpenRouter",
             "api_key_url": "https://openrouter.ai/keys"
         },
-        "deepseek/deepseek-r1": {
-            "name": "DeepSeek R1",
-            "description": "DeepSeek R1推理模型，成本较低但不支持视觉分析",
+        "deepseek-chat": {
+            "name": "DeepSeek Chat",
+            "description": "DeepSeek Chat模型，成本较低但不支持视觉分析",
             "supports_vision": False,
             "cost": "较低",
             "base_url": "https://api.deepseek.com/v1",

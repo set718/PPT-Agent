@@ -13,7 +13,7 @@ def test_multi_key_config():
         # 创建多密钥配置
         config = DifyAPIConfig()
         
-        print(f"Total API keys: {len(config.api_keys)}")
+        print(f"Total API keys: {len(config.api_keys)} (8个密钥)")
         for i, key in enumerate(config.api_keys, 1):
             print(f"  Key {i}: {key[:20]}...")
         

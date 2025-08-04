@@ -31,17 +31,36 @@ class APIKeyBalancer:
         self.current_index = 0
         self.usage_count = {key: 0 for key in api_keys}
         self.failed_keys = set()
+        self.failure_count = {key: 0 for key in api_keys}  # 记录每个密钥的失败次数
+        self.last_failure_time = {key: 0 for key in api_keys}  # 记录最后失败时间
         
         logger.info(f"初始化API密钥负载均衡器，策略: {strategy}, 密钥数量: {len(api_keys)}")
     
     def get_next_key(self) -> str:
         """获取下一个API密钥"""
+        import time
+        current_time = time.time()
+        
+        # 智能恢复机制：检查失效的密钥是否可以恢复
+        keys_to_recover = []
+        for key in list(self.failed_keys):
+            last_fail_time = self.last_failure_time.get(key, 0)
+            # 如果密钥失效超过60秒，尝试恢复
+            if current_time - last_fail_time > 60:
+                keys_to_recover.append(key)
+        
+        for key in keys_to_recover:
+            self.failed_keys.discard(key)
+            logger.info(f"API密钥自动恢复: {key[:20]}... (失效时间超过60秒)")
+        
         available_keys = [key for key in self.api_keys if key not in self.failed_keys]
         
         if not available_keys:
-            # 如果所有密钥都失败了，重置失败列表
-            logger.warning("所有API密钥都失败，重置失败列表")
+            # 如果所有密钥都失败了，强制重置失败列表
+            logger.warning(f"所有{len(self.api_keys)}个API密钥都失效，强制重置失败列表以确保服务可用")
             self.failed_keys.clear()
+            # 重置失败计数
+            self.failure_count = {key: 0 for key in self.api_keys}
             available_keys = self.api_keys
         
         if self.strategy == "round_robin":
@@ -80,14 +99,22 @@ class APIKeyBalancer:
     
     def mark_key_failed(self, api_key: str):
         """标记密钥失败"""
+        import time
         self.failed_keys.add(api_key)
-        logger.warning(f"标记API密钥失败: {api_key[:20]}...")
+        self.failure_count[api_key] = self.failure_count.get(api_key, 0) + 1
+        self.last_failure_time[api_key] = time.time()
+        
+        failure_count = self.failure_count[api_key]
+        logger.warning(f"标记API密钥失败: {api_key[:20]}... (第{failure_count}次失败)")
     
     def mark_key_success(self, api_key: str):
         """标记密钥成功（从失败列表中移除）"""
         if api_key in self.failed_keys:
             self.failed_keys.remove(api_key)
-            logger.info(f"API密钥恢复正常: {api_key[:20]}...")
+            # 重置失败计数和时间
+            self.failure_count[api_key] = 0
+            self.last_failure_time[api_key] = 0
+            logger.info(f"API密钥恢复正常: {api_key[:20]}... (失败计数已重置)")
     
     def get_usage_stats(self) -> Dict[str, Any]:
         """获取使用统计"""
@@ -106,13 +133,18 @@ class DifyAPIConfig:
     api_keys: List[str] = field(default_factory=lambda: [
         "app-7HOcCxB7uosj23f1xgjFClkv",
         "app-vxEWYWTaakWITl041b8UHBCN", 
-        "app-WM17uKVOQHpYE4sNyxRH0dtG"
+        "app-WM17uKVOQHpYE4sNyxRH0dtG",
+        "app-dmKCw2gATM5mbC2VXS0Htiyu",
+        "app-wC0jXMfM1qwliIaPtrq9evuE",
+        "app-0QHbweS3gsr9q3o5R08Q8bYE",
+        "app-mvjmGCfgEV86qjsMihwaGB2T",
+        "app-pzeGjsmkvH9oQ9vNK7DX9Z0a"
     ])
     endpoint: str = "/chat-messages"
-    timeout: int = 60
-    max_retries: int = 3
-    retry_delay: float = 2.0
-    max_concurrent: int = 6  # 增加并发数，因为有多个API密钥
+    timeout: int = 180  # 增加到3分钟超时
+    max_retries: int = 8  # 增加到8次重试
+    retry_delay: float = 3.0  # 增加重试间隔
+    max_concurrent: int = 8   # 降低并发数，减少服务器压力，提高成功率
     load_balance_strategy: str = "round_robin"  # round_robin, random, least_used
     
     @property
@@ -152,8 +184,8 @@ class DifyAPIClient:
             connector=connector,
             timeout=aiohttp.ClientTimeout(
                 total=self.config.timeout,
-                connect=10,  # 连接超时
-                sock_read=30  # 读取超时
+                connect=30,  # 增加连接超时到30秒
+                sock_read=120  # 增加读取超时到2分钟
             ),
             headers={
                 'Content-Type': 'application/json',
@@ -273,51 +305,87 @@ class DifyAPIClient:
                             }
             
             except asyncio.TimeoutError as e:
-                logger.warning(f"第{page_index + 1}页API请求超时 (尝试 {attempt + 1}/{self.config.max_retries})")
+                logger.warning(f"第{page_index + 1}页API请求超时 (尝试 {attempt + 1}/{self.config.max_retries}，使用密钥: {current_api_key[:20]}...)")
+                
+                # 超时时也标记当前API密钥可能有问题
+                if attempt >= 2:  # 超时2次后标记密钥为临时失效
+                    self.key_balancer.mark_key_failed(current_api_key)
+                    logger.info(f"API密钥因多次超时被临时标记为失效: {current_api_key[:20]}...")
+                
                 if attempt < self.config.max_retries - 1:
-                    delay = self.config.retry_delay * (2 ** attempt)  # 指数退避
-                    logger.info(f"等待 {delay:.1f} 秒后重试...")
+                    # 增强的指数退避策略
+                    base_delay = self.config.retry_delay
+                    exponential_delay = base_delay * (2 ** attempt)
+                    jitter = exponential_delay * 0.1  # 添加10%的随机抖动
+                    import random
+                    delay = exponential_delay + random.uniform(-jitter, jitter)
+                    delay = min(delay, 30)  # 最大延迟30秒
+                    
+                    logger.info(f"超时重试：等待 {delay:.1f} 秒后使用下一个API密钥重试...")
                     await asyncio.sleep(delay)
                     continue
                 else:
+                    # 所有重试都失败了，但不应该发生这种情况
+                    logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然超时，这不应该发生！")
                     return {
                         "success": False,
                         "page_index": page_index,
                         "page_number": page_data.get('page_number', page_index + 1),
                         "input_content": input_text,
-                        "error": f"请求超时 (超时限制: {self.config.timeout}秒)",
-                        "attempts": self.config.max_retries
+                        "error": f"经过{self.config.max_retries}次重试仍然超时 (超时限制: {self.config.timeout}秒)",
+                        "attempts": self.config.max_retries,
+                        "all_used_keys": [k[:20] + "..." for k in self.config.api_keys]
                     }
             
             except aiohttp.ClientConnectorError as e:
-                logger.warning(f"第{page_index + 1}页连接错误 (尝试 {attempt + 1}/{self.config.max_retries}): {str(e)}")
+                logger.warning(f"第{page_index + 1}页连接错误 (尝试 {attempt + 1}/{self.config.max_retries}，使用密钥: {current_api_key[:20]}...): {str(e)}")
+                
+                # 连接错误时也可能是API密钥或服务器问题
+                if attempt >= 1:  # 连接错误1次后就切换密钥
+                    self.key_balancer.mark_key_failed(current_api_key)
+                    logger.info(f"API密钥因连接错误被标记为失效: {current_api_key[:20]}...")
+                
                 if attempt < self.config.max_retries - 1:
                     delay = self.config.retry_delay * (2 ** attempt)
+                    delay = min(delay, 20)  # 连接错误最大等待20秒
+                    logger.info(f"连接错误重试：等待 {delay:.1f} 秒后使用下一个API密钥重试...")
                     await asyncio.sleep(delay)
                     continue
                 else:
+                    logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然连接失败！")
                     return {
                         "success": False,
                         "page_index": page_index,
                         "page_number": page_data.get('page_number', page_index + 1),
                         "input_content": input_text,
-                        "error": f"连接失败: {str(e)}",
+                        "error": f"经过{self.config.max_retries}次重试仍然连接失败: {str(e)}",
                         "attempts": self.config.max_retries
                     }
             
             except Exception as e:
-                logger.error(f"第{page_index + 1}页API请求异常: {str(e)}")
+                logger.error(f"第{page_index + 1}页API请求异常 (尝试 {attempt + 1}/{self.config.max_retries}，使用密钥: {current_api_key[:20]}...): {str(e)}")
+                
+                # 未知异常时也切换API密钥
+                if attempt >= 0:  # 任何异常都立即切换密钥
+                    self.key_balancer.mark_key_failed(current_api_key)
+                    logger.info(f"API密钥因异常被标记为失效: {current_api_key[:20]}...")
+                
                 if attempt < self.config.max_retries - 1:
-                    await asyncio.sleep(self.config.retry_delay * (attempt + 1))
+                    delay = self.config.retry_delay * (attempt + 1)
+                    delay = min(delay, 15)  # 异常最大等待15秒
+                    logger.info(f"异常重试：等待 {delay:.1f} 秒后使用下一个API密钥重试...")
+                    await asyncio.sleep(delay)
                     continue
                 else:
+                    logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然异常！")
                     return {
                         "success": False,
                         "page_index": page_index,
                         "page_number": page_data.get('page_number', page_index + 1),
                         "input_content": input_text,
-                        "error": f"请求异常: {str(e)}",
-                        "attempts": self.config.max_retries
+                        "error": f"经过{self.config.max_retries}次重试仍然异常: {str(e)}",
+                        "attempts": self.config.max_retries,
+                        "exception_type": type(e).__name__
                     }
         
         # 不应该到达这里
@@ -394,23 +462,59 @@ class DifyAPIClient:
                 "results": []
             }
         
+        # 过滤出需要Dify API处理的页面（跳过固定页面）
+        fixed_page_types = {'title', 'table_of_contents', 'ending'}
+        
+        # 分离需要处理和跳过的页面
+        pages_to_process = []
+        skipped_pages = []
+        
+        for page in pages:
+            page_type = page.get('page_type', 'content')
+            if page_type in fixed_page_types:
+                skipped_pages.append(page)
+                logger.info(f"跳过固定页面: 第{page.get('page_number', '?')}页 ({page_type})")
+            else:
+                pages_to_process.append(page)
+        
+        logger.info(f"共{len(pages)}页，需要Dify API处理: {len(pages_to_process)}页，跳过固定页面: {len(skipped_pages)}页")
+        
+        # 如果没有需要处理的页面，直接返回成功结果
+        if not pages_to_process:
+            return {
+                "success": True,
+                "total_pages": len(pages),
+                "successful_count": 0,
+                "failed_count": 0,
+                "exception_count": 0,
+                "skipped_count": len(skipped_pages),
+                "processing_time": 0,
+                "results": [],
+                "successful_results": [],
+                "failed_results": [],
+                "skipped_results": skipped_pages,
+                "exceptions": [],
+                "api_key_stats": self.key_balancer.get_usage_stats()
+            }
+        
         start_time = time.time()
-        log_user_action("Dify API并发处理", f"开始处理{len(pages)}个页面（最大并发: {self.config.max_concurrent}）")
+        log_user_action("Dify API并发处理", f"开始处理{len(pages_to_process)}个页面（最大并发: {self.config.max_concurrent}，跳过{len(skipped_pages)}个固定页面）")
         
         try:
             # 创建信号量来控制并发数量
             semaphore = asyncio.Semaphore(self.config.max_concurrent)
             
-            async def limited_request(page_data, index):
+            async def limited_request(page_data, original_index):
                 async with semaphore:
-                    logger.info(f"开始处理第{index + 1}页（并发控制）")
-                    return await self._make_single_request(page_data, index)
+                    logger.info(f"开始处理第{page_data.get('page_number', original_index + 1)}页（并发控制）")
+                    return await self._make_single_request(page_data, original_index)
             
-            # 创建并发任务
-            tasks = [
-                limited_request(page_data, index)
-                for index, page_data in enumerate(pages)
-            ]
+            # 创建并发任务（只处理需要API调用的页面，但保持原始索引）
+            tasks = []
+            for page_data in pages_to_process:
+                # 找到该页面在原始列表中的索引
+                original_index = next(i for i, p in enumerate(pages) if p is page_data)
+                tasks.append(limited_request(page_data, original_index))
             
             # 并发执行所有API请求
             results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -436,22 +540,24 @@ class DifyAPIClient:
             
             # 构建返回结果
             return_result = {
-                "success": len(successful_results) > 0,
+                "success": len(successful_results) > 0 or len(skipped_pages) > 0,  # 如果有跳过的页面也算成功
                 "total_pages": len(pages),
                 "successful_count": len(successful_results),
                 "failed_count": len(failed_results),
                 "exception_count": len(exceptions),
+                "skipped_count": len(skipped_pages),  # 添加跳过页面统计
                 "processing_time": processing_time,
                 "results": successful_results + failed_results,
                 "successful_results": successful_results,
                 "failed_results": failed_results,
+                "skipped_results": skipped_pages,  # 添加跳过的页面
                 "exceptions": exceptions,
                 "api_key_stats": key_stats  # 添加API密钥统计
             }
             
             log_user_action(
                 "Dify API处理完成", 
-                f"成功: {len(successful_results)}, 失败: {len(failed_results)}, 异常: {len(exceptions)}, 耗时: {processing_time:.2f}秒"
+                f"成功: {len(successful_results)}, 失败: {len(failed_results)}, 跳过: {len(skipped_pages)}, 异常: {len(exceptions)}, 耗时: {processing_time:.2f}秒"
             )
             
             return return_result
@@ -459,14 +565,16 @@ class DifyAPIClient:
         except Exception as e:
             logger.error(f"并发处理异常: {str(e)}")
             return {
-                "success": False,
+                "success": len(skipped_pages) > 0,  # 如果有跳过的页面，至少部分成功
                 "error": f"并发处理异常: {str(e)}",
                 "total_pages": len(pages),
                 "successful_count": 0,
                 "failed_count": 0,
                 "exception_count": 1,
+                "skipped_count": len(skipped_pages),
                 "processing_time": time.time() - start_time,
                 "results": [],
+                "skipped_results": skipped_pages,
                 "exceptions": [str(e)]
             }
 
@@ -519,8 +627,9 @@ class DifyIntegrationService:
                     "total_pages": api_results.get('total_pages', 0),
                     "successful_api_calls": api_results.get('successful_count', 0),
                     "failed_api_calls": api_results.get('failed_count', 0),
+                    "skipped_fixed_pages": api_results.get('skipped_count', 0),
                     "processing_time": api_results.get('processing_time', 0),
-                    "success_rate": api_results.get('successful_count', 0) / max(api_results.get('total_pages', 1), 1) * 100
+                    "success_rate": api_results.get('successful_count', 0) / max(api_results.get('successful_count', 0) + api_results.get('failed_count', 0), 1) * 100  # 跳过的页面不计入成功率
                 }
             }
             
@@ -530,20 +639,33 @@ class DifyIntegrationService:
                 result.get('page_index', -1): result 
                 for result in api_results.get('results', [])
             }
+            skipped_results_by_page = {
+                i: page for i, page in enumerate(pages) 
+                if page in api_results.get('skipped_results', [])
+            }
             
             for i, page in enumerate(pages):
                 enhanced_page = page.copy()
-                api_result = api_results_by_page.get(i)
+                page_type = page.get('page_type', 'content')
                 
-                if api_result:
-                    enhanced_page['dify_api_result'] = api_result
-                    if api_result.get('success'):
-                        enhanced_page['dify_response'] = api_result.get('response_text', '')
-                        enhanced_page['dify_full_response'] = api_result.get('api_response', {})
-                    else:
-                        enhanced_page['dify_error'] = api_result.get('error', 'API调用失败')
+                # 检查是否是跳过的固定页面
+                if i in skipped_results_by_page or page_type in ['title', 'table_of_contents', 'ending']:
+                    enhanced_page['dify_skipped'] = True
+                    enhanced_page['dify_skip_reason'] = f'固定页面类型({page_type})，无需Dify API处理'
+                    logger.debug(f"第{page.get('page_number', i+1)}页({page_type})已跳过Dify API处理")
                 else:
-                    enhanced_page['dify_error'] = '未找到对应的API结果'
+                    # 查找API处理结果
+                    api_result = api_results_by_page.get(i)
+                    
+                    if api_result:
+                        enhanced_page['dify_api_result'] = api_result
+                        if api_result.get('success'):
+                            enhanced_page['dify_response'] = api_result.get('response_text', '')
+                            enhanced_page['dify_full_response'] = api_result.get('api_response', {})
+                        else:
+                            enhanced_page['dify_error'] = api_result.get('error', 'API调用失败')
+                    else:
+                        enhanced_page['dify_error'] = '未找到对应的API结果'
                 
                 enhanced_pages.append(enhanced_page)
             
@@ -576,6 +698,7 @@ class DifyIntegrationService:
         total_pages = summary.get('total_pages', 0)
         successful = summary.get('successful_api_calls', 0)
         failed = summary.get('failed_api_calls', 0)
+        skipped = summary.get('skipped_fixed_pages', 0)
         processing_time = summary.get('processing_time', 0)
         success_rate = summary.get('success_rate', 0)
         
@@ -599,10 +722,11 @@ class DifyIntegrationService:
 • 总页面数: {total_pages}
 • 成功调用: {successful}
 • 失败调用: {failed}
+• 跳过固定页面: {skipped} (封面/目录/结束页)
 • 成功率: {success_rate:.1f}%
 • 处理耗时: {processing_time:.2f}秒{key_info}
 
-🚀 平均响应时间: {processing_time / max(total_pages, 1):.2f}秒/页"""
+🚀 平均响应时间: {processing_time / max(successful + failed, 1):.2f}秒/页（不含固定页面）"""
         
         return summary_text
 

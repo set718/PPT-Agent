@@ -1335,3 +1335,145 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u2713' in position 3: i
 2025-07-29 09:52:24 - ppt_generator - INFO - 第5页API请求成功 (使用密钥: app-7HOcCxB7uosj23f1...)
 2025-07-29 09:52:24 - ppt_generator - INFO - 用户操作: Dify API处理完成 - 成功: 4, 失败: 2, 异常: 0, 耗时: 27.55秒
 2025-07-29 09:52:24 - ppt_generator - INFO - 初始化Dify集成服务
+2025-07-29 10:03:20 - ppt_generator - INFO - 初始化API密钥负载均衡器，策略: round_robin, 密钥数量: 8
+2025-07-29 10:13:58 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-29 10:13:58 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-29 10:13:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-29 10:13:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-29 10:13:58 - ppt_generator - INFO - 开始提取位置信息
+2025-07-29 10:13:58 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-29 10:13:58 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.12s
+2025-07-29 10:14:03 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-29 10:14:03 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-29 10:14:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-29 10:14:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-29 10:14:03 - ppt_generator - INFO - 开始提取位置信息
+2025-07-29 10:14:03 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-29 10:14:03 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-07-29 11:13:13 - ppt_generator - INFO - 初始化Dify集成服务
+2025-07-29 11:13:13 - ppt_generator - INFO - 用户操作: Dify集成处理 - 开始处理4个页面的API调用
+2025-07-29 11:13:13 - ppt_generator - INFO - 初始化API密钥负载均衡器，策略: round_robin, 密钥数量: 8
+2025-07-29 11:13:13 - ppt_generator - INFO - 初始化Dify API客户端，支持8个API密钥
+2025-07-29 11:13:13 - ppt_generator - INFO - 跳过固定页面: 第1页 (title)
+2025-07-29 11:13:13 - ppt_generator - INFO - 跳过固定页面: 第4页 (ending)
+2025-07-29 11:13:13 - ppt_generator - INFO - 共4页，需要Dify API处理: 2页，跳过固定页面: 2页
+2025-07-29 11:13:13 - ppt_generator - INFO - 用户操作: Dify API并发处理 - 开始处理2个页面（最大并发: 12，跳过2个固定页面）
+2025-07-29 11:13:13 - ppt_generator - INFO - 开始处理第2页（并发控制）
+2025-07-29 11:13:13 - ppt_generator - INFO - 开始请求第2页内容 (尝试 1/3, API密钥: app-7HOcCxB7uosj23f1...)
+2025-07-29 11:13:13 - ppt_generator - INFO - 开始处理第3页（并发控制）
+2025-07-29 11:13:13 - ppt_generator - INFO - 开始请求第3页内容 (尝试 1/3, API密钥: app-vxEWYWTaakWITl04...)
+2025-07-29 11:13:37 - ppt_generator - INFO - 第2页API请求成功 (使用密钥: app-7HOcCxB7uosj23f1...)
+2025-07-29 11:13:43 - ppt_generator - INFO - 第3页API请求成功 (使用密钥: app-vxEWYWTaakWITl04...)
+2025-07-29 11:13:43 - ppt_generator - INFO - 用户操作: Dify API处理完成 - 成功: 2, 失败: 0, 跳过: 2, 异常: 0, 耗时: 29.80秒
+2025-07-29 11:19:30 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-29 11:19:30 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-29 11:19:31 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-29 11:19:31 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-29 11:19:31 - ppt_generator - INFO - 开始提取位置信息
+2025-07-29 11:19:31 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-29 11:19:31 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.14s
+2025-07-29 11:23:32 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-29 11:23:32 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-29 11:23:32 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-29 11:23:32 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-29 11:23:32 - ppt_generator - INFO - 开始提取位置信息
+2025-07-29 11:23:32 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-29 11:23:32 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-07-29 11:23:34 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-29 11:23:34 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-29 11:23:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-29 11:23:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-29 11:23:34 - ppt_generator - INFO - 开始提取位置信息
+2025-07-29 11:23:34 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-29 11:23:34 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.15s
+2025-07-29 11:23:35 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 2240
+2025-07-29 11:24:29 - ppt_generator - INFO - 初始化Dify集成服务
+2025-07-29 11:24:29 - ppt_generator - INFO - 用户操作: Dify集成处理 - 开始处理8个页面的API调用
+2025-07-29 11:24:29 - ppt_generator - INFO - 初始化API密钥负载均衡器，策略: round_robin, 密钥数量: 8
+2025-07-29 11:24:29 - ppt_generator - INFO - 初始化Dify API客户端，支持8个API密钥
+2025-07-29 11:24:29 - ppt_generator - INFO - 跳过固定页面: 第1页 (title)
+2025-07-29 11:24:29 - ppt_generator - INFO - 共8页，需要Dify API处理: 7页，跳过固定页面: 1页
+2025-07-29 11:24:29 - ppt_generator - INFO - 用户操作: Dify API并发处理 - 开始处理7个页面（最大并发: 12，跳过1个固定页面）
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始处理第2页（并发控制）
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始请求第2页内容 (尝试 1/3, API密钥: app-7HOcCxB7uosj23f1...)
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始处理第3页（并发控制）
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始请求第3页内容 (尝试 1/3, API密钥: app-vxEWYWTaakWITl04...)
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始处理第4页（并发控制）
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始请求第4页内容 (尝试 1/3, API密钥: app-WM17uKVOQHpYE4sN...)
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始处理第5页（并发控制）
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始请求第5页内容 (尝试 1/3, API密钥: app-dmKCw2gATM5mbC2V...)
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始处理第6页（并发控制）
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始请求第6页内容 (尝试 1/3, API密钥: app-wC0jXMfM1qwliIaP...)
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始处理第7页（并发控制）
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始请求第7页内容 (尝试 1/3, API密钥: app-0QHbweS3gsr9q3o5...)
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始处理第8页（并发控制）
+2025-07-29 11:24:29 - ppt_generator - INFO - 开始请求第8页内容 (尝试 1/3, API密钥: app-mvjmGCfgEV86qjsM...)
+2025-07-29 11:24:40 - ppt_generator - WARNING - 第8页API请求超时 (尝试 1/3)
+2025-07-29 11:24:40 - ppt_generator - INFO - 等待 2.0 秒后重试...
+2025-07-29 11:24:40 - ppt_generator - WARNING - 第7页API请求超时 (尝试 1/3)
+2025-07-29 11:24:40 - ppt_generator - INFO - 等待 2.0 秒后重试...
+2025-07-29 11:24:42 - ppt_generator - INFO - 开始请求第8页内容 (尝试 2/3, API密钥: app-pzeGjsmkvH9oQ9vN...)
+2025-07-29 11:24:42 - ppt_generator - INFO - 开始请求第7页内容 (尝试 2/3, API密钥: app-7HOcCxB7uosj23f1...)
+2025-07-29 11:24:51 - ppt_generator - INFO - 第6页API请求成功 (使用密钥: app-wC0jXMfM1qwliIaP...)
+2025-07-29 11:24:53 - ppt_generator - WARNING - 第7页API请求超时 (尝试 2/3)
+2025-07-29 11:24:53 - ppt_generator - INFO - 等待 4.0 秒后重试...
+2025-07-29 11:24:57 - ppt_generator - INFO - 开始请求第7页内容 (尝试 3/3, API密钥: app-vxEWYWTaakWITl04...)
+2025-07-29 11:25:00 - ppt_generator - WARNING - 第4页API请求超时 (尝试 1/3)
+2025-07-29 11:25:00 - ppt_generator - INFO - 等待 2.0 秒后重试...
+2025-07-29 11:25:00 - ppt_generator - WARNING - 第3页API请求超时 (尝试 1/3)
+2025-07-29 11:25:00 - ppt_generator - INFO - 等待 2.0 秒后重试...
+2025-07-29 11:25:00 - ppt_generator - WARNING - 第2页API请求超时 (尝试 1/3)
+2025-07-29 11:25:00 - ppt_generator - INFO - 等待 2.0 秒后重试...
+2025-07-29 11:25:00 - ppt_generator - WARNING - 第5页API请求超时 (尝试 1/3)
+2025-07-29 11:25:00 - ppt_generator - INFO - 等待 2.0 秒后重试...
+2025-07-29 11:25:02 - ppt_generator - INFO - 开始请求第3页内容 (尝试 2/3, API密钥: app-WM17uKVOQHpYE4sN...)
+2025-07-29 11:25:02 - ppt_generator - INFO - 开始请求第5页内容 (尝试 2/3, API密钥: app-dmKCw2gATM5mbC2V...)
+2025-07-29 11:25:02 - ppt_generator - INFO - 开始请求第2页内容 (尝试 2/3, API密钥: app-wC0jXMfM1qwliIaP...)
+2025-07-29 11:25:02 - ppt_generator - INFO - 开始请求第4页内容 (尝试 2/3, API密钥: app-0QHbweS3gsr9q3o5...)
+2025-07-29 11:25:13 - ppt_generator - WARNING - 第4页API请求超时 (尝试 2/3)
+2025-07-29 11:25:13 - ppt_generator - INFO - 等待 4.0 秒后重试...
+2025-07-29 11:25:17 - ppt_generator - INFO - 开始请求第4页内容 (尝试 3/3, API密钥: app-mvjmGCfgEV86qjsM...)
+2025-07-29 11:25:21 - ppt_generator - WARNING - 第8页API请求超时 (尝试 2/3)
+2025-07-29 11:25:21 - ppt_generator - INFO - 等待 4.0 秒后重试...
+2025-07-29 11:25:24 - ppt_generator - INFO - 第2页API请求成功 (使用密钥: app-wC0jXMfM1qwliIaP...)
+2025-07-29 11:25:25 - ppt_generator - INFO - 开始请求第8页内容 (尝试 3/3, API密钥: app-pzeGjsmkvH9oQ9vN...)
+2025-07-29 11:25:30 - ppt_generator - WARNING - 第7页API请求超时 (尝试 3/3)
+2025-07-29 11:25:31 - ppt_generator - INFO - 第5页API请求成功 (使用密钥: app-dmKCw2gATM5mbC2V...)
+2025-07-29 11:25:32 - ppt_generator - WARNING - 第3页API请求超时 (尝试 2/3)
+2025-07-29 11:25:32 - ppt_generator - INFO - 等待 4.0 秒后重试...
+2025-07-29 11:25:36 - ppt_generator - INFO - 开始请求第3页内容 (尝试 3/3, API密钥: app-7HOcCxB7uosj23f1...)
+2025-07-29 11:25:44 - ppt_generator - INFO - 第4页API请求成功 (使用密钥: app-mvjmGCfgEV86qjsM...)
+2025-07-29 11:25:54 - ppt_generator - INFO - 第8页API请求成功 (使用密钥: app-pzeGjsmkvH9oQ9vN...)
+2025-07-29 11:26:04 - ppt_generator - INFO - 第3页API请求成功 (使用密钥: app-7HOcCxB7uosj23f1...)
+2025-07-29 11:26:04 - ppt_generator - INFO - 用户操作: Dify API处理完成 - 成功: 6, 失败: 1, 跳过: 1, 异常: 0, 耗时: 94.38秒
+2025-07-29 11:26:04 - ppt_generator - INFO - 初始化Dify集成服务
+2025-07-29 11:42:41 - ppt_generator - INFO - 初始化API密钥负载均衡器，策略: round_robin, 密钥数量: 8
+2025-07-29 11:51:54 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-29 11:51:54 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-29 11:51:54 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-29 11:51:54 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-29 11:51:54 - ppt_generator - INFO - 开始提取位置信息
+2025-07-29 11:51:54 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-29 11:51:54 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-07-29 12:07:48 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-29 12:07:48 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-29 12:07:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-29 12:07:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-29 12:07:48 - ppt_generator - INFO - 开始提取位置信息
+2025-07-29 12:07:48 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-29 12:07:48 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.22s
+2025-07-30 09:15:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-07-30 09:15:28 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-07-30 09:15:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-07-30 09:15:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-07-30 09:15:29 - ppt_generator - INFO - 开始提取位置信息
+2025-07-30 09:15:29 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-07-30 09:15:29 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.37s
+2025-08-01 13:36:46 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-01 13:36:46 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-01 13:36:46 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-01 13:36:46 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-01 13:36:46 - ppt_generator - INFO - 开始提取位置信息
+2025-08-01 13:36:46 - ppt_generator - INFO - 文件操作成功: load_ppt_user - D:\Code\AI大赛相关Code\templates\ppt_template.pptx
+2025-08-01 13:36:46 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.16s
+2025-08-04 23:54:06 - ppt_generator - INFO - 初始化自定义模板生成器

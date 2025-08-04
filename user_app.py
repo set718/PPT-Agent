@@ -569,7 +569,7 @@ def main():
     
     # 功能选择选项卡
     st.markdown("---")
-    tab1, tab2 = st.tabs(["🎨 智能PPT生成", "📑 AI智能分页（预览）"])
+    tab1, tab2, tab3 = st.tabs(["🎨 智能PPT生成", "📑 AI智能分页（预览）", "🧪 自定义模板测试"])
     
     with tab1:
         # 现有的PPT生成功能
@@ -794,7 +794,7 @@ def main():
             target_pages = st.number_input(
                 "目标页面数量（可选）",
                 min_value=0,
-                max_value=30,
+                max_value=25,
                 value=0,
                 help="设置为0时，AI将自动判断最佳页面数量。建议根据演示时间控制页数。"
             )
@@ -807,7 +807,7 @@ def main():
              • 10分钟演示：5-8页（含标题页）<br>
              • 15分钟演示：8-12页（含标题页）<br>
              • 30分钟演示：15-20页（含标题页）<br>
-             • 学术报告：20-30页（含标题页）<br>
+             • 学术报告：20-25页（含标题页）<br>
              <strong>注：</strong>结尾页使用固定模板，无需计入</small>
              </div>
             """, unsafe_allow_html=True)
@@ -1002,6 +1002,353 @@ def main():
             except Exception as e:
                 st.error(f"❌ 处理过程中出现错误：{str(e)}")
                 logger.error("AI分页功能错误: %s", str(e))
+    
+    with tab3:
+        # 自定义模板测试功能
+        st.markdown("### 🧪 自定义模板测试")
+        
+        st.markdown('<div class="info-box">🎯 <strong>功能说明</strong><br>此功能独立于智能分页和Dify API，专门用于测试您自己的PPT模板。您可以上传自定义模板，输入文本内容，系统将智能填充到您的模板中。</div>', unsafe_allow_html=True)
+        
+        # 模板上传区域
+        st.markdown("#### 📁 上传您的PPT模板")
+        
+        uploaded_file = st.file_uploader(
+            "选择您的PPT模板文件",
+            type=['pptx'],
+            help="请上传.pptx格式的PPT模板文件，建议文件大小不超过50MB",
+            key="custom_template_uploader"
+        )
+        
+        if uploaded_file is not None:
+            # 显示上传文件信息
+            file_details = {
+                "文件名": uploaded_file.name,
+                "文件大小": f"{uploaded_file.size / 1024:.1f} KB",
+                "文件类型": uploaded_file.type
+            }
+            
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                st.success("✅ 模板文件已上传")
+                for key, value in file_details.items():
+                    st.text(f"{key}: {value}")
+            
+            with col2:
+                # 保存上传的文件到临时目录
+                import tempfile
+                import shutil
+                
+                try:
+                    # 创建临时文件
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.pptx') as tmp_file:
+                        tmp_file.write(uploaded_file.getvalue())
+                        temp_ppt_path = tmp_file.name
+                    
+                    # 验证PPT文件
+                    is_valid, error_msg = FileManager.validate_ppt_file(temp_ppt_path)
+                    
+                    if is_valid:
+                        st.success("✅ 模板文件格式验证通过")
+                        
+                        # 分析模板结构
+                        try:
+                            from pptx import Presentation
+                            temp_presentation = Presentation(temp_ppt_path)
+                            
+                            # 基本信息
+                            slide_count = len(temp_presentation.slides)
+                            st.metric("📑 幻灯片数量", slide_count)
+                            
+                            # 分析占位符
+                            total_placeholders = 0
+                            placeholder_info = []
+                            
+                            for i, slide in enumerate(temp_presentation.slides):
+                                slide_placeholders = []
+                                for shape in slide.shapes:
+                                    if hasattr(shape, 'text') and shape.text:
+                                        # 查找占位符模式 {xxx}
+                                        import re
+                                        placeholders = re.findall(r'\{([^}]+)\}', shape.text)
+                                        if placeholders:
+                                            slide_placeholders.extend(placeholders)
+                                            total_placeholders += len(placeholders)
+                                
+                                if slide_placeholders:
+                                    placeholder_info.append({
+                                        'slide_num': i + 1,
+                                        'placeholders': slide_placeholders
+                                    })
+                            
+                            st.metric("🎯 发现占位符", total_placeholders)
+                            
+                            # 显示占位符详情
+                            if placeholder_info:
+                                with st.expander("🔍 模板结构分析", expanded=False):
+                                    for info in placeholder_info[:5]:  # 只显示前5页
+                                        st.write(f"**第{info['slide_num']}页：** {', '.join([f'{{{p}}}' for p in info['placeholders']])}")
+                                    
+                                    if len(placeholder_info) > 5:
+                                        st.write(f"... 还有 {len(placeholder_info)-5} 页包含占位符")
+                            else:
+                                st.warning("⚠️ 未检测到占位符模式 {xxx}，请确保模板中包含要填充的占位符")
+                        
+                        except Exception as e:
+                            st.error(f"❌ 模板分析失败: {str(e)}")
+                    else:
+                        st.error(f"❌ 模板文件验证失败: {error_msg}")
+                        temp_ppt_path = None
+                    
+                except Exception as e:
+                    st.error(f"❌ 文件处理失败: {str(e)}")
+                    temp_ppt_path = None
+            
+            # 如果模板验证通过，显示文本输入和处理区域
+            if 'temp_ppt_path' in locals() and temp_ppt_path and is_valid:
+                st.markdown("---")
+                st.markdown("#### 📝 输入测试内容")
+                
+                test_text = st.text_area(
+                    "请输入要填充到模板中的文本内容：",
+                    height=200,
+                    placeholder="""例如：
+
+我的自定义PPT测试
+
+这是使用自定义模板的测试内容。AI将分析您的文本结构，并智能地将内容分配到模板中的各个占位符位置。
+
+主要特点：
+- 支持自定义PPT模板上传
+- 智能文本内容分配
+- 保持原有模板设计风格
+- 独立于其他功能模块
+
+测试结果将展示AI如何理解您的内容并填充到模板的对应位置。""",
+                    help="AI将分析您的文本并智能分配到模板的占位符中",
+                    key="custom_template_text"
+                )
+                
+                # 处理选项
+                col1, col2 = st.columns(2)
+                with col1:
+                    # 获取当前模型信息
+                    current_model_info = config.get_model_info()
+                    supports_vision = current_model_info.get('supports_vision', False)
+                    
+                    if supports_vision:
+                        enable_custom_visual = st.checkbox(
+                            "🎨 启用视觉优化",
+                            value=False,
+                            help="对自定义模板应用AI视觉优化（需要额外时间）",
+                            key="custom_visual_opt"
+                        )
+                    else:
+                        enable_custom_visual = False
+                        st.info("⚠️ 当前模型不支持视觉优化")
+                
+                with col2:
+                    if test_text:
+                        char_count = len(test_text)
+                        word_count = len(test_text.split())
+                        st.metric("📊 文本统计", f"{char_count}字符 | {word_count}词")
+                
+                # 处理按钮
+                st.markdown("#### 🚀 开始测试")
+                
+                test_button = st.button(
+                    "🧪 测试自定义模板",
+                    type="primary",
+                    use_container_width=True,
+                    disabled=not test_text.strip(),
+                    help="使用您的模板和内容进行AI智能填充测试",
+                    key="custom_template_test_btn"
+                )
+                
+                # 处理逻辑
+                if test_button and test_text.strip():
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    try:
+                        # 创建自定义模板生成器
+                        status_text.text("🔧 正在初始化自定义模板处理器...")
+                        progress_bar.progress(20)
+                        
+                        custom_generator = UserPPTGenerator(api_key)
+                        success, message = custom_generator.load_ppt_from_path(temp_ppt_path)
+                        
+                        if not success:
+                            st.error(f"❌ 自定义模板加载失败: {message}")
+                            return
+                        
+                        # AI分析
+                        status_text.text("🤖 AI正在分析您的内容和模板结构...")
+                        progress_bar.progress(40)
+                        
+                        assignments = custom_generator.process_text_with_openai(test_text)
+                        
+                        # 填充内容
+                        status_text.text("📝 正在将内容填入自定义模板...")
+                        progress_bar.progress(60)
+                        
+                        success, results = custom_generator.apply_text_assignments(assignments, test_text)
+                        
+                        if not success:
+                            st.error("❌ 内容填充失败，请检查模板格式")
+                            return
+                        
+                        # 清理占位符
+                        status_text.text("🧹 正在清理未使用的占位符...")
+                        progress_bar.progress(80)
+                        
+                        cleanup_results = custom_generator.cleanup_unfilled_placeholders()
+                        
+                        # 可选的视觉优化
+                        if enable_custom_visual:
+                            status_text.text("🎨 正在应用视觉优化...")
+                            progress_bar.progress(90)
+                            
+                            optimization_results = custom_generator.apply_visual_optimization(
+                                temp_ppt_path, 
+                                enable_visual_optimization=True
+                            )
+                        else:
+                            optimization_results = custom_generator.apply_basic_beautification()
+                        
+                        # 完成处理
+                        status_text.text("📦 正在准备下载...")
+                        progress_bar.progress(100)
+                        
+                        # 清除进度显示
+                        progress_bar.empty()
+                        status_text.empty()
+                        
+                        # 显示成功信息
+                        st.markdown('<div class="success-box">🎉 自定义模板测试完成！</div>', unsafe_allow_html=True)
+                        
+                        # 显示处理摘要
+                        if optimization_results and "error" not in optimization_results:
+                            st.markdown("### 📊 处理结果")
+                            
+                            col1, col2, col3, col4 = st.columns(4)
+                            
+                            with col1:
+                                summary = optimization_results.get('summary', {})
+                                final_slide_count = summary.get('final_slide_count', 0)
+                                st.metric("📑 最终页数", final_slide_count)
+                            
+                            with col2:
+                                cleanup_count = cleanup_results.get('cleaned_placeholders', 0) if cleanup_results else 0
+                                st.metric("🧹 清理占位符", cleanup_count)
+                            
+                            with col3:
+                                removed_empty = summary.get('removed_empty_slides_count', 0)
+                                st.metric("🗑️ 删除空页", removed_empty)
+                            
+                            with col4:
+                                reorganized = summary.get('reorganized_slides_count', 0)
+                                st.metric("🔄 重新排版", reorganized)
+                        
+                        # 下载文件
+                        st.markdown("### 💾 下载测试结果")
+                        
+                        try:
+                            updated_ppt_bytes = custom_generator.get_ppt_bytes()
+                            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                            original_name = uploaded_file.name.rsplit('.', 1)[0]
+                            filename = f"{original_name}_测试结果_{timestamp}.pptx"
+                            
+                            col1, col2, col3 = st.columns([1, 2, 1])
+                            with col2:
+                                st.download_button(
+                                    label="📥 下载测试结果PPT",
+                                    data=updated_ppt_bytes,
+                                    file_name=filename,
+                                    mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                                    type="primary",
+                                    use_container_width=True,
+                                    key="download_custom_result"
+                                )
+                            
+                            st.markdown('<div class="info-box">', unsafe_allow_html=True)
+                            st.markdown(f"📁 **文件名：** {filename}")
+                            st.markdown("🎯 **测试内容：** 基于您的自定义模板生成")
+                            st.markdown("📋 **说明：** 可以在PowerPoint中查看AI填充效果")
+                            st.markdown('</div>', unsafe_allow_html=True)
+                            
+                        except Exception as e:
+                            st.error(f"❌ 文件生成失败: {str(e)}")
+                        
+                        # 清理临时文件
+                        try:
+                            os.unlink(temp_ppt_path)
+                        except:
+                            pass
+                            
+                    except Exception as e:
+                        progress_bar.empty()
+                        status_text.empty()
+                        st.error(f"❌ 测试过程中出现错误: {str(e)}")
+                        logger.error("自定义模板测试错误: %s", str(e))
+                        
+                        # 清理临时文件
+                        try:
+                            os.unlink(temp_ppt_path)
+                        except:
+                            pass
+        
+        else:
+            # 未上传文件时的说明
+            st.markdown("#### 🎯 使用说明")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("""
+                **📋 模板要求：**
+                - 文件格式：.pptx
+                - 文件大小：<50MB
+                - 包含占位符：{标题}、{内容}等
+                - 建议结构清晰的模板设计
+                """)
+            
+            with col2:
+                st.markdown("""
+                **🔄 处理流程：**
+                1. 上传您的PPT模板
+                2. 系统验证和分析模板结构
+                3. 输入要填充的文本内容
+                4. AI智能分配内容到占位符
+                5. 下载填充后的PPT文件
+                """)
+            
+            st.markdown("#### ✨ 功能特色")
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.markdown("""
+                **🎨 保持设计风格**
+                - 完全保留您的模板样式
+                - 不改变颜色、字体、布局
+                - 只填充内容到指定位置
+                """)
+            
+            with col2:
+                st.markdown("""
+                **🤖 智能内容分配**
+                - AI理解文本结构和含义
+                - 自动匹配最合适的占位符
+                - 支持多种内容类型处理
+                """)
+            
+            with col3:
+                st.markdown("""
+                **🔧 独立测试环境**
+                - 不影响其他功能模块
+                - 专门用于模板测试验证
+                - 支持多次测试和调整
+                """)
+            
+            st.markdown('<div class="warning-box">💡 <strong>提示：</strong> 请确保您的PPT模板中包含形如 {标题}、{内容}、{要点} 等占位符，AI将根据这些占位符的名称智能分配相应的内容。</div>', unsafe_allow_html=True)
     
     # 页脚信息
     st.markdown("---")

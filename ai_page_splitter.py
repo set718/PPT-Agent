@@ -7,6 +7,7 @@ AI智能分页模块
 
 import re
 import json
+import requests
 from typing import Dict, List, Any, Optional, Tuple
 from openai import OpenAI
 from config import get_config
@@ -24,13 +25,43 @@ class AIPageSplitter:
         
         # 根据当前选择的模型获取对应的配置
         model_info = config.get_model_info()
-        base_url = model_info.get('base_url', config.openai_base_url)
+        self.base_url = model_info.get('base_url', config.openai_base_url)
+        
+        # 针对阿里云通义千问API优化超时设置
+        timeout = 60.0 if 'dashscope' in self.base_url.lower() else 30.0
         
         self.client = OpenAI(
             api_key=self.api_key,
-            base_url=base_url
+            base_url=self.base_url,
+            timeout=timeout
         )
         self.config = config
+        
+        # 创建持久化session用于HTTP连接复用，针对阿里云通义千问API优化
+        self.session = requests.Session()
+        # 为阿里云通义千问API优化适配器配置
+        if 'dashscope' in self.base_url.lower():
+            from requests.adapters import HTTPAdapter
+            from urllib3.util.retry import Retry
+            
+            retry_strategy = Retry(
+                total=3,
+                backoff_factor=2,
+                status_forcelist=[429, 500, 502, 503, 504],
+                allowed_methods=["POST"]
+            )
+            adapter = HTTPAdapter(
+                max_retries=retry_strategy,
+                pool_connections=5,
+                pool_maxsize=10
+            )
+            self.session.mount("http://", adapter)
+            self.session.mount("https://", adapter)
+            # 设置keep-alive
+            self.session.headers.update({'Connection': 'keep-alive'})
+        
+        # 简单的内存缓存
+        self._cache = {}
     
     def split_text_to_pages(self, user_text: str, target_pages: Optional[int] = None) -> Dict[str, Any]:
         """
@@ -49,22 +80,32 @@ class AIPageSplitter:
             # 构建AI提示
             system_prompt = self._build_system_prompt(target_pages)
             
-            # 调用AI分析
-            response = self.client.chat.completions.create(
-                model=self.config.ai_model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_text}
-                ],
-                temperature=0.3,  # 较低的温度确保结果更稳定
-                max_tokens=self.config.ai_max_tokens
-            )
-            
-            content = response.choices[0].message.content
-            if content:
-                content = content.strip()
+            # 检查是否为Liai API
+            model_info = self.config.get_model_info()
+            if model_info.get('request_format') == 'dify_compatible':
+                # 使用Liai API格式
+                content = self._call_liai_api(system_prompt, user_text)
             else:
-                content = ""
+                # 针对不同API提供商优化请求参数
+                request_timeout = 90 if 'dashscope' in self.base_url.lower() else 60
+                
+                response = self.client.chat.completions.create(
+                    model=self.config.ai_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_text}
+                    ],
+                    temperature=0.3,    # 较低的温度确保结果更稳定
+                    max_tokens=4000,    # 支持25页PPT的大容量响应
+                    stream=False,       # 暂不使用stream避免复杂度
+                    timeout=request_timeout
+                )
+                
+                content = response.choices[0].message.content
+                if content:
+                    content = content.strip()
+                else:
+                    content = ""
             
             # 解析AI返回的结果
             return self._parse_ai_response(content, user_text)
@@ -72,6 +113,72 @@ class AIPageSplitter:
         except Exception as e:
             print(f"AI分页分析失败: {e}")
             return self._create_fallback_split(user_text)
+    
+    def _call_liai_api(self, system_prompt: str, user_text: str) -> str:
+        """调用Liai API"""
+        model_info = self.config.get_model_info()
+        base_url = model_info.get('base_url', '')
+        endpoint = model_info.get('chat_endpoint', '/chat-messages')
+        
+        url = base_url + endpoint
+        
+        # 构建Liai API请求格式
+        combined_query = f"{system_prompt}\n\n用户输入：{user_text}"
+        
+        payload = {
+            "inputs": {},
+            "query": combined_query,
+            "response_mode": "streaming",  # 改为streaming模式提升响应速度
+            "conversation_id": "",
+            "user": "ai-ppt-user",
+            "files": []
+        }
+        
+        headers = {
+            'Authorization': f'Bearer {self.api_key}',
+            'Content-Type': 'application/json',
+            'Connection': 'keep-alive'  # 保持连接
+        }
+        
+        try:
+            # 使用持久化会话复用连接，增加超时处理
+            response = self.session.post(url, headers=headers, json=payload, timeout=120, stream=True)
+            response.raise_for_status()
+            
+            # 处理streaming响应，特别处理阿里云API的keep-alive
+            content = ""
+            for line in response.iter_lines():
+                if line:
+                    try:
+                        line_text = line.decode('utf-8').strip()
+                        # 忽略阿里云的keep-alive注释
+                        if line_text == ': keep-alive' or line_text == '':
+                            continue
+                        if line_text.startswith('data: '):
+                            json_str = line_text[6:]  # 去掉'data: '前缀
+                            if json_str.strip() == '[DONE]':
+                                break
+                            data = json.loads(json_str)
+                            if 'answer' in data:
+                                content += data['answer']
+                            elif 'data' in data and 'answer' in data['data']:
+                                content += data['data']['answer']
+                    except (json.JSONDecodeError, UnicodeDecodeError):
+                        continue
+            
+            # 如果streaming失败，尝试作为普通JSON处理
+            if not content:
+                try:
+                    result = response.json()
+                    content = result.get('answer', '') or result.get('data', {}).get('answer', '')
+                except:
+                    pass
+            
+            return content.strip() if content else ""
+            
+        except Exception as e:
+            print(f"Liai API调用失败: {e}")
+            raise e
     
     def _build_system_prompt(self, target_pages: Optional[int] = None) -> str:
         """构建AI系统提示"""
@@ -121,8 +228,11 @@ class AIPageSplitter:
 
 **页面结构说明：**
 - 结尾页使用固定模板，不需要AI生成，因此总页数 = 生成页数 + 1个固定结尾页
+- **重要限制：总页数不得超过25页**（包括标题页、内容页和结尾页）
 
 {target_instruction}请分析用户文本的结构和内容，智能分割为合适的页面数量。
+
+**严格要求：生成的页面数量必须控制在24页以内，为固定结尾页预留位置，确保总数不超过25页。**
 
 **输出格式要求：**
 请严格按照以下JSON格式返回：
@@ -199,6 +309,10 @@ class AIPageSplitter:
             if self._validate_split_result(result):
                 result['success'] = True
                 result['original_text'] = user_text
+                
+                # 添加固定的结尾页
+                self._add_ending_page(result)
+                
                 return result
             else:
                 print("AI返回结果格式验证失败")
@@ -292,6 +406,11 @@ class AIPageSplitter:
         page_num = 2
         if remaining_paragraphs:
             for i, paragraph in enumerate(remaining_paragraphs):
+                # 限制总页数不超过24页（为结尾页预留空间）
+                if page_num > 24:
+                    print(f"警告：内容过多，已达到24页上限，剩余{len(remaining_paragraphs) - i}段内容将被省略")
+                    break
+                    
                 pages.append({
                     "page_number": page_num,
                     "page_type": "content",
@@ -314,7 +433,7 @@ class AIPageSplitter:
                 "original_text_segment": "无额外内容"
             })
         
-        return {
+        result = {
             "success": True,
             "analysis": {
                 "total_pages": len(pages),
@@ -326,6 +445,45 @@ class AIPageSplitter:
             "original_text": user_text,
             "is_fallback": True
         }
+        
+        # 添加固定的结尾页
+        self._add_ending_page(result)
+        
+        return result
+    
+    def _add_ending_page(self, result: Dict[str, Any]) -> None:
+        """添加固定的结尾页"""
+        import os
+        
+        pages = result.get('pages', [])
+        if not pages:
+            return
+        
+        # 计算结尾页的页码
+        ending_page_number = len(pages) + 1
+        
+        # 添加结尾页信息
+        ending_page = {
+            "page_number": ending_page_number,
+            "page_type": "ending",
+            "title": "谢谢观看",
+            "subtitle": "感谢您的聆听",
+            "content_summary": "固定结尾页模板，表达感谢",
+            "key_points": [
+                "感谢观看",
+                "欢迎交流讨论"
+            ],
+            "original_text_segment": "",
+            "template_path": os.path.join("templates", "ending_slides.pptx"),
+            "is_fixed_template": True,
+            "skip_dify_api": True  # 标记为跳过Dify API调用
+        }
+        
+        pages.append(ending_page)
+        
+        # 更新总页数
+        if 'analysis' in result:
+            result['analysis']['total_pages'] = len(pages)
 
 class PageContentFormatter:
     """页面内容格式化工具"""

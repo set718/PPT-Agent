@@ -1,0 +1,39 @@
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
+# Python 缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 日志文件
+*.log
+app.log
+
+# 临时文件和输出文件
+output/
+temp_output/
+*.pptx
+*.tmp
+
+# IDE配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 测试输出
+test_*.pptx
+merged_*.pptx
+spire_*.pptx
+*_merged_*.pptx
+
+# 用户上传的文件
+uploads/
+temp/

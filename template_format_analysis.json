@@ -1,0 +1,792 @@
+{
+  "file_path": "templates\\ppt_template\\split_presentations_1.pptx",
+  "slide_count": 1,
+  "slide_size": {
+    "width": 12192000,
+    "height": 6858000
+  },
+  "slides": [
+    {
+      "slide_index": 0,
+      "layout_name": "仅标题",
+      "background": {
+        "type": "unknown",
+        "color": null,
+        "fill_type": "BACKGROUND (5)"
+      },
+      "shapes": [
+        {
+          "index": 0,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 12573000,
+            "top": 0,
+            "width": 12700,
+            "height": 12700
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "",
+            "text_length": 0,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "",
+                "alignment": "CENTER (2)",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "None",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 1,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 12573000,
+            "top": 0,
+            "width": 12700,
+            "height": 12700
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "",
+            "text_length": 0,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "",
+                "alignment": "CENTER (2)",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "None",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 2,
+          "type": "EMBEDDED_OLE_OBJECT (7)",
+          "position": {
+            "left": 1588,
+            "top": 1588,
+            "width": 1588,
+            "height": 1588
+          },
+          "has_text": false,
+          "text_info": null,
+          "fill_info": null
+        },
+        {
+          "index": 3,
+          "type": "PLACEHOLDER (14)",
+          "position": {
+            "left": 403200,
+            "top": 258578,
+            "width": 10087200,
+            "height": 339004
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Agenda I",
+            "text_length": 8,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Agenda I",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "None",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 4,
+          "type": "LINE (9)",
+          "position": {
+            "left": 4057685,
+            "top": 2372871,
+            "width": 7751728,
+            "height": 0
+          },
+          "has_text": false,
+          "text_info": null,
+          "fill_info": null
+        },
+        {
+          "index": 5,
+          "type": "LINE (9)",
+          "position": {
+            "left": 4057685,
+            "top": 3329370,
+            "width": 7751728,
+            "height": 0
+          },
+          "has_text": false,
+          "text_info": null,
+          "fill_info": null
+        },
+        {
+          "index": 6,
+          "type": "LINE (9)",
+          "position": {
+            "left": 4057685,
+            "top": 4285869,
+            "width": 7751728,
+            "height": 0
+          },
+          "has_text": false,
+          "text_info": null,
+          "fill_info": null
+        },
+        {
+          "index": 7,
+          "type": "LINE (9)",
+          "position": {
+            "left": 4057685,
+            "top": 5242368,
+            "width": 7751728,
+            "height": 0
+          },
+          "has_text": false,
+          "text_info": null,
+          "fill_info": null
+        },
+        {
+          "index": 8,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 750252,
+            "top": 2513837,
+            "width": 3025427,
+            "height": 674566
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor",
+            "text_length": 17,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor",
+                "alignment": "LEFT (1)",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "SOLID (1)",
+            "color": "Cannot determine",
+            "transparency": null
+          }
+        },
+        {
+          "index": 9,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 750252,
+            "top": 1557338,
+            "width": 3025427,
+            "height": 674566
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor",
+            "text_length": 17,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor",
+                "alignment": "LEFT (1)",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "SOLID (1)",
+            "color": "Cannot determine",
+            "transparency": null
+          }
+        },
+        {
+          "index": 10,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 750252,
+            "top": 3470335,
+            "width": 3025427,
+            "height": 674566
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor",
+            "text_length": 17,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor",
+                "alignment": "LEFT (1)",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "SOLID (1)",
+            "color": "Cannot determine",
+            "transparency": null
+          }
+        },
+        {
+          "index": 11,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 750252,
+            "top": 4426834,
+            "width": 3025427,
+            "height": 674566
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor",
+            "text_length": 17,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor",
+                "alignment": "LEFT (1)",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "SOLID (1)",
+            "color": "Cannot determine",
+            "transparency": null
+          }
+        },
+        {
+          "index": 12,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 750252,
+            "top": 5383334,
+            "width": 3025427,
+            "height": 674566
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor",
+            "text_length": 17,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor",
+                "alignment": "LEFT (1)",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "SOLID (1)",
+            "color": "Cannot determine",
+            "transparency": null
+          }
+        },
+        {
+          "index": 13,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 4057685,
+            "top": 1771512,
+            "width": 7751728,
+            "height": 246221
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit ",
+            "text_length": 56,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor sit amet, consectetur adipiscing...",
+                "alignment": "LEFT (1)",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 14,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 4057685,
+            "top": 2728010,
+            "width": 7751728,
+            "height": 246221
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras fringilla ",
+            "text_length": 72,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor sit amet, consectetur adipiscing...",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 15,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 4057685,
+            "top": 3684509,
+            "width": 7751728,
+            "height": 246221
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras fringilla, felis sit",
+            "text_length": 82,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor sit amet, consectetur adipiscing...",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 16,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 4057685,
+            "top": 4641008,
+            "width": 7751728,
+            "height": 246221
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor sit amet, consectetur",
+            "text_length": 39,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor sit amet, consectetur",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 17,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 4057685,
+            "top": 5597506,
+            "width": 7751728,
+            "height": 246221
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras fringilla, felis sit",
+            "text_length": 82,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Lorem ipsum dolor sit amet, consectetur adipiscing...",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 18,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 879014,
+            "top": 2590726,
+            "width": 778338,
+            "height": 520790
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "02.",
+            "text_length": 3,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "02.",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 19,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 879014,
+            "top": 1634227,
+            "width": 778338,
+            "height": 520790
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "01.",
+            "text_length": 3,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "01.",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 20,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 879014,
+            "top": 3547225,
+            "width": 778338,
+            "height": 520790
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "03.",
+            "text_length": 3,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "03.",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 21,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 879014,
+            "top": 4503723,
+            "width": 778338,
+            "height": 520790
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "04.",
+            "text_length": 3,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "04.",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 22,
+          "type": "AUTO_SHAPE (1)",
+          "position": {
+            "left": 879014,
+            "top": 5460222,
+            "width": 778338,
+            "height": 520790
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "05.",
+            "text_length": 3,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "05.",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "BACKGROUND (5)",
+            "color": null,
+            "transparency": null
+          }
+        },
+        {
+          "index": 23,
+          "type": "LINE (9)",
+          "position": {
+            "left": 440864,
+            "top": 1557339,
+            "width": 0,
+            "height": 2587562
+          },
+          "has_text": false,
+          "text_info": null,
+          "fill_info": null
+        },
+        {
+          "index": 24,
+          "type": "LINE (9)",
+          "position": {
+            "left": 440864,
+            "top": 4426834,
+            "width": 0,
+            "height": 1631066
+          },
+          "has_text": false,
+          "text_info": null,
+          "fill_info": null
+        },
+        {
+          "index": 25,
+          "type": "TEXT_BOX (17)",
+          "position": {
+            "left": 407988,
+            "top": 6215906,
+            "width": 2641749,
+            "height": 153888
+          },
+          "has_text": true,
+          "text_info": {
+            "text_content": "Keywords: agendas, list, lists, table of contents",
+            "text_length": 49,
+            "paragraphs": [
+              {
+                "index": 0,
+                "text": "Keywords: agendas, list, lists, table of contents",
+                "alignment": "None",
+                "level": 0,
+                "font_info": {
+                  "name": null,
+                  "size": null,
+                  "bold": null,
+                  "italic": null,
+                  "color": "Cannot determine"
+                }
+              }
+            ]
+          },
+          "fill_info": {
+            "type": "None",
+            "color": null,
+            "transparency": null
+          }
+        }
+      ],
+      "color_scheme": {
+        "text_colors": [],
+        "fill_colors": [],
+        "accent_colors": []
+      },
+      "font_info": {
+        "most_common_fonts": [],
+        "most_common_colors": [
+          [
+            "Cannot determine",
+            19
+          ]
+        ],
+        "most_common_sizes": []
+      }
+    }
+  ]
+}

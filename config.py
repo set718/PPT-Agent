@@ -25,7 +25,7 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "gpt-4o"
+    ai_model: str = "qwen-max"
     ai_temperature: float = 0.3
     ai_max_tokens: int = 2000
     
@@ -40,14 +40,26 @@ class Config:
             "api_provider": "OpenRouter",
             "api_key_url": "https://openrouter.ai/keys"
         },
-        "deepseek-chat": {
-            "name": "DeepSeek Chat",
-            "description": "DeepSeek Chat模型，成本较低但不支持视觉分析",
+        "qwen-max": {
+            "name": "Qwen Max",
+            "description": "阿里云通义千问Max模型，顶级性能和理解能力",
             "supports_vision": False,
-            "cost": "较低",
-            "base_url": "https://api.deepseek.com/v1",
-            "api_provider": "DeepSeek",
-            "api_key_url": "https://platform.deepseek.com/api_keys"
+            "cost": "中等",
+            "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+            "api_provider": "阿里云",
+            "api_key_url": "https://dashscope.console.aliyun.com/apiKey",
+            "api_key_env": "DASHSCOPE_API_KEY"
+        },
+        "liai-chat": {
+            "name": "Liai Chat",
+            "description": "Liai智能对话模型，支持多模态输入",
+            "supports_vision": True,
+            "cost": "中等",
+            "base_url": "https://liai-app.chj.cloud/v1",
+            "api_provider": "Liai",
+            "api_key_url": "https://liai-app.chj.cloud",
+            "chat_endpoint": "/chat-messages",
+            "request_format": "dify_compatible"
         }
     })
     

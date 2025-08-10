@@ -8,144 +8,201 @@ Dify API客户端模块
 import asyncio
 import aiohttp
 import time
+import threading
+import random
+import os
 from typing import Dict, List, Any, Optional, Tuple
 import json
 from dataclasses import dataclass, field
 from logger import get_logger, log_user_action
 
+# 尝试加载.env文件（如果存在python-dotenv）
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # 如果没有安装python-dotenv，使用系统环境变量
+
 logger = get_logger()
 
 class APIKeyBalancer:
-    """API密钥负载均衡器"""
+    """线程安全的API密钥负载均衡器 - 单例模式"""
     
-    def __init__(self, api_keys: List[str], strategy: str = "round_robin"):
+    _instance = None
+    _lock = threading.Lock()
+    _initialized = False
+    
+    def __new__(cls, *args, **kwargs):
+        """单例模式实现"""
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
+        return cls._instance
+    
+    def __init__(self, api_keys: List[str], strategy: str = "concurrent_random"):
         """
-        初始化负载均衡器
+        初始化负载均衡器（仅初始化一次）
         
         Args:
             api_keys: API密钥列表
-            strategy: 负载均衡策略 (round_robin, random, least_used)
+            strategy: 负载均衡策略 (concurrent_random, least_used, random)
         """
+        if self._initialized:
+            return
+            
         self.api_keys = api_keys
         self.strategy = strategy
-        self.current_index = 0
         self.usage_count = {key: 0 for key in api_keys}
         self.failed_keys = set()
-        self.failure_count = {key: 0 for key in api_keys}  # 记录每个密钥的失败次数
-        self.last_failure_time = {key: 0 for key in api_keys}  # 记录最后失败时间
+        self.failure_count = {key: 0 for key in api_keys}
+        self.last_failure_time = {key: 0 for key in api_keys}
+        self.active_requests = {key: 0 for key in api_keys}  # 跟踪每个密钥的并发请求数
+        self.key_lock = threading.Lock()  # 保护密钥状态的锁
         
-        logger.info(f"初始化API密钥负载均衡器，策略: {strategy}, 密钥数量: {len(api_keys)}")
+        APIKeyBalancer._initialized = True
+        logger.info(f"初始化API密钥负载均衡器（单例），策略: {strategy}, 密钥数量: {len(api_keys)}")
     
     def get_next_key(self) -> str:
-        """获取下一个API密钥"""
-        import time
-        current_time = time.time()
-        
-        # 智能恢复机制：检查失效的密钥是否可以恢复
-        keys_to_recover = []
-        for key in list(self.failed_keys):
-            last_fail_time = self.last_failure_time.get(key, 0)
-            # 如果密钥失效超过60秒，尝试恢复
-            if current_time - last_fail_time > 60:
-                keys_to_recover.append(key)
-        
-        for key in keys_to_recover:
-            self.failed_keys.discard(key)
-            logger.info(f"API密钥自动恢复: {key[:20]}... (失效时间超过60秒)")
-        
-        available_keys = [key for key in self.api_keys if key not in self.failed_keys]
-        
-        if not available_keys:
-            # 如果所有密钥都失败了，强制重置失败列表
-            logger.warning(f"所有{len(self.api_keys)}个API密钥都失效，强制重置失败列表以确保服务可用")
-            self.failed_keys.clear()
-            # 重置失败计数
-            self.failure_count = {key: 0 for key in self.api_keys}
-            available_keys = self.api_keys
-        
-        if self.strategy == "round_robin":
-            key = self._round_robin_select(available_keys)
-        elif self.strategy == "random":
-            key = self._random_select(available_keys)
-        elif self.strategy == "least_used":
-            key = self._least_used_select(available_keys)
-        else:
-            key = available_keys[0]  # 默认选择第一个
-        
-        self.usage_count[key] += 1
-        logger.debug(f"选择API密钥: {key[:20]}..., 使用次数: {self.usage_count[key]}")
-        return key
+        """获取下一个API密钥（线程安全）"""
+        with self.key_lock:
+            current_time = time.time()
+            
+            # 智能恢复机制：检查失效的密钥是否可以恢复
+            keys_to_recover = []
+            for key in list(self.failed_keys):
+                last_fail_time = self.last_failure_time.get(key, 0)
+                # 如果密钥失效超过60秒，尝试恢复
+                if current_time - last_fail_time > 60:
+                    keys_to_recover.append(key)
+            
+            for key in keys_to_recover:
+                self.failed_keys.discard(key)
+                logger.info(f"API密钥自动恢复: {key[:20]}... (失效时间超过60秒)")
+            
+            available_keys = [key for key in self.api_keys if key not in self.failed_keys]
+            
+            if not available_keys:
+                # 如果所有密钥都失败了，强制重置失败列表
+                logger.warning(f"所有{len(self.api_keys)}个API密钥都失效，强制重置失败列表以确保服务可用")
+                self.failed_keys.clear()
+                # 重置失败计数
+                self.failure_count = {key: 0 for key in self.api_keys}
+                available_keys = self.api_keys
+            
+            # 选择策略
+            if self.strategy == "concurrent_random":
+                key = self._concurrent_random_select(available_keys)
+            elif self.strategy == "least_used":
+                key = self._least_used_select(available_keys)
+            elif self.strategy == "random":
+                key = self._random_select(available_keys)
+            else:
+                key = self._concurrent_random_select(available_keys)  # 默认并发随机
+            
+            # 增加使用计数和活跃请求数
+            self.usage_count[key] += 1
+            self.active_requests[key] += 1
+            
+            logger.debug(f"选择API密钥: {key[:20]}..., 使用次数: {self.usage_count[key]}, 并发数: {self.active_requests[key]}")
+            return key
     
-    def _round_robin_select(self, available_keys: List[str]) -> str:
-        """轮询选择"""
+    def _concurrent_random_select(self, available_keys: List[str]) -> str:
+        """并发随机选择策略 - 优化并发场景"""
         if not available_keys:
             return self.api_keys[0]
         
-        key = available_keys[self.current_index % len(available_keys)]
-        self.current_index += 1
-        return key
+        # 根据并发数量和使用次数进行加权选择
+        # 优先选择并发数少且使用次数少的密钥
+        weighted_keys = []
+        for key in available_keys:
+            concurrent_count = self.active_requests.get(key, 0)
+            usage_count = self.usage_count.get(key, 0)
+            # 权重 = 1 / (并发数 + 使用次数 + 1)，越小的并发和使用数权重越高
+            weight = 1.0 / (concurrent_count + usage_count/10 + 1)
+            weighted_keys.extend([key] * max(1, int(weight * 100)))
+        
+        return random.choice(weighted_keys) if weighted_keys else available_keys[0]
     
     def _random_select(self, available_keys: List[str]) -> str:
         """随机选择"""
-        import random
         return random.choice(available_keys) if available_keys else self.api_keys[0]
     
     def _least_used_select(self, available_keys: List[str]) -> str:
-        """选择使用次数最少的密钥"""
+        """选择并发数最少的密钥"""
         if not available_keys:
             return self.api_keys[0]
         
-        return min(available_keys, key=lambda k: self.usage_count.get(k, 0))
+        # 优先考虑并发数，再考虑使用次数
+        return min(available_keys, key=lambda k: (self.active_requests.get(k, 0), self.usage_count.get(k, 0)))
+    
+    def release_key(self, api_key: str):
+        """释放API密钥的并发计数"""
+        with self.key_lock:
+            if api_key in self.active_requests:
+                self.active_requests[api_key] = max(0, self.active_requests[api_key] - 1)
+                logger.debug(f"释放API密钥: {api_key[:20]}..., 当前并发数: {self.active_requests[api_key]}")
     
     def mark_key_failed(self, api_key: str):
-        """标记密钥失败"""
-        import time
-        self.failed_keys.add(api_key)
-        self.failure_count[api_key] = self.failure_count.get(api_key, 0) + 1
-        self.last_failure_time[api_key] = time.time()
-        
-        failure_count = self.failure_count[api_key]
-        logger.warning(f"标记API密钥失败: {api_key[:20]}... (第{failure_count}次失败)")
+        """标记密钥失败（线程安全）"""
+        with self.key_lock:
+            current_time = time.time()
+            
+            self.failed_keys.add(api_key)
+            self.failure_count[api_key] = self.failure_count.get(api_key, 0) + 1
+            self.last_failure_time[api_key] = current_time
+            # 释放失败密钥的并发计数
+            self.active_requests[api_key] = 0
+            
+            logger.warning(f"API密钥被标记为失败: {api_key[:20]}..., 失败次数: {self.failure_count[api_key]}")
     
     def mark_key_success(self, api_key: str):
-        """标记密钥成功（从失败列表中移除）"""
-        if api_key in self.failed_keys:
-            self.failed_keys.remove(api_key)
-            # 重置失败计数和时间
-            self.failure_count[api_key] = 0
-            self.last_failure_time[api_key] = 0
-            logger.info(f"API密钥恢复正常: {api_key[:20]}... (失败计数已重置)")
+        """标记密钥成功（线程安全）"""
+        with self.key_lock:
+            # 成功时重置失败计数
+            if api_key in self.failure_count:
+                self.failure_count[api_key] = 0
+            
+            # 如果该密钥之前被标记为失败，现在恢复
+            if api_key in self.failed_keys:
+                self.failed_keys.remove(api_key)
+                logger.info(f"API密钥恢复正常: {api_key[:20]}...")
     
-    def get_usage_stats(self) -> Dict[str, Any]:
-        """获取使用统计"""
-        return {
-            "total_keys": len(self.api_keys),
-            "available_keys": len(self.api_keys) - len(self.failed_keys),
-            "failed_keys": len(self.failed_keys),
-            "usage_count": dict(self.usage_count),
-            "strategy": self.strategy
-        }
+    def get_statistics(self) -> Dict[str, Any]:
+        """获取负载均衡统计信息"""
+        with self.key_lock:
+            total_keys = len(self.api_keys)
+            available_keys = len([key for key in self.api_keys if key not in self.failed_keys])
+            
+            return {
+                "total_keys": total_keys,
+                "available_keys": available_keys,
+                "failed_keys": len(self.failed_keys),
+                "strategy": self.strategy,
+                "usage_count": dict(self.usage_count),
+                "failure_count": dict(self.failure_count),
+                "active_requests": dict(self.active_requests)
+            }
 
 @dataclass
 class DifyAPIConfig:
     """Dify API配置类 - 支持多API密钥负载均衡"""
     base_url: str = "https://api.dify.ai/v1"
     api_keys: List[str] = field(default_factory=lambda: [
-        "app-7HOcCxB7uosj23f1xgjFClkv",
-        "app-vxEWYWTaakWITl041b8UHBCN", 
-        "app-WM17uKVOQHpYE4sNyxRH0dtG",
-        "app-dmKCw2gATM5mbC2VXS0Htiyu",
-        "app-wC0jXMfM1qwliIaPtrq9evuE",
-        "app-0QHbweS3gsr9q3o5R08Q8bYE",
-        "app-mvjmGCfgEV86qjsMihwaGB2T",
-        "app-pzeGjsmkvH9oQ9vNK7DX9Z0a"
+        key for key in [
+            os.getenv("DIFY_API_KEY_1"),
+            os.getenv("DIFY_API_KEY_2"),
+            os.getenv("DIFY_API_KEY_3"),
+            os.getenv("DIFY_API_KEY_4"),
+            os.getenv("DIFY_API_KEY_5")
+        ] if key
     ])
     endpoint: str = "/chat-messages"
-    timeout: int = 180  # 增加到3分钟超时
-    max_retries: int = 8  # 增加到8次重试
-    retry_delay: float = 3.0  # 增加重试间隔
-    max_concurrent: int = 8   # 降低并发数，减少服务器压力，提高成功率
-    load_balance_strategy: str = "round_robin"  # round_robin, random, least_used
+    timeout: int = 180  # 3分钟超时以应对阿里云通义千问API排队
+    max_retries: int = 5  # 优化重试次数避免过度重试
+    retry_delay: float = 2.0  # 优化重试间隔
+    max_concurrent: int = 5   # 最大并发数，支持5个API密钥同时使用
+    load_balance_strategy: str = "concurrent_random"  # concurrent_random, least_used, random
     
     @property
     def api_key(self) -> str:
@@ -184,8 +241,8 @@ class DifyAPIClient:
             connector=connector,
             timeout=aiohttp.ClientTimeout(
                 total=self.config.timeout,
-                connect=30,  # 增加连接超时到30秒
-                sock_read=120  # 增加读取超时到2分钟
+                connect=45,  # 增加连接超时到45秒应对高负载
+                sock_read=240  # 增加读取超时到4分钟处理阿里云通义千问API排队
             ),
             headers={
                 'Content-Type': 'application/json',
@@ -248,8 +305,9 @@ class DifyAPIClient:
                         
                         logger.info(f"第{page_index + 1}页API请求成功 (使用密钥: {current_api_key[:20]}...)")
                         
-                        # 标记该API密钥成功
+                        # 标记该API密钥成功并释放并发计数
                         self.key_balancer.mark_key_success(current_api_key)
+                        self.key_balancer.release_key(current_api_key)
                         
                         # 根据不同的响应格式提取文本内容
                         response_text = ""
@@ -286,6 +344,9 @@ class DifyAPIClient:
                         if response.status in [401, 403]:
                             self.key_balancer.mark_key_failed(current_api_key)
                             logger.warning(f"API密钥认证失败，已标记为失败: {current_api_key[:20]}...")
+                        else:
+                            # 对于其他错误，只释放并发计数，不标记失败
+                            self.key_balancer.release_key(current_api_key)
                         
                         if attempt < self.config.max_retries - 1:
                             delay = self.config.retry_delay * (2 ** attempt)  # 指数退避
@@ -293,6 +354,8 @@ class DifyAPIClient:
                             await asyncio.sleep(delay)
                             continue
                         else:
+                            # 最终失败时释放当前密钥
+                            self.key_balancer.release_key(current_api_key)
                             return {
                                 "success": False,
                                 "page_index": page_index,
@@ -307,10 +370,13 @@ class DifyAPIClient:
             except asyncio.TimeoutError as e:
                 logger.warning(f"第{page_index + 1}页API请求超时 (尝试 {attempt + 1}/{self.config.max_retries}，使用密钥: {current_api_key[:20]}...)")
                 
-                # 超时时也标记当前API密钥可能有问题
-                if attempt >= 2:  # 超时2次后标记密钥为临时失效
+                # 针对阿里云通义千问API特性，超时不立即标记密钥失效
+                if attempt >= 3:  # 超时3次后标记密钥为临时失效，给阿里云API更多容忍度
                     self.key_balancer.mark_key_failed(current_api_key)
                     logger.info(f"API密钥因多次超时被临时标记为失效: {current_api_key[:20]}...")
+                else:
+                    # 首次超时只释放并发计数
+                    self.key_balancer.release_key(current_api_key)
                 
                 if attempt < self.config.max_retries - 1:
                     # 增强的指数退避策略
@@ -325,7 +391,8 @@ class DifyAPIClient:
                     await asyncio.sleep(delay)
                     continue
                 else:
-                    # 所有重试都失败了，但不应该发生这种情况
+                    # 所有重试都失败了，释放当前密钥
+                    self.key_balancer.release_key(current_api_key)
                     logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然超时，这不应该发生！")
                     return {
                         "success": False,
@@ -344,6 +411,9 @@ class DifyAPIClient:
                 if attempt >= 1:  # 连接错误1次后就切换密钥
                     self.key_balancer.mark_key_failed(current_api_key)
                     logger.info(f"API密钥因连接错误被标记为失效: {current_api_key[:20]}...")
+                else:
+                    # 首次连接错误只释放并发计数
+                    self.key_balancer.release_key(current_api_key)
                 
                 if attempt < self.config.max_retries - 1:
                     delay = self.config.retry_delay * (2 ** attempt)
@@ -352,6 +422,8 @@ class DifyAPIClient:
                     await asyncio.sleep(delay)
                     continue
                 else:
+                    # 最终连接失败，释放当前密钥
+                    self.key_balancer.release_key(current_api_key)
                     logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然连接失败！")
                     return {
                         "success": False,
@@ -377,6 +449,8 @@ class DifyAPIClient:
                     await asyncio.sleep(delay)
                     continue
                 else:
+                    # 最终异常失败，释放当前密钥
+                    self.key_balancer.release_key(current_api_key)
                     logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然异常！")
                     return {
                         "success": False,

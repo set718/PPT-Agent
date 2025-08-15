@@ -105,9 +105,19 @@ class Win32PPTMerger:
                 try:
                     abs_path = os.path.abspath(template_path)
                     
-                    # 使用InsertFromFile，但指定保持源格式的参数
-                    slide_index = self.merged_presentation.Slides.Count
-                    self.merged_presentation.Slides.InsertFromFile(abs_path, slide_index, 1, 1)
+                    # 打开源模板以保持完整格式
+                    temp_ppt = self.ppt_app.Presentations.Open(abs_path, ReadOnly=True, WithWindow=False)
+                    
+                    if temp_ppt.Slides.Count > 0:
+                        # 使用Duplicate方法完全复制幻灯片，包括所有格式
+                        source_slide = temp_ppt.Slides(1)
+                        duplicated_slide = source_slide.Duplicate()
+                        
+                        # 将复制的幻灯片移动到目标演示文稿
+                        duplicated_slide.MoveTo(self.merged_presentation.Slides.Count + 1)
+                    
+                    # 关闭临时演示文稿
+                    temp_ppt.Close()
                     
                     result["processed_pages"] += 1
                     logger.info(f"文件级别合并页面: {os.path.basename(template_path)}")
@@ -193,18 +203,31 @@ class Win32PPTMerger:
                     temp_ppt = self.ppt_app.Presentations.Open(abs_path, ReadOnly=True, WithWindow=False)
                     
                     if temp_ppt.Slides.Count > 0:
-                        # 使用Range方法选择第一张slide
-                        slide_range = temp_ppt.Slides.Range([1])
+                        # 使用Duplicate方法完全复制，保持所有格式属性
+                        source_slide = temp_ppt.Slides(1)
                         
-                        # 复制选中的slide
-                        slide_range.Copy()
+                        # 先选择源幻灯片
+                        source_slide.Select()
                         
-                        # 在目标位置粘贴，保持源格式
+                        # 复制整个幻灯片，包括母版信息
+                        source_slide.Copy()
+                        
+                        # 粘贴到目标演示文稿，使用源格式
                         slide_index = self.merged_presentation.Slides.Count + 1
-                        self.merged_presentation.Slides.Paste(slide_index)
+                        pasted_slides = self.merged_presentation.Slides.Paste(slide_index)
+                        
+                        # 确保新粘贴的幻灯片使用源演示文稿的设计模板
+                        if pasted_slides.Count > 0:
+                            new_slide = pasted_slides(1)
+                            # 应用源幻灯片的设计模板
+                            try:
+                                new_slide.Design = source_slide.Design
+                                new_slide.ColorScheme = source_slide.ColorScheme
+                            except:
+                                pass  # 某些版本可能不支持直接设置
                         
                         result["processed_pages"] += 1
-                        logger.info(f"Range.Copy合并: {os.path.basename(template_path)}")
+                        logger.info(f"增强格式保留合并: {os.path.basename(template_path)}")
                     else:
                         result["skipped_pages"] += 1
                         result["errors"].append(f"第{i+1}页模板文件为空")
@@ -243,9 +266,109 @@ class Win32PPTMerger:
         
         return result
 
+    def merge_template_pages_to_ppt_perfect_format(self, page_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        完美格式保留合并 - 使用ImportSlides保持原始设计
+        """
+        log_user_action("PPT完美格式保留合并", f"开始合并{len(page_results)}个模板文件")
+        
+        result = {
+            "success": False,
+            "total_pages": 0,
+            "processed_pages": 0,
+            "skipped_pages": 0,
+            "errors": [],
+            "presentation_bytes": None,
+            "output_path": None,
+            "error": None
+        }
+        
+        if len(page_results) == 0:
+            result["error"] = "没有页面需要合并"
+            return result
+        
+        try:
+            # 关闭默认演示文稿
+            if self.merged_presentation:
+                self.merged_presentation.Close()
+                self.merged_presentation = None
+            
+            # 创建新的空白演示文稿，不使用任何母版
+            self.merged_presentation = self.ppt_app.Presentations.Add()
+            
+            # 删除默认空白页
+            if self.merged_presentation.Slides.Count > 0:
+                self.merged_presentation.Slides(1).Delete()
+            
+            # 逐个导入每个模板的第一页，保持完整原始格式
+            for i, page_result in enumerate(page_results):
+                template_path = page_result.get('template_path')
+                
+                if not template_path or not os.path.exists(template_path):
+                    result["errors"].append(f"第{i+1}页模板文件不存在")
+                    result["skipped_pages"] += 1
+                    continue
+                
+                try:
+                    abs_path = os.path.abspath(template_path)
+                    
+                    # 打开源模板文件
+                    temp_ppt = self.ppt_app.Presentations.Open(abs_path, ReadOnly=True, WithWindow=False)
+                    
+                    if temp_ppt.Slides.Count > 0:
+                        # 获取源幻灯片
+                        source_slide = temp_ppt.Slides(1)
+                        
+                        # 复制整个幻灯片
+                        source_slide.Copy()
+                        
+                        # 粘贴到目标演示文稿
+                        self.merged_presentation.Slides.Paste(self.merged_presentation.Slides.Count + 1)
+                        
+                        result["processed_pages"] += 1
+                        logger.info(f"完美格式保留合并: {os.path.basename(template_path)}")
+                    
+                    # 关闭临时演示文稿
+                    temp_ppt.Close()
+                    
+                except Exception as e:
+                    error_msg = f"第{i+1}页完美格式合并失败: {str(e)}"
+                    result["errors"].append(error_msg)
+                    result["skipped_pages"] += 1
+                    logger.error(error_msg)
+            
+            # 保存合并结果
+            output_path = self._save_presentation()
+            if output_path:
+                result["output_path"] = output_path
+                result["success"] = True
+                result["total_pages"] = self.merged_presentation.Slides.Count
+                
+                # 读取文件字节数据
+                try:
+                    with open(output_path, 'rb') as f:
+                        result["presentation_bytes"] = f.read()
+                    logger.info(f"成功读取PPT字节数据，大小: {len(result['presentation_bytes'])} 字节")
+                except Exception as read_e:
+                    error_msg = f"读取PPT字节数据失败: {str(read_e)}"
+                    logger.error(error_msg)
+                    result["error"] = error_msg
+                    result["success"] = False
+                
+                log_user_action("PPT完美格式保留合并完成", 
+                               f"成功: {result['processed_pages']}页, 跳过: {result['skipped_pages']}页")
+            else:
+                result["error"] = "PPT文件保存失败"
+        
+        except Exception as e:
+            result["error"] = f"完美格式保留合并异常: {str(e)}"
+            logger.error(f"完美格式保留合并异常: {str(e)}")
+        
+        return result
+
     def merge_template_pages_to_ppt(self, page_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        将模板页面原样整合成完整的PPT（使用AppendSlide风格策略）
+        将模板页面原样整合成完整的PPT（使用完美格式保留策略）
         
         Args:
             page_results: 页面处理结果列表，每个元素包含模板路径信息
@@ -253,8 +376,8 @@ class Win32PPTMerger:
         Returns:
             Dict: 整合结果
         """
-        # 使用AppendSlide风格合并，更好地保留格式
-        return self.merge_template_pages_to_ppt_append_style(page_results)
+        # 优先使用完美格式保留合并
+        return self.merge_template_pages_to_ppt_perfect_format(page_results)
     
     def _copy_template_page_win32(self, page_result: Dict[str, Any], page_number: int) -> bool:
         """

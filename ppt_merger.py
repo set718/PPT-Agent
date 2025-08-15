@@ -32,8 +32,8 @@ def merge_dify_templates_to_ppt_enhanced(page_results: List[Dict[str, Any]]) -> 
     增强版PPT合并函数：使用最佳格式保留方法
     
     优先级策略：
-    1. Spire.Presentation合并器 (跨平台，保持各页独特格式)
-    2. Win32COM合并器 (Windows系统，保持各页独特格式)
+    1. Win32COM合并器 (Windows系统，保持各页独特格式)
+    2. Spire.Presentation合并器 (跨平台，保持各页独特格式)
     3. 格式基准合并器 (以split_presentations_1.pptx为设计基准) - 统一格式风格
     
     Args:
@@ -44,20 +44,7 @@ def merge_dify_templates_to_ppt_enhanced(page_results: List[Dict[str, Any]]) -> 
     """
     log_user_action("增强版PPT合并", f"尝试使用最佳格式保留方法合并{len(page_results)}个模板")
 
-    # 1. 尝试Spire合并器（保持各页独特格式）
-    if SPIRE_AVAILABLE:
-        logger.info("使用Spire.Presentation合并器（保持各页独特格式）")
-        try:
-            result = merge_dify_templates_to_ppt_spire(page_results)
-            if result.get("success"):
-                logger.info("Spire合并成功")
-                return result
-            else:
-                logger.warning(f"Spire合并失败: {result.get('error')}")
-        except Exception as e:
-            logger.warning(f"Spire合并异常: {str(e)}")
-
-    # 2. 回退到Win32COM合并器
+    # 1. 尝试Win32COM合并器（保持各页独特格式）
     if WIN32_AVAILABLE and sys.platform.startswith('win'):
         logger.info("使用Win32COM合并器（保持各页独特格式）")
         try:
@@ -69,6 +56,19 @@ def merge_dify_templates_to_ppt_enhanced(page_results: List[Dict[str, Any]]) -> 
                 logger.warning(f"Win32COM合并失败: {result.get('error')}")
         except Exception as e:
             logger.warning(f"Win32COM合并异常: {str(e)}")
+
+    # 2. 回退到Spire合并器
+    if SPIRE_AVAILABLE:
+        logger.info("使用Spire.Presentation合并器（保持各页独特格式）")
+        try:
+            result = merge_dify_templates_to_ppt_spire(page_results)
+            if result.get("success"):
+                logger.info("Spire合并成功")
+                return result
+            else:
+                logger.warning(f"Spire合并失败: {result.get('error')}")
+        except Exception as e:
+            logger.warning(f"Spire合并异常: {str(e)}")
 
     # 3. 最后回退到格式基准合并器（统一格式风格）
     logger.info("使用格式基准合并器（统一为split_presentations_1格式风格）")

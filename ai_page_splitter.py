@@ -19,16 +19,32 @@ class AIPageSplitter:
     def __init__(self, api_key: Optional[str] = None):
         """初始化AI分页处理器"""
         config = get_config()
-        self.api_key = api_key if api_key is not None else (config.openai_api_key or "")
-        if not self.api_key:
-            raise ValueError("请设置API密钥")
         
         # 根据当前选择的模型获取对应的配置
         model_info = config.get_model_info()
+        
+        # 自动获取对应的API密钥
+        if api_key is None:
+            api_key_env = model_info.get('api_key_env')
+            if api_key_env:
+                # 从环境变量获取对应的API密钥
+                import os
+                self.api_key = os.getenv(api_key_env) or config.openai_api_key or ""
+            else:
+                self.api_key = config.openai_api_key or ""
+        else:
+            self.api_key = api_key
+            
+        if not self.api_key:
+            raise ValueError("请设置API密钥")
+        
         self.base_url = model_info.get('base_url', config.openai_base_url)
         
-        # 针对阿里云通义千问API优化超时设置
-        timeout = 60.0 if 'dashscope' in self.base_url.lower() else 30.0
+        # 针对不同API提供商优化超时设置
+        if 'groq.com' in self.base_url.lower():
+            timeout = 45.0
+        else:
+            timeout = 30.0
         
         self.client = OpenAI(
             api_key=self.api_key,
@@ -37,16 +53,16 @@ class AIPageSplitter:
         )
         self.config = config
         
-        # 创建持久化session用于HTTP连接复用，针对阿里云通义千问API优化
+        # 创建持久化session用于HTTP连接复用
         self.session = requests.Session()
-        # 为阿里云通义千问API优化适配器配置
-        if 'dashscope' in self.base_url.lower():
+        # 针对API提供商优化适配器配置
+        if 'groq.com' in self.base_url.lower():
             from requests.adapters import HTTPAdapter
             from urllib3.util.retry import Retry
             
             retry_strategy = Retry(
                 total=3,
-                backoff_factor=2,
+                backoff_factor=1,
                 status_forcelist=[429, 500, 502, 503, 504],
                 allowed_methods=["POST"]
             )
@@ -87,25 +103,54 @@ class AIPageSplitter:
                 content = self._call_liai_api(system_prompt, user_text)
             else:
                 # 针对不同API提供商优化请求参数
-                request_timeout = 90 if 'dashscope' in self.base_url.lower() else 60
+                request_timeout = 60
                 
-                response = self.client.chat.completions.create(
-                    model=self.config.ai_model,
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_text}
-                    ],
-                    temperature=0.3,    # 较低的温度确保结果更稳定
-                    max_tokens=4000,    # 支持25页PPT的大容量响应
-                    stream=False,       # 暂不使用stream避免复杂度
-                    timeout=request_timeout
-                )
+                # 获取实际使用的模型名称
+                actual_model = model_info.get('actual_model', self.config.ai_model)
                 
-                content = response.choices[0].message.content
-                if content:
-                    content = content.strip()
-                else:
+                # 检查是否支持流式输出（Groq Kimi K2）
+                use_streaming = 'groq.com' in self.base_url.lower()
+                
+                if use_streaming:
+                    # 使用流式输出
+                    stream_options = {}
+                    
+                    response = self.client.chat.completions.create(
+                        model=actual_model,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_text}
+                        ],
+                        temperature=0.3,
+                        max_tokens=4000,
+                        stream=True,
+                        stream_options=stream_options,
+                        timeout=request_timeout
+                    )
+                    
+                    # 收集流式响应内容
                     content = ""
+                    for chunk in response:
+                        if chunk.choices and chunk.choices[0].delta.content:
+                            content += chunk.choices[0].delta.content
+                    
+                    content = content.strip() if content else ""
+                else:
+                    # 使用传统非流式调用
+                    response = self.client.chat.completions.create(
+                        model=actual_model,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_text}
+                        ],
+                        temperature=0.3,
+                        max_tokens=4000,
+                        stream=False,
+                        timeout=request_timeout
+                    )
+                    
+                    content = response.choices[0].message.content
+                    content = content.strip() if content else ""
             
             # 解析AI返回的结果
             return self._parse_ai_response(content, user_text)

@@ -20,36 +20,14 @@ from utils import AIProcessor, PPTProcessor, FileManager, PPTAnalyzer
 from logger import get_logger, log_user_action, log_file_operation, LogContext
 
 # 依赖检查和安装函数
-def check_and_install_dependencies():
-    """检查并安装必要的依赖包"""
-    required_packages = [
-        'streamlit',
-        'python-pptx',
-        'openai',
-        'aiohttp',
-        'asyncio'
-    ]
-    
-    missing_packages = []
-    
-    for package in required_packages:
-        try:
-            __import__(package.replace('-', '_'))
-        except ImportError:
-            missing_packages.append(package)
-    
-    if missing_packages:
-        print("🔧 检测到缺失的依赖包，正在安装...")
-        for package in missing_packages:
-            try:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-                print(f"✅ 成功安装 {package}")
-            except subprocess.CalledProcessError:
-                print(f"❌ 安装 {package} 失败")
-                return False
-        print("✅ 所有依赖包安装完成")
-    
-    return True
+def check_dependencies_light():
+    """轻量级依赖检查（不安装）"""
+    try:
+        import streamlit
+        import pptx
+        return True
+    except ImportError:
+        return False
 
 def check_system_requirements():
     """检查系统要求"""
@@ -99,20 +77,17 @@ def check_system_requirements():
     return True
 
 def initialize_system():
-    """初始化系统"""
-    print("🚀 正在初始化AI智能分页与Dify-模板桥接系统...")
-    
-    # 检查依赖
-    if not check_and_install_dependencies():
-        print("❌ 依赖安装失败，请手动安装必要的包")
+    """轻量级系统初始化"""
+    # 只做基础检查，不执行耗时操作
+    if not check_dependencies_light():
         return False
     
-    # 检查系统要求
-    if not check_system_requirements():
-        print("❌ 系统要求检查失败")
-        return False
+    # 检查基础文件存在
+    required_files = ['config.py', 'utils.py', 'logger.py']
+    for file in required_files:
+        if not os.path.exists(file):
+            return False
     
-    print("✅ 系统初始化完成")
     return True
 
 def show_results_section(pages, page_results):
@@ -267,18 +242,27 @@ def show_results_section(pages, page_results):
             'page_results': page_results
         })
 
-# 在导入其他模块之前先进行系统初始化
-if __name__ == "__main__":
-    # 只在直接运行时进行初始化检查
-    if not initialize_system():
-        print("❌ 系统初始化失败，请检查错误信息")
-        sys.exit(1)
-    else:
-        print("🎯 系统就绪，启动用户界面...")
-
-# 获取配置
+# 获取配置 - 移除阻塞性初始化
 config = get_config()
 logger = get_logger()
+
+# 云环境检测
+def is_cloud_environment():
+    """检测是否在云环境中运行"""
+    return (os.getenv('STREAMLIT_CLOUD') or 
+            '/home/adminuser/venv' in str(sys.executable) or
+            '/mount/src/' in os.getcwd())
+
+# 延迟初始化函数
+@st.cache_resource
+def lazy_initialize():
+    """延迟初始化系统资源"""
+    if is_cloud_environment():
+        # 云环境只做基础检查
+        return True
+    else:
+        # 本地环境执行完整初始化
+        return initialize_system()
 
 # 页面配置
 st.set_page_config(
@@ -587,6 +571,11 @@ def display_processing_summary(optimization_results, cleanup_results, enable_vis
         st.info("💡 提示：启用AI视觉优化可获得更详细的美观度分析和自动布局优化")
 
 def main():
+    # 延迟初始化系统
+    if not lazy_initialize():
+        st.error("❌ 系统初始化失败，请刷新页面重试")
+        return
+    
     # 页面标题
     st.markdown('<div class="main-header">🎨 AI PPT助手</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">智能将您的文本内容转换为精美的PPT演示文稿</div>', unsafe_allow_html=True)

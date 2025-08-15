@@ -25,7 +25,7 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "qwen-max"
+    ai_model: str = "kimi-k2"
     ai_temperature: float = 0.3
     ai_max_tokens: int = 2000
     
@@ -40,16 +40,6 @@ class Config:
             "api_provider": "OpenRouter",
             "api_key_url": "https://openrouter.ai/keys"
         },
-        "qwen-max": {
-            "name": "Qwen Max",
-            "description": "阿里云通义千问Max模型，顶级性能和理解能力",
-            "supports_vision": False,
-            "cost": "中等",
-            "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-            "api_provider": "阿里云",
-            "api_key_url": "https://dashscope.console.aliyun.com/apiKey",
-            "api_key_env": "DASHSCOPE_API_KEY"
-        },
         "liai-chat": {
             "name": "Liai Chat",
             "description": "Liai智能对话模型，支持多模态输入",
@@ -60,6 +50,17 @@ class Config:
             "api_key_url": "https://liai-app.chj.cloud",
             "chat_endpoint": "/chat-messages",
             "request_format": "dify_compatible"
+        },
+        "kimi-k2": {
+            "name": "Kimi K2",
+            "description": "Moonshot AI最新模型，支持长上下文和流式输出",
+            "supports_vision": False,
+            "cost": "中等",
+            "base_url": "https://api.groq.com/openai/v1",
+            "api_provider": "Groq",
+            "api_key_url": "https://console.groq.com/keys",
+            "api_key_env": "GROQ_API_KEY",
+            "actual_model": "moonshotai/kimi-k2-instruct"
         }
     })
     

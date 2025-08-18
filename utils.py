@@ -142,6 +142,7 @@ class AIProcessor:
         system_prompt = self._build_system_prompt(ppt_description)
         
         try:
+            # 使用流式输出
             response = self.client.chat.completions.create(
                 model=self.config.ai_model,
                 messages=[
@@ -149,14 +150,17 @@ class AIProcessor:
                     {"role": "user", "content": user_text}
                 ],
                 temperature=self.config.ai_temperature,
-                max_tokens=self.config.ai_max_tokens
+                max_tokens=self.config.ai_max_tokens,
+                stream=True
             )
             
-            content = response.choices[0].message.content
-            if content:
-                content = content.strip()
-            else:
-                content = ""
+            # 收集流式响应内容
+            content = ""
+            for chunk in response:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    content += chunk.choices[0].delta.content
+            
+            content = content.strip() if content else ""
             
             # 提取JSON内容
             return self._extract_json_from_response(content, user_text)

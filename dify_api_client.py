@@ -1,192 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Dify API客户端模块
-用于在文本分页后调用Dify API，对每页内容进行处理
+Dify API基础配置模块（简化版）
+仅保留基础配置，移除内容处理功能，专注于模板推荐
 """
 
-import asyncio
-import aiohttp
+import os
 import time
 import threading
-import random
-import os
-from typing import Dict, List, Any, Optional, Tuple
-import json
+import asyncio
 from dataclasses import dataclass, field
-from logger import get_logger, log_user_action
-
-# 尝试加载.env文件（如果存在python-dotenv）
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass  # 如果没有安装python-dotenv，使用系统环境变量
+from typing import List, Dict, Optional, Tuple, Any
+from collections import defaultdict
+from logger import get_logger
 
 logger = get_logger()
 
-class APIKeyBalancer:
-    """线程安全的API密钥负载均衡器 - 单例模式"""
-    
-    _instance = None
-    _lock = threading.Lock()
-    _initialized = False
-    
-    def __new__(cls, *args, **kwargs):
-        """单例模式实现"""
-        if cls._instance is None:
-            with cls._lock:
-                if cls._instance is None:
-                    cls._instance = super().__new__(cls)
-        return cls._instance
-    
-    def __init__(self, api_keys: List[str], strategy: str = "concurrent_random"):
-        """
-        初始化负载均衡器（仅初始化一次）
-        
-        Args:
-            api_keys: API密钥列表
-            strategy: 负载均衡策略 (concurrent_random, least_used, random)
-        """
-        if self._initialized:
-            return
-            
-        self.api_keys = api_keys
-        self.strategy = strategy
-        self.usage_count = {key: 0 for key in api_keys}
-        self.failed_keys = set()
-        self.failure_count = {key: 0 for key in api_keys}
-        self.last_failure_time = {key: 0 for key in api_keys}
-        self.active_requests = {key: 0 for key in api_keys}  # 跟踪每个密钥的并发请求数
-        self.key_lock = threading.Lock()  # 保护密钥状态的锁
-        
-        APIKeyBalancer._initialized = True
-        logger.info(f"初始化API密钥负载均衡器（单例），策略: {strategy}, 密钥数量: {len(api_keys)}")
-    
-    def get_next_key(self) -> str:
-        """获取下一个API密钥（线程安全）"""
-        with self.key_lock:
-            current_time = time.time()
-            
-            # 智能恢复机制：检查失效的密钥是否可以恢复
-            keys_to_recover = []
-            for key in list(self.failed_keys):
-                last_fail_time = self.last_failure_time.get(key, 0)
-                # 如果密钥失效超过60秒，尝试恢复
-                if current_time - last_fail_time > 60:
-                    keys_to_recover.append(key)
-            
-            for key in keys_to_recover:
-                self.failed_keys.discard(key)
-                logger.info(f"API密钥自动恢复: {key[:20]}... (失效时间超过60秒)")
-            
-            available_keys = [key for key in self.api_keys if key not in self.failed_keys]
-            
-            if not available_keys:
-                # 如果所有密钥都失败了，强制重置失败列表
-                logger.warning(f"所有{len(self.api_keys)}个API密钥都失效，强制重置失败列表以确保服务可用")
-                self.failed_keys.clear()
-                # 重置失败计数
-                self.failure_count = {key: 0 for key in self.api_keys}
-                available_keys = self.api_keys
-            
-            # 选择策略
-            if self.strategy == "concurrent_random":
-                key = self._concurrent_random_select(available_keys)
-            elif self.strategy == "least_used":
-                key = self._least_used_select(available_keys)
-            elif self.strategy == "random":
-                key = self._random_select(available_keys)
-            else:
-                key = self._concurrent_random_select(available_keys)  # 默认并发随机
-            
-            # 增加使用计数和活跃请求数
-            self.usage_count[key] += 1
-            self.active_requests[key] += 1
-            
-            logger.debug(f"选择API密钥: {key[:20]}..., 使用次数: {self.usage_count[key]}, 并发数: {self.active_requests[key]}")
-            return key
-    
-    def _concurrent_random_select(self, available_keys: List[str]) -> str:
-        """并发随机选择策略 - 优化并发场景"""
-        if not available_keys:
-            return self.api_keys[0]
-        
-        # 根据并发数量和使用次数进行加权选择
-        # 优先选择并发数少且使用次数少的密钥
-        weighted_keys = []
-        for key in available_keys:
-            concurrent_count = self.active_requests.get(key, 0)
-            usage_count = self.usage_count.get(key, 0)
-            # 权重 = 1 / (并发数 + 使用次数 + 1)，越小的并发和使用数权重越高
-            weight = 1.0 / (concurrent_count + usage_count/10 + 1)
-            weighted_keys.extend([key] * max(1, int(weight * 100)))
-        
-        return random.choice(weighted_keys) if weighted_keys else available_keys[0]
-    
-    def _random_select(self, available_keys: List[str]) -> str:
-        """随机选择"""
-        return random.choice(available_keys) if available_keys else self.api_keys[0]
-    
-    def _least_used_select(self, available_keys: List[str]) -> str:
-        """选择并发数最少的密钥"""
-        if not available_keys:
-            return self.api_keys[0]
-        
-        # 优先考虑并发数，再考虑使用次数
-        return min(available_keys, key=lambda k: (self.active_requests.get(k, 0), self.usage_count.get(k, 0)))
-    
-    def release_key(self, api_key: str):
-        """释放API密钥的并发计数"""
-        with self.key_lock:
-            if api_key in self.active_requests:
-                self.active_requests[api_key] = max(0, self.active_requests[api_key] - 1)
-                logger.debug(f"释放API密钥: {api_key[:20]}..., 当前并发数: {self.active_requests[api_key]}")
-    
-    def mark_key_failed(self, api_key: str):
-        """标记密钥失败（线程安全）"""
-        with self.key_lock:
-            current_time = time.time()
-            
-            self.failed_keys.add(api_key)
-            self.failure_count[api_key] = self.failure_count.get(api_key, 0) + 1
-            self.last_failure_time[api_key] = current_time
-            # 释放失败密钥的并发计数
-            self.active_requests[api_key] = 0
-            
-            logger.warning(f"API密钥被标记为失败: {api_key[:20]}..., 失败次数: {self.failure_count[api_key]}")
-    
-    def mark_key_success(self, api_key: str):
-        """标记密钥成功（线程安全）"""
-        with self.key_lock:
-            # 成功时重置失败计数
-            if api_key in self.failure_count:
-                self.failure_count[api_key] = 0
-            
-            # 如果该密钥之前被标记为失败，现在恢复
-            if api_key in self.failed_keys:
-                self.failed_keys.remove(api_key)
-                logger.info(f"API密钥恢复正常: {api_key[:20]}...")
-    
-    def get_statistics(self) -> Dict[str, Any]:
-        """获取负载均衡统计信息"""
-        with self.key_lock:
-            total_keys = len(self.api_keys)
-            available_keys = len([key for key in self.api_keys if key not in self.failed_keys])
-            
-            return {
-                "total_keys": total_keys,
-                "available_keys": available_keys,
-                "failed_keys": len(self.failed_keys),
-                "strategy": self.strategy,
-                "usage_count": dict(self.usage_count),
-                "failure_count": dict(self.failure_count),
-                "active_requests": dict(self.active_requests)
-            }
-
 @dataclass
 class DifyAPIConfig:
-    """Dify API配置类 - 支持多API密钥负载均衡"""
+    """Dify API配置类 - 专用于模板推荐，支持智能轮询策略"""
     base_url: str = "https://api.dify.ai/v1"
     api_keys: List[str] = field(default_factory=lambda: [
         key for key in [
@@ -198,636 +30,483 @@ class DifyAPIConfig:
         ] if key
     ])
     endpoint: str = "/chat-messages"
-    timeout: int = 180  # 3分钟超时以应对阿里云通义千问API排队
-    max_retries: int = 5  # 优化重试次数避免过度重试
-    retry_delay: float = 2.0  # 优化重试间隔
-    max_concurrent: int = 5   # 最大并发数，支持5个API密钥同时使用
-    load_balance_strategy: str = "concurrent_random"  # concurrent_random, least_used, random
+    timeout: int = 30
+    max_retries: int = 5
+    retry_delay: float = 2.0
+    max_concurrent: int = 5
+    load_balance_strategy: str = "health_based_polling"
+    
+    # 轮询策略配置
+    polling_strategy: str = "round_robin"  # round_robin, health_based, weighted
+    health_check_interval: int = 300  # 健康检查间隔（秒）
+    key_failure_threshold: int = 3  # 密钥失败阈值
+    key_recovery_time: int = 600  # 密钥恢复时间（秒）
+    response_time_weight: float = 0.3  # 响应时间权重
+    success_rate_weight: float = 0.7  # 成功率权重
+    
+    # 分批处理配置
+    batch_size: int = 5  # 每批处理的请求数量
+    batch_delay: float = 2.0  # 批次间延迟（秒）
+    enable_batch_processing: bool = True  # 启用分批处理
+    batch_timeout: int = 300  # 单批次超时时间（秒）
     
     @property
     def api_key(self) -> str:
         """向后兼容：返回第一个API密钥"""
         return self.api_keys[0] if self.api_keys else ""
 
-class DifyAPIClient:
-    """Dify API客户端 - 支持多API密钥负载均衡"""
+    def __post_init__(self):
+        """初始化后验证"""
+        if not self.api_keys:
+            logger.warning("未配置任何Dify API密钥，模板推荐功能将无法使用")
+        else:
+            logger.info(f"Dify API配置初始化完成，共{len(self.api_keys)}个密钥可用")
+
+class APIKeyHealth:
+    """API密钥健康状态跟踪"""
     
-    def __init__(self, config: Optional[DifyAPIConfig] = None):
-        """初始化Dify API客户端"""
-        self.config = config or DifyAPIConfig()
-        self.session = None
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+        self.total_requests = 0
+        self.successful_requests = 0
+        self.failed_requests = 0
+        self.last_request_time = 0
+        self.last_success_time = 0
+        self.last_failure_time = 0
+        self.consecutive_failures = 0
+        self.avg_response_time = 0
+        self.is_healthy = True
+        self.failure_reasons = defaultdict(int)
+        self._lock = threading.Lock()
+    
+    def record_request(self, success: bool, response_time: float, error_type: str = None):
+        """记录请求结果"""
+        with self._lock:
+            self.total_requests += 1
+            self.last_request_time = time.time()
+            
+            if success:
+                self.successful_requests += 1
+                self.last_success_time = self.last_request_time
+                self.consecutive_failures = 0
+                
+                # 更新平均响应时间（指数移动平均）
+                if self.avg_response_time == 0:
+                    self.avg_response_time = response_time
+                else:
+                    self.avg_response_time = 0.7 * self.avg_response_time + 0.3 * response_time
+            else:
+                self.failed_requests += 1
+                self.last_failure_time = self.last_request_time
+                self.consecutive_failures += 1
+                
+                if error_type:
+                    self.failure_reasons[error_type] += 1
+    
+    def get_success_rate(self) -> float:
+        """获取成功率"""
+        if self.total_requests == 0:
+            return 1.0
+        return self.successful_requests / self.total_requests
+    
+    def get_health_score(self, response_time_weight: float = 0.3, success_rate_weight: float = 0.7) -> float:
+        """计算健康分数 (0-1)"""
+        success_rate = self.get_success_rate()
         
-        # 初始化负载均衡器
-        self.key_balancer = APIKeyBalancer(
-            self.config.api_keys, 
-            self.config.load_balance_strategy
-        )
+        # 响应时间分数（越快越好，1秒为基准）
+        if self.avg_response_time == 0:
+            response_time_score = 1.0
+        else:
+            response_time_score = max(0.1, min(1.0, 1.0 / self.avg_response_time))
         
-        logger.info(f"初始化Dify API客户端，支持{len(self.config.api_keys)}个API密钥")
+        return success_rate_weight * success_rate + response_time_weight * response_time_score
     
-    async def __aenter__(self):
-        """异步上下文管理器入口"""
-        # 创建连接器，优化连接参数
-        connector = aiohttp.TCPConnector(
-            limit=10,  # 总连接数限制
-            limit_per_host=5,  # 每个主机的连接数限制
-            ttl_dns_cache=300,  # DNS缓存时间
-            use_dns_cache=True,
-            keepalive_timeout=60,  # 保持连接时间
-            enable_cleanup_closed=True
-        )
+    def is_considered_healthy(self, failure_threshold: int, recovery_time: int) -> bool:
+        """判断密钥是否健康"""
+        current_time = time.time()
         
-        self.session = aiohttp.ClientSession(
-            connector=connector,
-            timeout=aiohttp.ClientTimeout(
-                total=self.config.timeout,
-                connect=45,  # 增加连接超时到45秒应对高负载
-                sock_read=240  # 增加读取超时到4分钟处理阿里云通义千问API排队
-            ),
-            headers={
-                'Content-Type': 'application/json',
-                'User-Agent': 'Dify-API-Client/2.0-MultiKey'
-            }  # Authorization header will be set per request
-        )
-        return self
+        # 连续失败次数检查
+        if self.consecutive_failures >= failure_threshold:
+            # 检查是否超过恢复时间
+            if current_time - self.last_failure_time < recovery_time:
+                return False
+        
+        return True
+
+
+class SmartAPIKeyPoller:
+    """智能API密钥轮询器"""
     
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """异步上下文管理器出口"""
-        if self.session:
-            await self.session.close()
+    def __init__(self, config: DifyAPIConfig):
+        self.config = config
+        self.api_keys = config.api_keys.copy()
+        self.key_health: Dict[str, APIKeyHealth] = {}
+        self.current_index = 0
+        self._lock = threading.Lock()
+        self.last_health_check = 0
+        
+        # 初始化密钥健康状态
+        for api_key in self.api_keys:
+            self.key_health[api_key] = APIKeyHealth(api_key)
+        
+        logger.info(f"初始化智能API密钥轮询器，共{len(self.api_keys)}个密钥")
     
-    async def _make_single_request(self, page_data: Dict[str, Any], page_index: int) -> Dict[str, Any]:
+    def get_next_key(self) -> Optional[Tuple[str, int]]:
+        """获取下一个API密钥"""
+        if not self.api_keys:
+            return None
+            
+        with self._lock:
+            if self.config.polling_strategy == "round_robin":
+                return self._round_robin_selection()
+            elif self.config.polling_strategy == "health_based":
+                return self._health_based_selection()
+            elif self.config.polling_strategy == "weighted":
+                return self._weighted_selection()
+            else:
+                return self._round_robin_selection()
+    
+    def _round_robin_selection(self) -> Tuple[str, int]:
+        """轮询选择"""
+        selected_key = self.api_keys[self.current_index]
+        selected_index = self.current_index
+        self.current_index = (self.current_index + 1) % len(self.api_keys)
+        return selected_key, selected_index
+    
+    def _health_based_selection(self) -> Tuple[str, int]:
+        """基于健康状态的选择"""
+        healthy_keys = []
+        
+        for i, api_key in enumerate(self.api_keys):
+            health = self.key_health[api_key]
+            if health.is_considered_healthy(
+                self.config.key_failure_threshold,
+                self.config.key_recovery_time
+            ):
+                healthy_keys.append((api_key, i))
+        
+        if not healthy_keys:
+            # 如果没有健康的密钥，选择恢复时间最长的
+            logger.warning("没有健康的API密钥，选择恢复时间最长的密钥")
+            oldest_key = min(
+                self.api_keys,
+                key=lambda k: self.key_health[k].last_failure_time
+            )
+            return oldest_key, self.api_keys.index(oldest_key)
+        
+        # 从健康密钥中轮询选择
+        selected_key, selected_index = healthy_keys[self.current_index % len(healthy_keys)]
+        self.current_index += 1
+        return selected_key, selected_index
+    
+    def _weighted_selection(self) -> Tuple[str, int]:
+        """基于权重的选择"""
+        if not self.api_keys:
+            return None
+            
+        # 计算每个密钥的权重
+        weights = []
+        for api_key in self.api_keys:
+            health = self.key_health[api_key]
+            if health.is_considered_healthy(
+                self.config.key_failure_threshold,
+                self.config.key_recovery_time
+            ):
+                score = health.get_health_score(
+                    self.config.response_time_weight,
+                    self.config.success_rate_weight
+                )
+            else:
+                score = 0.1  # 不健康的密钥给予很低的权重
+            weights.append(score)
+        
+        if sum(weights) == 0:
+            # 所有权重都为0，回退到轮询
+            return self._round_robin_selection()
+        
+        # 根据权重选择
+        import random
+        selected_index = random.choices(range(len(self.api_keys)), weights=weights)[0]
+        return self.api_keys[selected_index], selected_index
+    
+    def record_request_result(self, api_key: str, success: bool, response_time: float, error_type: str = None):
+        """记录请求结果"""
+        if api_key in self.key_health:
+            self.key_health[api_key].record_request(success, response_time, error_type)
+            
+            # 记录日志
+            health = self.key_health[api_key]
+            if success:
+                logger.debug(f"API密钥请求成功: {api_key[:20]}... (响应时间: {response_time:.2f}s, 成功率: {health.get_success_rate():.2%})")
+            else:
+                logger.warning(f"API密钥请求失败: {api_key[:20]}... (连续失败: {health.consecutive_failures}, 错误类型: {error_type})")
+    
+    def get_health_report(self) -> Dict[str, Dict]:
+        """获取健康状态报告"""
+        report = {}
+        for api_key, health in self.key_health.items():
+            masked_key = api_key[:20] + "..." if len(api_key) > 20 else api_key
+            report[masked_key] = {
+                "total_requests": health.total_requests,
+                "success_rate": health.get_success_rate(),
+                "avg_response_time": health.avg_response_time,
+                "consecutive_failures": health.consecutive_failures,
+                "health_score": health.get_health_score(
+                    self.config.response_time_weight,
+                    self.config.success_rate_weight
+                ),
+                "is_healthy": health.is_considered_healthy(
+                    self.config.key_failure_threshold,
+                    self.config.key_recovery_time
+                ),
+                "failure_reasons": dict(health.failure_reasons)
+            }
+        return report
+    
+    def perform_health_check(self):
+        """执行健康检查"""
+        current_time = time.time()
+        if current_time - self.last_health_check < self.config.health_check_interval:
+            return
+            
+        self.last_health_check = current_time
+        report = self.get_health_report()
+        
+        healthy_count = sum(1 for stats in report.values() if stats["is_healthy"])
+        total_count = len(report)
+        
+        logger.info(f"API密钥健康检查: {healthy_count}/{total_count} 个密钥健康")
+        
+        # 详细健康报告
+        for key, stats in report.items():
+            if stats["total_requests"] > 0:
+                logger.debug(
+                    f"密钥 {key}: 成功率 {stats['success_rate']:.2%}, "
+                    f"平均响应时间 {stats['avg_response_time']:.2f}s, "
+                    f"健康分数 {stats['health_score']:.2f}, "
+                    f"状态: {'健康' if stats['is_healthy'] else '不健康'}"
+                )
+
+
+class BatchProcessor:
+    """分批API调用处理器"""
+    
+    def __init__(self, config: DifyAPIConfig, api_key_poller: SmartAPIKeyPoller = None):
+        self.config = config
+        self.api_key_poller = api_key_poller
+        self.batch_results = []
+        self.total_requests = 0
+        self.successful_requests = 0
+        self.failed_requests = 0
+        self.processing_start_time = 0
+        self._lock = threading.Lock()
+        
+        logger.info(f"初始化分批处理器，批次大小: {config.batch_size}")
+    
+    async def process_pages_in_batches(self, pages_data: List[Dict], 
+                                     api_call_func, 
+                                     progress_callback=None) -> Dict[str, Any]:
         """
-        对单个页面内容发起API请求
+        分批处理页面数据
         
         Args:
-            page_data: 页面数据
-            page_index: 页面索引
+            pages_data: 页面数据列表
+            api_call_func: API调用函数
+            progress_callback: 进度回调函数
             
         Returns:
-            Dict: API响应结果
+            Dict: 批处理结果
         """
-        # 构建请求输入内容
-        input_text = self._format_page_content(page_data)
+        self.processing_start_time = time.time()
+        self.total_requests = len(pages_data)
+        self.batch_results = []
         
-        request_data = {
-            "inputs": {},
-            "query": input_text,
-            "response_mode": "blocking",
-            "conversation_id": "",
-            "user": f"pagination_user_{int(time.time())}"
-        }
+        logger.info(f"开始分批处理 {self.total_requests} 个页面，每批 {self.config.batch_size} 个")
         
-        url = f"{self.config.base_url}{self.config.endpoint}"
+        if not self.config.enable_batch_processing or len(pages_data) <= self.config.batch_size:
+            # 不启用分批处理或数据量小，直接处理
+            return await self._process_single_batch(pages_data, api_call_func, progress_callback)
         
-        # 重试逻辑（现在支持多API密钥）
-        current_api_key = None
-        for attempt in range(self.config.max_retries):
-            # 获取下一个API密钥
-            current_api_key = self.key_balancer.get_next_key()
+        # 分批处理
+        batches = self._split_into_batches(pages_data)
+        
+        for batch_index, batch_data in enumerate(batches):
+            batch_start_time = time.time()
             
-            # 为当前请求设置Authorization头
-            headers = {
-                'Authorization': f'Bearer {current_api_key}',
-                'Content-Type': 'application/json'
-            }
+            logger.info(f"处理第 {batch_index + 1}/{len(batches)} 批，包含 {len(batch_data)} 个页面")
             
             try:
-                logger.info(f"开始请求第{page_index + 1}页内容 (尝试 {attempt + 1}/{self.config.max_retries}, API密钥: {current_api_key[:20]}...)")
+                # 处理当前批次
+                batch_result = await self._process_single_batch(
+                    batch_data, 
+                    api_call_func, 
+                    progress_callback,
+                    batch_index + 1
+                )
                 
-                async with self.session.post(url, json=request_data, headers=headers) as response:
-                    if response.status == 200:
-                        # 尝试正确解码响应
-                        try:
-                            result = await response.json(encoding='utf-8')
-                        except:
-                            result = await response.json()
-                        
-                        logger.info(f"第{page_index + 1}页API请求成功 (使用密钥: {current_api_key[:20]}...)")
-                        
-                        # 标记该API密钥成功并释放并发计数
-                        self.key_balancer.mark_key_success(current_api_key)
-                        self.key_balancer.release_key(current_api_key)
-                        
-                        # 根据不同的响应格式提取文本内容
-                        response_text = ""
-                        if 'answer' in result:
-                            response_text = result.get('answer', '')
-                        elif 'message' in result and 'content' in result['message']:
-                            response_text = result['message']['content']
-                        elif 'data' in result and isinstance(result['data'], dict):
-                            response_text = result['data'].get('answer', result['data'].get('content', ''))
-                        else:
-                            # 如果找不到标准字段，尝试将整个结果转为字符串
-                            response_text = str(result)
-                        
-                        # 如果响应文本为空或看起来有问题，使用备用方案
-                        if not response_text or len(response_text.strip()) == 0:
-                            response_text = f"API响应成功，但内容为空。原始响应包含以下字段: {list(result.keys())}"
-                        
-                        return {
-                            "success": True,
-                            "page_index": page_index,
-                            "page_number": page_data.get('page_number', page_index + 1),
-                            "input_content": input_text,
-                            "api_response": result,
-                            "response_text": response_text,
-                            "api_status": response.status,
-                            "attempt": attempt + 1,
-                            "used_api_key": current_api_key[:20] + "..."
-                        }
-                    else:
-                        error_text = await response.text()
-                        logger.warning(f"第{page_index + 1}页API请求失败，状态码: {response.status} (使用密钥: {current_api_key[:20]}...)")
-                        
-                        # 如果是认证错误，标记该API密钥失败
-                        if response.status in [401, 403]:
-                            self.key_balancer.mark_key_failed(current_api_key)
-                            logger.warning(f"API密钥认证失败，已标记为失败: {current_api_key[:20]}...")
-                        else:
-                            # 对于其他错误，只释放并发计数，不标记失败
-                            self.key_balancer.release_key(current_api_key)
-                        
-                        if attempt < self.config.max_retries - 1:
-                            delay = self.config.retry_delay * (2 ** attempt)  # 指数退避
-                            logger.info(f"等待 {delay:.1f} 秒后使用下一个API密钥重试...")
-                            await asyncio.sleep(delay)
-                            continue
-                        else:
-                            # 最终失败时释放当前密钥
-                            self.key_balancer.release_key(current_api_key)
-                            return {
-                                "success": False,
-                                "page_index": page_index,
-                                "page_number": page_data.get('page_number', page_index + 1),
-                                "input_content": input_text,
-                                "error": f"HTTP {response.status}: {error_text}",
-                                "api_status": response.status,
-                                "attempts": self.config.max_retries,
-                                "last_used_api_key": current_api_key[:20] + "..."
-                            }
-            
-            except asyncio.TimeoutError as e:
-                logger.warning(f"第{page_index + 1}页API请求超时 (尝试 {attempt + 1}/{self.config.max_retries}，使用密钥: {current_api_key[:20]}...)")
+                self.batch_results.append({
+                    "batch_index": batch_index + 1,
+                    "batch_size": len(batch_data),
+                    "batch_result": batch_result,
+                    "processing_time": time.time() - batch_start_time,
+                    "success": batch_result.get("success", False)
+                })
                 
-                # 针对阿里云通义千问API特性，超时不立即标记密钥失效
-                if attempt >= 3:  # 超时3次后标记密钥为临时失效，给阿里云API更多容忍度
-                    self.key_balancer.mark_key_failed(current_api_key)
-                    logger.info(f"API密钥因多次超时被临时标记为失效: {current_api_key[:20]}...")
-                else:
-                    # 首次超时只释放并发计数
-                    self.key_balancer.release_key(current_api_key)
+                # 更新统计
+                with self._lock:
+                    batch_successful = batch_result.get("successful_count", 0)
+                    batch_failed = len(batch_data) - batch_successful
+                    self.successful_requests += batch_successful
+                    self.failed_requests += batch_failed
                 
-                if attempt < self.config.max_retries - 1:
-                    # 增强的指数退避策略
-                    base_delay = self.config.retry_delay
-                    exponential_delay = base_delay * (2 ** attempt)
-                    jitter = exponential_delay * 0.1  # 添加10%的随机抖动
-                    import random
-                    delay = exponential_delay + random.uniform(-jitter, jitter)
-                    delay = min(delay, 30)  # 最大延迟30秒
-                    
-                    logger.info(f"超时重试：等待 {delay:.1f} 秒后使用下一个API密钥重试...")
-                    await asyncio.sleep(delay)
-                    continue
-                else:
-                    # 所有重试都失败了，释放当前密钥
-                    self.key_balancer.release_key(current_api_key)
-                    logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然超时，这不应该发生！")
-                    return {
-                        "success": False,
-                        "page_index": page_index,
-                        "page_number": page_data.get('page_number', page_index + 1),
-                        "input_content": input_text,
-                        "error": f"经过{self.config.max_retries}次重试仍然超时 (超时限制: {self.config.timeout}秒)",
-                        "attempts": self.config.max_retries,
-                        "all_used_keys": [k[:20] + "..." for k in self.config.api_keys]
-                    }
-            
-            except aiohttp.ClientConnectorError as e:
-                logger.warning(f"第{page_index + 1}页连接错误 (尝试 {attempt + 1}/{self.config.max_retries}，使用密钥: {current_api_key[:20]}...): {str(e)}")
+                # 批次间延迟（除了最后一批）
+                if batch_index < len(batches) - 1:
+                    logger.debug(f"批次间延迟 {self.config.batch_delay} 秒")
+                    await asyncio.sleep(self.config.batch_delay)
                 
-                # 连接错误时也可能是API密钥或服务器问题
-                if attempt >= 1:  # 连接错误1次后就切换密钥
-                    self.key_balancer.mark_key_failed(current_api_key)
-                    logger.info(f"API密钥因连接错误被标记为失效: {current_api_key[:20]}...")
-                else:
-                    # 首次连接错误只释放并发计数
-                    self.key_balancer.release_key(current_api_key)
-                
-                if attempt < self.config.max_retries - 1:
-                    delay = self.config.retry_delay * (2 ** attempt)
-                    delay = min(delay, 20)  # 连接错误最大等待20秒
-                    logger.info(f"连接错误重试：等待 {delay:.1f} 秒后使用下一个API密钥重试...")
-                    await asyncio.sleep(delay)
-                    continue
-                else:
-                    # 最终连接失败，释放当前密钥
-                    self.key_balancer.release_key(current_api_key)
-                    logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然连接失败！")
-                    return {
-                        "success": False,
-                        "page_index": page_index,
-                        "page_number": page_data.get('page_number', page_index + 1),
-                        "input_content": input_text,
-                        "error": f"经过{self.config.max_retries}次重试仍然连接失败: {str(e)}",
-                        "attempts": self.config.max_retries
-                    }
-            
             except Exception as e:
-                logger.error(f"第{page_index + 1}页API请求异常 (尝试 {attempt + 1}/{self.config.max_retries}，使用密钥: {current_api_key[:20]}...): {str(e)}")
+                logger.error(f"第 {batch_index + 1} 批处理异常: {str(e)}")
+                self.batch_results.append({
+                    "batch_index": batch_index + 1,
+                    "batch_size": len(batch_data),
+                    "error": str(e),
+                    "success": False
+                })
                 
-                # 未知异常时也切换API密钥
-                if attempt >= 0:  # 任何异常都立即切换密钥
-                    self.key_balancer.mark_key_failed(current_api_key)
-                    logger.info(f"API密钥因异常被标记为失效: {current_api_key[:20]}...")
-                
-                if attempt < self.config.max_retries - 1:
-                    delay = self.config.retry_delay * (attempt + 1)
-                    delay = min(delay, 15)  # 异常最大等待15秒
-                    logger.info(f"异常重试：等待 {delay:.1f} 秒后使用下一个API密钥重试...")
-                    await asyncio.sleep(delay)
-                    continue
-                else:
-                    # 最终异常失败，释放当前密钥
-                    self.key_balancer.release_key(current_api_key)
-                    logger.error(f"第{page_index + 1}页经过{self.config.max_retries}次重试仍然异常！")
-                    return {
-                        "success": False,
-                        "page_index": page_index,
-                        "page_number": page_data.get('page_number', page_index + 1),
-                        "input_content": input_text,
-                        "error": f"经过{self.config.max_retries}次重试仍然异常: {str(e)}",
-                        "attempts": self.config.max_retries,
-                        "exception_type": type(e).__name__
-                    }
+                with self._lock:
+                    self.failed_requests += len(batch_data)
         
-        # 不应该到达这里
+        # 汇总结果
+        return self._consolidate_batch_results()
+    
+    def _split_into_batches(self, data: List) -> List[List]:
+        """将数据分割成批次"""
+        batches = []
+        for i in range(0, len(data), self.config.batch_size):
+            batch = data[i:i + self.config.batch_size]
+            batches.append(batch)
+        return batches
+    
+    async def _process_single_batch(self, batch_data: List[Dict], 
+                                  api_call_func, 
+                                  progress_callback=None,
+                                  batch_number: int = 1) -> Dict[str, Any]:
+        """处理单个批次"""
+        batch_results = []
+        successful_count = 0
+        
+        for i, page_data in enumerate(batch_data):
+            try:
+                # 调用API处理函数
+                result = await api_call_func(page_data)
+                
+                if result.get("success", False):
+                    successful_count += 1
+                
+                batch_results.append({
+                    "page_data": page_data,
+                    "result": result,
+                    "success": result.get("success", False)
+                })
+                
+                # 更新进度
+                if progress_callback:
+                    total_processed = (batch_number - 1) * self.config.batch_size + i + 1
+                    progress_callback(total_processed, self.total_requests)
+                
+                # API密钥健康检查
+                if self.api_key_poller:
+                    self.api_key_poller.perform_health_check()
+                
+            except Exception as e:
+                logger.error(f"处理页面异常: {str(e)}")
+                batch_results.append({
+                    "page_data": page_data,
+                    "error": str(e),
+                    "success": False
+                })
+        
         return {
-            "success": False,
-            "page_index": page_index,
-            "page_number": page_data.get('page_number', page_index + 1),
-            "input_content": input_text,
-            "error": "未知错误",
-            "attempts": self.config.max_retries
+            "success": True,
+            "batch_results": batch_results,
+            "successful_count": successful_count,
+            "total_count": len(batch_data)
         }
     
-    def _format_page_content(self, page_data: Dict[str, Any]) -> str:
-        """
-        格式化页面内容为API输入
+    def _consolidate_batch_results(self) -> Dict[str, Any]:
+        """汇总所有批次的结果"""
+        all_page_results = []
+        successful_batches = 0
         
-        Args:
-            page_data: 页面数据
-            
-        Returns:
-            str: 格式化后的输入文本
-        """
-        # 构建结构化的输入内容
-        input_parts = []
-        
-        # 页面基本信息
-        page_number = page_data.get('page_number', 1)
-        page_type = page_data.get('page_type', 'content')
-        title = page_data.get('title', '')
-        
-        input_parts.append(f"页面信息：第{page_number}页 ({page_type})")
-        
-        if title:
-            input_parts.append(f"标题：{title}")
-        
-        # 副标题（如果有）
-        subtitle = page_data.get('subtitle', '')
-        if subtitle:
-            input_parts.append(f"副标题：{subtitle}")
-        
-        # 内容摘要
-        content_summary = page_data.get('content_summary', '')
-        if content_summary:
-            input_parts.append(f"内容摘要：{content_summary}")
-        
-        # 主要要点
-        key_points = page_data.get('key_points', [])
-        if key_points:
-            input_parts.append("主要要点：")
-            for i, point in enumerate(key_points, 1):
-                input_parts.append(f"{i}. {point}")
-        
-        # 原始文本片段
-        original_text = page_data.get('original_text_segment', '')
-        if original_text:
-            input_parts.append(f"原始文本：{original_text}")
-        
-        return "\n\n".join(input_parts)
-    
-    async def process_pages_concurrent(self, pages: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        并发处理多个页面的API请求（控制并发数量）
-        
-        Args:
-            pages: 页面数据列表
-            
-        Returns:
-            Dict: 处理结果
-        """
-        if not pages:
-            return {
-                "success": False,
-                "error": "没有页面数据需要处理",
-                "results": []
-            }
-        
-        # 过滤出需要Dify API处理的页面（跳过固定页面）
-        fixed_page_types = {'title', 'table_of_contents', 'ending'}
-        
-        # 分离需要处理和跳过的页面
-        pages_to_process = []
-        skipped_pages = []
-        
-        for page in pages:
-            page_type = page.get('page_type', 'content')
-            if page_type in fixed_page_types:
-                skipped_pages.append(page)
-                logger.info(f"跳过固定页面: 第{page.get('page_number', '?')}页 ({page_type})")
+        for batch_info in self.batch_results:
+            if batch_info.get("success", False):
+                successful_batches += 1
+                batch_result = batch_info["batch_result"]
+                all_page_results.extend(batch_result.get("batch_results", []))
             else:
-                pages_to_process.append(page)
+                # 失败的批次也要记录
+                logger.warning(f"批次 {batch_info.get('batch_index', '?')} 处理失败")
         
-        logger.info(f"共{len(pages)}页，需要Dify API处理: {len(pages_to_process)}页，跳过固定页面: {len(skipped_pages)}页")
+        total_processing_time = time.time() - self.processing_start_time
         
-        # 如果没有需要处理的页面，直接返回成功结果
-        if not pages_to_process:
-            return {
-                "success": True,
-                "total_pages": len(pages),
-                "successful_count": 0,
-                "failed_count": 0,
-                "exception_count": 0,
-                "skipped_count": len(skipped_pages),
-                "processing_time": 0,
-                "results": [],
-                "successful_results": [],
-                "failed_results": [],
-                "skipped_results": skipped_pages,
-                "exceptions": [],
-                "api_key_stats": self.key_balancer.get_usage_stats()
-            }
+        result = {
+            "success": True,
+            "page_templates": all_page_results,
+            "successful_count": self.successful_requests,
+            "failed_count": self.failed_requests,
+            "total_pages": self.total_requests,
+            "total_batches": len(self.batch_results),
+            "successful_batches": successful_batches,
+            "total_processing_time": total_processing_time,
+            "average_batch_time": total_processing_time / len(self.batch_results) if self.batch_results else 0,
+            "batch_details": self.batch_results
+        }
         
-        start_time = time.time()
-        log_user_action("Dify API并发处理", f"开始处理{len(pages_to_process)}个页面（最大并发: {self.config.max_concurrent}，跳过{len(skipped_pages)}个固定页面）")
+        logger.info(
+            f"分批处理完成: {self.successful_requests}/{self.total_requests} 成功, "
+            f"{successful_batches}/{len(self.batch_results)} 批次成功, "
+            f"总耗时: {total_processing_time:.2f}秒"
+        )
         
-        try:
-            # 创建信号量来控制并发数量
-            semaphore = asyncio.Semaphore(self.config.max_concurrent)
-            
-            async def limited_request(page_data, original_index):
-                async with semaphore:
-                    logger.info(f"开始处理第{page_data.get('page_number', original_index + 1)}页（并发控制）")
-                    return await self._make_single_request(page_data, original_index)
-            
-            # 创建并发任务（只处理需要API调用的页面，但保持原始索引）
-            tasks = []
-            for page_data in pages_to_process:
-                # 找到该页面在原始列表中的索引
-                original_index = next(i for i, p in enumerate(pages) if p is page_data)
-                tasks.append(limited_request(page_data, original_index))
-            
-            # 并发执行所有API请求
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            
-            # 处理结果
-            successful_results = []
-            failed_results = []
-            exceptions = []
-            
-            for result in results:
-                if isinstance(result, Exception):
-                    exceptions.append(str(result))
-                elif result.get('success', False):
-                    successful_results.append(result)
-                else:
-                    failed_results.append(result)
-            
-            end_time = time.time()
-            processing_time = end_time - start_time
-            
-            # 获取API密钥使用统计
-            key_stats = self.key_balancer.get_usage_stats()
-            
-            # 构建返回结果
-            return_result = {
-                "success": len(successful_results) > 0 or len(skipped_pages) > 0,  # 如果有跳过的页面也算成功
-                "total_pages": len(pages),
-                "successful_count": len(successful_results),
-                "failed_count": len(failed_results),
-                "exception_count": len(exceptions),
-                "skipped_count": len(skipped_pages),  # 添加跳过页面统计
-                "processing_time": processing_time,
-                "results": successful_results + failed_results,
-                "successful_results": successful_results,
-                "failed_results": failed_results,
-                "skipped_results": skipped_pages,  # 添加跳过的页面
-                "exceptions": exceptions,
-                "api_key_stats": key_stats  # 添加API密钥统计
-            }
-            
-            log_user_action(
-                "Dify API处理完成", 
-                f"成功: {len(successful_results)}, 失败: {len(failed_results)}, 跳过: {len(skipped_pages)}, 异常: {len(exceptions)}, 耗时: {processing_time:.2f}秒"
-            )
-            
-            return return_result
-            
-        except Exception as e:
-            logger.error(f"并发处理异常: {str(e)}")
-            return {
-                "success": len(skipped_pages) > 0,  # 如果有跳过的页面，至少部分成功
-                "error": f"并发处理异常: {str(e)}",
-                "total_pages": len(pages),
-                "successful_count": 0,
-                "failed_count": 0,
-                "exception_count": 1,
-                "skipped_count": len(skipped_pages),
-                "processing_time": time.time() - start_time,
-                "results": [],
-                "skipped_results": skipped_pages,
-                "exceptions": [str(e)]
-            }
+        return result
+    
+    def get_processing_stats(self) -> Dict[str, Any]:
+        """获取处理统计信息"""
+        if self.processing_start_time == 0:
+            return {"status": "not_started"}
+        
+        current_time = time.time()
+        elapsed_time = current_time - self.processing_start_time
+        
+        return {
+            "status": "processing" if len(self.batch_results) * self.config.batch_size < self.total_requests else "completed",
+            "total_requests": self.total_requests,
+            "successful_requests": self.successful_requests,
+            "failed_requests": self.failed_requests,
+            "completed_batches": len(self.batch_results),
+            "elapsed_time": elapsed_time,
+            "estimated_remaining_time": self._estimate_remaining_time(elapsed_time)
+        }
+    
+    def _estimate_remaining_time(self, elapsed_time: float) -> float:
+        """估算剩余处理时间"""
+        if len(self.batch_results) == 0:
+            return 0
+        
+        completed_requests = len(self.batch_results) * self.config.batch_size
+        if completed_requests >= self.total_requests:
+            return 0
+        
+        avg_time_per_request = elapsed_time / completed_requests
+        remaining_requests = self.total_requests - completed_requests
+        
+        return avg_time_per_request * remaining_requests
 
-class DifyIntegrationService:
-    """Dify集成服务类"""
-    
-    def __init__(self, config: Optional[DifyAPIConfig] = None):
-        """初始化服务"""
-        self.config = config or DifyAPIConfig()
-        logger.info("初始化Dify集成服务")
-    
-    async def process_pagination_result(self, pagination_result: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        处理分页结果，对每页调用Dify API
-        
-        Args:
-            pagination_result: AI分页的结果
-            
-        Returns:
-            Dict: 包含Dify API处理结果的完整数据
-        """
-        if not pagination_result.get('success', False):
-            return {
-                "success": False,
-                "error": "输入的分页结果无效",
-                "original_pagination": pagination_result
-            }
-        
-        pages = pagination_result.get('pages', [])
-        if not pages:
-            return {
-                "success": False,
-                "error": "没有页面数据需要处理",
-                "original_pagination": pagination_result
-            }
-        
-        log_user_action("Dify集成处理", f"开始处理{len(pages)}个页面的API调用")
-        
-        try:
-            # 使用异步客户端处理页面
-            async with DifyAPIClient(self.config) as client:
-                api_results = await client.process_pages_concurrent(pages)
-            
-            # 合并原始分页结果和API处理结果
-            combined_result = {
-                "success": api_results.get('success', False),
-                "original_pagination": pagination_result,
-                "dify_api_results": api_results,
-                "processing_summary": {
-                    "total_pages": api_results.get('total_pages', 0),
-                    "successful_api_calls": api_results.get('successful_count', 0),
-                    "failed_api_calls": api_results.get('failed_count', 0),
-                    "skipped_fixed_pages": api_results.get('skipped_count', 0),
-                    "processing_time": api_results.get('processing_time', 0),
-                    "success_rate": api_results.get('successful_count', 0) / max(api_results.get('successful_count', 0) + api_results.get('failed_count', 0), 1) * 100  # 跳过的页面不计入成功率
-                }
-            }
-            
-            # 为每个页面添加API结果
-            enhanced_pages = []
-            api_results_by_page = {
-                result.get('page_index', -1): result 
-                for result in api_results.get('results', [])
-            }
-            skipped_results_by_page = {
-                i: page for i, page in enumerate(pages) 
-                if page in api_results.get('skipped_results', [])
-            }
-            
-            for i, page in enumerate(pages):
-                enhanced_page = page.copy()
-                page_type = page.get('page_type', 'content')
-                
-                # 检查是否是跳过的固定页面
-                if i in skipped_results_by_page or page_type in ['title', 'table_of_contents', 'ending']:
-                    enhanced_page['dify_skipped'] = True
-                    enhanced_page['dify_skip_reason'] = f'固定页面类型({page_type})，无需Dify API处理'
-                    logger.debug(f"第{page.get('page_number', i+1)}页({page_type})已跳过Dify API处理")
-                else:
-                    # 查找API处理结果
-                    api_result = api_results_by_page.get(i)
-                    
-                    if api_result:
-                        enhanced_page['dify_api_result'] = api_result
-                        if api_result.get('success'):
-                            enhanced_page['dify_response'] = api_result.get('response_text', '')
-                            enhanced_page['dify_full_response'] = api_result.get('api_response', {})
-                        else:
-                            enhanced_page['dify_error'] = api_result.get('error', 'API调用失败')
-                    else:
-                        enhanced_page['dify_error'] = '未找到对应的API结果'
-                
-                enhanced_pages.append(enhanced_page)
-            
-            combined_result['enhanced_pages'] = enhanced_pages
-            
-            return combined_result
-            
-        except Exception as e:
-            logger.error(f"Dify集成处理异常: {str(e)}")
-            return {
-                "success": False,
-                "error": f"Dify集成处理异常: {str(e)}",
-                "original_pagination": pagination_result
-            }
-    
-    def format_results_summary(self, result: Dict[str, Any]) -> str:
-        """
-        格式化结果摘要
-        
-        Args:
-            result: 处理结果
-            
-        Returns:
-            str: 格式化的摘要文本
-        """
-        if not result.get('success', False):
-            return f"❌ 处理失败: {result.get('error', '未知错误')}"
-        
-        summary = result.get('processing_summary', {})
-        total_pages = summary.get('total_pages', 0)
-        successful = summary.get('successful_api_calls', 0)
-        failed = summary.get('failed_api_calls', 0)
-        skipped = summary.get('skipped_fixed_pages', 0)
-        processing_time = summary.get('processing_time', 0)
-        success_rate = summary.get('success_rate', 0)
-        
-        # 添加多API密钥统计信息
-        api_key_stats = result.get('api_key_stats', {})
-        key_info = ""
-        if api_key_stats:
-            total_keys = api_key_stats.get('total_keys', 0)
-            available_keys = api_key_stats.get('available_keys', 0)
-            strategy = api_key_stats.get('strategy', 'unknown')
-            
-            key_info = f"""
-🔑 API密钥统计:
-• 总密钥数: {total_keys}
-• 可用密钥: {available_keys}
-• 负载策略: {strategy}"""
-        
-        summary_text = f"""✅ Dify API处理完成 (多密钥并行)
 
-📊 处理统计:
-• 总页面数: {total_pages}
-• 成功调用: {successful}
-• 失败调用: {failed}
-• 跳过固定页面: {skipped} (封面/目录/结束页)
-• 成功率: {success_rate:.1f}%
-• 处理耗时: {processing_time:.2f}秒{key_info}
+# 保持向后兼容的函数
+def get_dify_config():
+    """获取Dify配置实例"""
+    return DifyAPIConfig()
 
-🚀 平均响应时间: {processing_time / max(successful + failed, 1):.2f}秒/页（不含固定页面）"""
-        
-        return summary_text
-
-# 同步接口函数
-def process_pages_with_dify(pagination_result: Dict[str, Any], config: Optional[DifyAPIConfig] = None) -> Dict[str, Any]:
-    """
-    同步接口：处理分页结果并调用Dify API
-    
-    Args:
-        pagination_result: AI分页结果
-        config: Dify API配置
-        
-    Returns:
-        Dict: 处理结果
-    """
-    service = DifyIntegrationService(config)
-    
-    # 运行异步处理
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    
-    try:
-        return loop.run_until_complete(service.process_pagination_result(pagination_result))
-    finally:
-        # 清理事件循环（如果是新创建的）
-        if loop != asyncio.get_event_loop():
-            loop.close()
+# 导出主要类和函数
+__all__ = ['DifyAPIConfig', 'APIKeyHealth', 'SmartAPIKeyPoller', 'BatchProcessor', 'get_dify_config']

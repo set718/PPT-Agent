@@ -2385,3 +2385,388 @@
 2025-08-14 17:53:39 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并完成 - 成功: 12页, 跳过: 0页
 2025-08-14 17:53:42 - ppt_generator - INFO - PowerPoint COM资源已清理
 2025-08-14 17:53:42 - ppt_generator - INFO - Win32COM合并成功
+2025-08-15 10:35:26 - ppt_generator - INFO - 初始化API密钥负载均衡器（单例），策略: concurrent_random, 密钥数量: 5
+2025-08-15 10:35:26 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-15 10:35:26 - ppt_generator - INFO - 扫描到250个模板文件，编号范围: {'min': 1, 'max': 250}
+2025-08-15 10:35:51 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 2240
+2025-08-15 10:36:02 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-08-15 10:36:02 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:02 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:36:11 - ppt_generator - INFO - 成功获取模板编号: 12
+2025-08-15 10:36:11 - ppt_generator - INFO - Dify API返回模板编号: 12
+2025-08-15 10:36:11 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_12.pptx
+2025-08-15 10:36:11 - ppt_generator - INFO - 成功获取模板文件: split_presentations_12.pptx (126.8KB)
+2025-08-15 10:36:11 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.58秒
+2025-08-15 10:36:11 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 16字符
+2025-08-15 10:36:11 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:11 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:36:15 - ppt_generator - INFO - 成功获取模板编号: 17
+2025-08-15 10:36:15 - ppt_generator - INFO - Dify API返回模板编号: 17
+2025-08-15 10:36:15 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_17.pptx
+2025-08-15 10:36:15 - ppt_generator - INFO - 成功获取模板文件: split_presentations_17.pptx (71.5KB)
+2025-08-15 10:36:15 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.84秒
+2025-08-15 10:36:15 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-15 10:36:15 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:15 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:36:20 - ppt_generator - INFO - 成功获取模板编号: 45
+2025-08-15 10:36:20 - ppt_generator - INFO - Dify API返回模板编号: 45
+2025-08-15 10:36:20 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_45.pptx
+2025-08-15 10:36:20 - ppt_generator - INFO - 成功获取模板文件: split_presentations_45.pptx (79.0KB)
+2025-08-15 10:36:20 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 5.23秒
+2025-08-15 10:36:20 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 8字符
+2025-08-15 10:36:20 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:20 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:36:24 - ppt_generator - WARNING - API响应中未找到有效数字: 适用图表推荐
+最适配图表类型：PPT页码：未找到相关外采数据展示页
+2025-08-15 10:36:26 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)
+2025-08-15 10:36:30 - ppt_generator - INFO - 成功获取模板编号: 39
+2025-08-15 10:36:30 - ppt_generator - INFO - Dify API返回模板编号: 39
+2025-08-15 10:36:30 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_39.pptx
+2025-08-15 10:36:30 - ppt_generator - INFO - 成功获取模板文件: split_presentations_39.pptx (68.1KB)
+2025-08-15 10:36:30 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.77秒
+2025-08-15 10:36:30 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 11字符
+2025-08-15 10:36:30 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:30 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:36:34 - ppt_generator - INFO - 成功获取模板编号: 22
+2025-08-15 10:36:34 - ppt_generator - INFO - Dify API返回模板编号: 22
+2025-08-15 10:36:34 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_22.pptx
+2025-08-15 10:36:34 - ppt_generator - INFO - 成功获取模板文件: split_presentations_22.pptx (69.6KB)
+2025-08-15 10:36:34 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.72秒
+2025-08-15 10:36:34 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 5字符
+2025-08-15 10:36:34 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:34 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:36:38 - ppt_generator - WARNING - API响应中未找到有效数字: 适用图表推荐
+战略：PPT页码：[XX]
+2025-08-15 10:36:40 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)
+2025-08-15 10:36:44 - ppt_generator - INFO - 成功获取模板编号: 18
+2025-08-15 10:36:44 - ppt_generator - INFO - Dify API返回模板编号: 18
+2025-08-15 10:36:44 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_18.pptx
+2025-08-15 10:36:44 - ppt_generator - INFO - 成功获取模板文件: split_presentations_18.pptx (99.0KB)
+2025-08-15 10:36:44 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.72秒
+2025-08-15 10:36:44 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 5字符
+2025-08-15 10:36:44 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:44 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:36:48 - ppt_generator - WARNING - API响应中未找到有效数字: 理解，我已准备就绪。请告诉我您的具体场景或数据展示需求，我将基于知识库为您推荐最合适的PPT图表类型。
+2025-08-15 10:36:50 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)
+2025-08-15 10:36:54 - ppt_generator - INFO - 成功获取模板编号: 23
+2025-08-15 10:36:54 - ppt_generator - INFO - Dify API返回模板编号: 23
+2025-08-15 10:36:54 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_23.pptx
+2025-08-15 10:36:54 - ppt_generator - INFO - 成功获取模板文件: split_presentations_23.pptx (68.2KB)
+2025-08-15 10:36:54 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.04秒
+2025-08-15 10:36:54 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 19字符
+2025-08-15 10:36:54 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:54 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:36:57 - ppt_generator - INFO - 成功获取模板编号: 29
+2025-08-15 10:36:57 - ppt_generator - INFO - Dify API返回模板编号: 29
+2025-08-15 10:36:57 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_29.pptx
+2025-08-15 10:36:57 - ppt_generator - INFO - 成功获取模板文件: split_presentations_29.pptx (68.8KB)
+2025-08-15 10:36:57 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.51秒
+2025-08-15 10:36:57 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-08-15 10:36:57 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:36:57 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:37:03 - ppt_generator - INFO - 成功获取模板编号: 16
+2025-08-15 10:37:03 - ppt_generator - INFO - Dify API返回模板编号: 16
+2025-08-15 10:37:03 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_16.pptx
+2025-08-15 10:37:03 - ppt_generator - INFO - 成功获取模板文件: split_presentations_16.pptx (108.6KB)
+2025-08-15 10:37:03 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 5.69秒
+2025-08-15 10:37:03 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 尝试使用最佳格式保留方法合并11个模板
+2025-08-15 10:37:03 - ppt_generator - INFO - 使用Win32COM合并器（保持各页独特格式）
+2025-08-15 10:37:09 - ppt_generator - INFO - PowerPoint COM接口初始化成功
+2025-08-15 10:37:09 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并 - 开始合并11个模板文件
+2025-08-15 10:37:11 - ppt_generator - INFO - 完美格式保留合并: title_slides.pptx
+2025-08-15 10:37:12 - ppt_generator - INFO - 完美格式保留合并: split_presentations_12.pptx
+2025-08-15 10:37:12 - ppt_generator - INFO - 完美格式保留合并: split_presentations_17.pptx
+2025-08-15 10:37:13 - ppt_generator - INFO - 完美格式保留合并: split_presentations_45.pptx
+2025-08-15 10:37:14 - ppt_generator - INFO - 完美格式保留合并: split_presentations_39.pptx
+2025-08-15 10:37:14 - ppt_generator - INFO - 完美格式保留合并: split_presentations_22.pptx
+2025-08-15 10:37:15 - ppt_generator - INFO - 完美格式保留合并: split_presentations_18.pptx
+2025-08-15 10:37:16 - ppt_generator - INFO - 完美格式保留合并: split_presentations_23.pptx
+2025-08-15 10:37:17 - ppt_generator - INFO - 完美格式保留合并: split_presentations_29.pptx
+2025-08-15 10:37:17 - ppt_generator - INFO - 完美格式保留合并: split_presentations_16.pptx
+2025-08-15 10:37:18 - ppt_generator - INFO - 完美格式保留合并: ending_slides.pptx
+2025-08-15 10:37:18 - ppt_generator - INFO - PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_20250815_103718.pptx
+2025-08-15 10:37:18 - ppt_generator - INFO - 成功读取PPT字节数据，大小: 1176615 字节
+2025-08-15 10:37:18 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并完成 - 成功: 11页, 跳过: 0页
+2025-08-15 10:37:21 - ppt_generator - INFO - PowerPoint COM资源已清理
+2025-08-15 10:37:21 - ppt_generator - INFO - Win32COM合并成功
+2025-08-15 10:44:57 - ppt_generator - INFO - 扫描到250个模板文件，编号范围: {'min': 1, 'max': 250}
+2025-08-15 10:48:08 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 1059
+2025-08-15 10:48:13 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 87字符
+2025-08-15 10:48:13 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:13 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:18 - ppt_generator - INFO - 成功获取模板编号: 12
+2025-08-15 10:48:18 - ppt_generator - INFO - Dify API返回模板编号: 12
+2025-08-15 10:48:18 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_12.pptx
+2025-08-15 10:48:18 - ppt_generator - INFO - 成功获取模板文件: split_presentations_12.pptx (126.8KB)
+2025-08-15 10:48:18 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 5.09秒
+2025-08-15 10:48:18 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 77字符
+2025-08-15 10:48:18 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:18 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:22 - ppt_generator - INFO - 成功获取模板编号: 12
+2025-08-15 10:48:22 - ppt_generator - INFO - Dify API返回模板编号: 12
+2025-08-15 10:48:22 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_12.pptx
+2025-08-15 10:48:22 - ppt_generator - INFO - 成功获取模板文件: split_presentations_12.pptx (126.8KB)
+2025-08-15 10:48:22 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.79秒
+2025-08-15 10:48:22 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 122字符
+2025-08-15 10:48:22 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:22 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:25 - ppt_generator - INFO - 成功获取模板编号: 12
+2025-08-15 10:48:25 - ppt_generator - INFO - Dify API返回模板编号: 12
+2025-08-15 10:48:25 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_12.pptx
+2025-08-15 10:48:25 - ppt_generator - INFO - 成功获取模板文件: split_presentations_12.pptx (126.8KB)
+2025-08-15 10:48:25 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.46秒
+2025-08-15 10:48:25 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 89字符
+2025-08-15 10:48:25 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:25 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:29 - ppt_generator - INFO - 成功获取模板编号: 38
+2025-08-15 10:48:29 - ppt_generator - INFO - Dify API返回模板编号: 38
+2025-08-15 10:48:29 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_38.pptx
+2025-08-15 10:48:29 - ppt_generator - INFO - 成功获取模板文件: split_presentations_38.pptx (68.9KB)
+2025-08-15 10:48:29 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.60秒
+2025-08-15 10:48:29 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 37字符
+2025-08-15 10:48:29 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:29 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:32 - ppt_generator - INFO - 成功获取模板编号: 36
+2025-08-15 10:48:32 - ppt_generator - INFO - Dify API返回模板编号: 36
+2025-08-15 10:48:32 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_36.pptx
+2025-08-15 10:48:32 - ppt_generator - INFO - 成功获取模板文件: split_presentations_36.pptx (111.9KB)
+2025-08-15 10:48:32 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.48秒
+2025-08-15 10:48:32 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 40字符
+2025-08-15 10:48:32 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:32 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:36 - ppt_generator - INFO - 成功获取模板编号: 9
+2025-08-15 10:48:36 - ppt_generator - INFO - Dify API返回模板编号: 9
+2025-08-15 10:48:36 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_9.pptx
+2025-08-15 10:48:36 - ppt_generator - INFO - 成功获取模板文件: split_presentations_9.pptx (71.4KB)
+2025-08-15 10:48:36 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.50秒
+2025-08-15 10:48:36 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 100字符
+2025-08-15 10:48:36 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:36 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:40 - ppt_generator - INFO - 成功获取模板编号: 23
+2025-08-15 10:48:40 - ppt_generator - INFO - Dify API返回模板编号: 23
+2025-08-15 10:48:40 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_23.pptx
+2025-08-15 10:48:40 - ppt_generator - INFO - 成功获取模板文件: split_presentations_23.pptx (68.2KB)
+2025-08-15 10:48:40 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.85秒
+2025-08-15 10:48:40 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 79字符
+2025-08-15 10:48:40 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:40 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:44 - ppt_generator - INFO - 成功获取模板编号: 13
+2025-08-15 10:48:44 - ppt_generator - INFO - Dify API返回模板编号: 13
+2025-08-15 10:48:44 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_13.pptx
+2025-08-15 10:48:44 - ppt_generator - INFO - 成功获取模板文件: split_presentations_13.pptx (112.3KB)
+2025-08-15 10:48:44 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 4.55秒
+2025-08-15 10:48:44 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 37字符
+2025-08-15 10:48:44 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:44 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:48 - ppt_generator - INFO - 成功获取模板编号: 42
+2025-08-15 10:48:48 - ppt_generator - INFO - Dify API返回模板编号: 42
+2025-08-15 10:48:48 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_42.pptx
+2025-08-15 10:48:48 - ppt_generator - INFO - 成功获取模板文件: split_presentations_42.pptx (67.2KB)
+2025-08-15 10:48:48 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.70秒
+2025-08-15 10:48:48 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 74字符
+2025-08-15 10:48:48 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:48 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:53 - ppt_generator - INFO - 成功获取模板编号: 24
+2025-08-15 10:48:53 - ppt_generator - INFO - Dify API返回模板编号: 24
+2025-08-15 10:48:53 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_24.pptx
+2025-08-15 10:48:53 - ppt_generator - INFO - 成功获取模板文件: split_presentations_24.pptx (70.6KB)
+2025-08-15 10:48:53 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 4.77秒
+2025-08-15 10:48:53 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 64字符
+2025-08-15 10:48:53 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:53 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:48:56 - ppt_generator - INFO - 成功获取模板编号: 16
+2025-08-15 10:48:56 - ppt_generator - INFO - Dify API返回模板编号: 16
+2025-08-15 10:48:56 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_16.pptx
+2025-08-15 10:48:56 - ppt_generator - INFO - 成功获取模板文件: split_presentations_16.pptx (108.6KB)
+2025-08-15 10:48:56 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.35秒
+2025-08-15 10:48:56 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 30字符
+2025-08-15 10:48:56 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:48:56 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:49:01 - ppt_generator - INFO - 成功获取模板编号: 45
+2025-08-15 10:49:01 - ppt_generator - INFO - Dify API返回模板编号: 45
+2025-08-15 10:49:01 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_45.pptx
+2025-08-15 10:49:01 - ppt_generator - INFO - 成功获取模板文件: split_presentations_45.pptx (79.0KB)
+2025-08-15 10:49:01 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 5.33秒
+2025-08-15 10:49:01 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 11字符
+2025-08-15 10:49:01 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-15 10:49:01 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-15 10:49:06 - ppt_generator - INFO - 成功获取模板编号: 2
+2025-08-15 10:49:06 - ppt_generator - INFO - Dify API返回模板编号: 2
+2025-08-15 10:49:06 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_2.pptx
+2025-08-15 10:49:06 - ppt_generator - INFO - 成功获取模板文件: split_presentations_2.pptx (71.6KB)
+2025-08-15 10:49:06 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 4.59秒
+2025-08-15 10:49:06 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 尝试使用最佳格式保留方法合并15个模板
+2025-08-15 10:49:06 - ppt_generator - INFO - 使用Win32COM合并器（保持各页独特格式）
+2025-08-15 10:49:12 - ppt_generator - INFO - PowerPoint COM接口初始化成功
+2025-08-15 10:49:12 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并 - 开始合并15个模板文件
+2025-08-15 10:49:15 - ppt_generator - INFO - 完美格式保留合并: title_slides.pptx
+2025-08-15 10:49:16 - ppt_generator - INFO - 完美格式保留合并: split_presentations_12.pptx
+2025-08-15 10:49:17 - ppt_generator - INFO - 完美格式保留合并: split_presentations_12.pptx
+2025-08-15 10:49:18 - ppt_generator - INFO - 完美格式保留合并: split_presentations_12.pptx
+2025-08-15 10:49:19 - ppt_generator - INFO - 完美格式保留合并: split_presentations_38.pptx
+2025-08-15 10:49:21 - ppt_generator - INFO - 完美格式保留合并: split_presentations_36.pptx
+2025-08-15 10:49:22 - ppt_generator - INFO - 完美格式保留合并: split_presentations_9.pptx
+2025-08-15 10:49:23 - ppt_generator - INFO - 完美格式保留合并: split_presentations_23.pptx
+2025-08-15 10:49:23 - ppt_generator - INFO - 完美格式保留合并: split_presentations_13.pptx
+2025-08-15 10:49:24 - ppt_generator - INFO - 完美格式保留合并: split_presentations_42.pptx
+2025-08-15 10:49:25 - ppt_generator - INFO - 完美格式保留合并: split_presentations_24.pptx
+2025-08-15 10:49:25 - ppt_generator - INFO - 完美格式保留合并: split_presentations_16.pptx
+2025-08-15 10:49:26 - ppt_generator - INFO - 完美格式保留合并: split_presentations_45.pptx
+2025-08-15 10:49:27 - ppt_generator - INFO - 完美格式保留合并: split_presentations_2.pptx
+2025-08-15 10:49:27 - ppt_generator - INFO - 完美格式保留合并: ending_slides.pptx
+2025-08-15 10:49:28 - ppt_generator - INFO - PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_20250815_104927.pptx
+2025-08-15 10:49:28 - ppt_generator - INFO - 成功读取PPT字节数据，大小: 1372413 字节
+2025-08-15 10:49:28 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并完成 - 成功: 15页, 跳过: 0页
+2025-08-15 10:49:31 - ppt_generator - INFO - PowerPoint COM资源已清理
+2025-08-15 10:49:31 - ppt_generator - INFO - Win32COM合并成功
+2025-08-17 17:45:41 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 17:52:07 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-17 17:52:07 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-17 17:52:07 - ppt_generator - INFO - 扫描到250个模板文件，编号范围: {'min': 1, 'max': 250}
+2025-08-17 18:00:46 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-17 18:00:46 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-17 18:00:46 - ppt_generator - INFO - 扫描到250个模板文件，编号范围: {'min': 1, 'max': 250}
+2025-08-17 18:02:23 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 695
+2025-08-17 18:02:27 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 123字符
+2025-08-17 18:02:27 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-17 18:02:27 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-17 18:02:58 - ppt_generator - WARNING - API请求超时 (尝试 1)
+2025-08-17 18:03:00 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)
+2025-08-17 18:03:09 - ppt_generator - INFO - 成功获取模板编号: 33
+2025-08-17 18:03:09 - ppt_generator - INFO - Dify API返回模板编号: 33
+2025-08-17 18:03:09 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_33.pptx
+2025-08-17 18:03:09 - ppt_generator - INFO - 成功获取模板文件: split_presentations_33.pptx (69.7KB)
+2025-08-17 18:03:09 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 42.02秒
+2025-08-17 18:03:09 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 100字符
+2025-08-17 18:03:09 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-17 18:03:09 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-17 18:03:13 - ppt_generator - INFO - 成功获取模板编号: 36
+2025-08-17 18:03:13 - ppt_generator - INFO - Dify API返回模板编号: 36
+2025-08-17 18:03:13 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_36.pptx
+2025-08-17 18:03:13 - ppt_generator - INFO - 成功获取模板文件: split_presentations_36.pptx (111.9KB)
+2025-08-17 18:03:13 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.29秒
+2025-08-17 18:03:13 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 177字符
+2025-08-17 18:03:13 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-17 18:03:13 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-17 18:03:17 - ppt_generator - INFO - 成功获取模板编号: 23
+2025-08-17 18:03:17 - ppt_generator - INFO - Dify API返回模板编号: 23
+2025-08-17 18:03:17 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_23.pptx
+2025-08-17 18:03:17 - ppt_generator - INFO - 成功获取模板文件: split_presentations_23.pptx (68.2KB)
+2025-08-17 18:03:17 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 4.04秒
+2025-08-17 18:03:17 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 134字符
+2025-08-17 18:03:17 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-17 18:03:17 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)
+2025-08-17 18:03:20 - ppt_generator - INFO - 成功获取模板编号: 13
+2025-08-17 18:03:20 - ppt_generator - INFO - Dify API返回模板编号: 13
+2025-08-17 18:03:20 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_13.pptx
+2025-08-17 18:03:20 - ppt_generator - INFO - 成功获取模板文件: split_presentations_13.pptx (112.3KB)
+2025-08-17 18:03:20 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.06秒
+2025-08-17 18:03:22 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 尝试使用最佳格式保留方法合并6个模板
+2025-08-17 18:03:22 - ppt_generator - INFO - 使用Win32COM合并器（保持各页独特格式）
+2025-08-17 18:03:40 - ppt_generator - INFO - PowerPoint COM接口初始化成功
+2025-08-17 18:03:40 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并 - 开始合并6个模板文件
+2025-08-17 18:03:42 - ppt_generator - INFO - 完美格式保留合并: title_slides.pptx
+2025-08-17 18:03:44 - ppt_generator - INFO - 完美格式保留合并: split_presentations_33.pptx
+2025-08-17 18:03:44 - ppt_generator - INFO - 完美格式保留合并: split_presentations_36.pptx
+2025-08-17 18:03:45 - ppt_generator - INFO - 完美格式保留合并: split_presentations_23.pptx
+2025-08-17 18:03:47 - ppt_generator - INFO - 完美格式保留合并: split_presentations_13.pptx
+2025-08-17 18:03:48 - ppt_generator - INFO - 完美格式保留合并: ending_slides.pptx
+2025-08-17 18:03:49 - ppt_generator - INFO - PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_20250817_180348.pptx
+2025-08-17 18:03:49 - ppt_generator - INFO - 成功读取PPT字节数据，大小: 1064280 字节
+2025-08-17 18:03:49 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并完成 - 成功: 6页, 跳过: 0页
+2025-08-17 18:03:55 - ppt_generator - INFO - PowerPoint COM资源已清理
+2025-08-17 18:03:55 - ppt_generator - INFO - Win32COM合并成功
+2025-08-17 18:34:10 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-17 18:34:10 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-17 18:34:10 - ppt_generator - INFO - 扫描到250个模板文件，编号范围: {'min': 1, 'max': 250}
+2025-08-17 20:22:44 - ppt_generator - INFO - 扫描到250个模板文件，编号范围: {'min': 1, 'max': 250}
+2025-08-17 20:51:04 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 20:51:04 - ppt_generator - INFO - 初始化智能API密钥轮询器，共3个密钥
+2025-08-17 20:51:04 - ppt_generator - INFO - 初始化智能API密钥轮询器，共3个密钥
+2025-08-17 20:51:04 - ppt_generator - INFO - 初始化智能API密钥轮询器，共3个密钥
+2025-08-17 20:51:04 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 20:51:04 - ppt_generator - INFO - 初始化智能API密钥轮询器，共0个密钥
+2025-08-17 20:51:12 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 20:51:12 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 20:51:12 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 20:51:12 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 20:51:12 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 20:51:12 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 21:00:31 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 21:00:31 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 21:00:31 - ppt_generator - WARNING - 未配置任何Dify API密钥，模板推荐功能将无法使用
+2025-08-17 21:00:31 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-17 21:00:31 - ppt_generator - INFO - 初始化分批处理器，批次大小: 3
+2025-08-17 21:00:31 - ppt_generator - INFO - 开始分批处理 8 个页面，每批 3 个
+2025-08-17 21:00:31 - ppt_generator - INFO - 处理第 1/3 批，包含 3 个页面
+2025-08-17 21:00:31 - ppt_generator - INFO - 处理第 2/3 批，包含 3 个页面
+2025-08-17 21:00:32 - ppt_generator - INFO - 处理第 3/3 批，包含 2 个页面
+2025-08-17 21:00:32 - ppt_generator - INFO - 分批处理完成: 6/8 成功, 3/3 批次成功, 总耗时: 1.89秒
+2025-08-18 10:14:04 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-18 10:14:04 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-18 10:14:04 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-18 10:14:04 - ppt_generator - INFO - 扫描到250个模板文件，编号范围: {'min': 1, 'max': 250}
+2025-08-18 10:14:28 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 503
+2025-08-18 10:14:32 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-18 10:14:32 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 101字符
+2025-08-18 10:14:32 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-18 10:14:32 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-18 10:14:32 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-18 10:14:37 - ppt_generator - INFO - 成功获取模板编号: 58 (响应时间: 4.71s)
+2025-08-18 10:14:37 - ppt_generator - INFO - Dify API返回模板编号: 58
+2025-08-18 10:14:37 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_58.pptx
+2025-08-18 10:14:37 - ppt_generator - INFO - 成功获取模板文件: split_presentations_58.pptx (93.0KB)
+2025-08-18 10:14:37 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 4.73秒
+2025-08-18 10:14:37 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-18 10:14:37 - ppt_generator - INFO -   app-AtSOXQoIZxBphB9M...: 1次请求, 成功率100.0%, 平均响应时间4.71s, 健康分数0.76
+2025-08-18 10:14:37 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 72字符
+2025-08-18 10:14:37 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-18 10:14:37 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-18 10:14:40 - ppt_generator - INFO - 成功获取模板编号: 16 (响应时间: 3.53s)
+2025-08-18 10:14:40 - ppt_generator - INFO - Dify API返回模板编号: 16
+2025-08-18 10:14:40 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_16.pptx
+2025-08-18 10:14:40 - ppt_generator - INFO - 成功获取模板文件: split_presentations_16.pptx (108.6KB)
+2025-08-18 10:14:40 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.56秒
+2025-08-18 10:14:40 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-18 10:14:40 - ppt_generator - INFO -   app-AtSOXQoIZxBphB9M...: 1次请求, 成功率100.0%, 平均响应时间4.71s, 健康分数0.76
+2025-08-18 10:14:40 - ppt_generator - INFO -   app-N7011dGBmtwWVEgt...: 1次请求, 成功率100.0%, 平均响应时间3.53s, 健康分数0.78
+2025-08-18 10:14:40 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 147字符
+2025-08-18 10:14:40 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-18 10:14:40 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-18 10:14:44 - ppt_generator - INFO - 成功获取模板编号: 32 (响应时间: 3.82s)
+2025-08-18 10:14:44 - ppt_generator - INFO - Dify API返回模板编号: 32
+2025-08-18 10:14:44 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_32.pptx
+2025-08-18 10:14:44 - ppt_generator - INFO - 成功获取模板文件: split_presentations_32.pptx (69.1KB)
+2025-08-18 10:14:44 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.83秒
+2025-08-18 10:14:44 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-18 10:14:44 - ppt_generator - INFO -   app-AtSOXQoIZxBphB9M...: 1次请求, 成功率100.0%, 平均响应时间4.71s, 健康分数0.76
+2025-08-18 10:14:44 - ppt_generator - INFO -   app-N7011dGBmtwWVEgt...: 1次请求, 成功率100.0%, 平均响应时间3.53s, 健康分数0.78
+2025-08-18 10:14:44 - ppt_generator - INFO -   app-TGd6LztoZHmU2W6B...: 1次请求, 成功率100.0%, 平均响应时间3.82s, 健康分数0.78
+2025-08-18 10:14:44 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 163字符
+2025-08-18 10:14:44 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-18 10:14:44 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-08-18 10:14:48 - ppt_generator - INFO - 成功获取模板编号: 36 (响应时间: 3.61s)
+2025-08-18 10:14:48 - ppt_generator - INFO - Dify API返回模板编号: 36
+2025-08-18 10:14:48 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_36.pptx
+2025-08-18 10:14:48 - ppt_generator - INFO - 成功获取模板文件: split_presentations_36.pptx (111.9KB)
+2025-08-18 10:14:48 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 3.62秒
+2025-08-18 10:14:48 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-18 10:14:48 - ppt_generator - INFO -   app-AtSOXQoIZxBphB9M...: 1次请求, 成功率100.0%, 平均响应时间4.71s, 健康分数0.76
+2025-08-18 10:14:48 - ppt_generator - INFO -   app-N7011dGBmtwWVEgt...: 1次请求, 成功率100.0%, 平均响应时间3.53s, 健康分数0.78
+2025-08-18 10:14:48 - ppt_generator - INFO -   app-TGd6LztoZHmU2W6B...: 1次请求, 成功率100.0%, 平均响应时间3.82s, 健康分数0.78
+2025-08-18 10:14:48 - ppt_generator - INFO -   app-M9GpDc9UqEm3WPiS...: 1次请求, 成功率100.0%, 平均响应时间3.61s, 健康分数0.78
+2025-08-18 10:14:49 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 尝试使用最佳格式保留方法合并6个模板
+2025-08-18 10:14:49 - ppt_generator - INFO - 使用Win32COM合并器（保持各页独特格式）
+2025-08-18 10:15:02 - ppt_generator - INFO - PowerPoint COM接口初始化成功
+2025-08-18 10:15:02 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并 - 开始合并6个模板文件
+2025-08-18 10:15:03 - ppt_generator - INFO - 完美格式保留合并: title_slides.pptx
+2025-08-18 10:15:04 - ppt_generator - INFO - 完美格式保留合并: ending_slides.pptx
+2025-08-18 10:15:05 - ppt_generator - INFO - 完美格式保留合并: split_presentations_58.pptx
+2025-08-18 10:15:06 - ppt_generator - INFO - 完美格式保留合并: split_presentations_16.pptx
+2025-08-18 10:15:08 - ppt_generator - INFO - 完美格式保留合并: split_presentations_32.pptx
+2025-08-18 10:15:09 - ppt_generator - INFO - 完美格式保留合并: split_presentations_36.pptx
+2025-08-18 10:15:10 - ppt_generator - INFO - PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_20250818_101509.pptx
+2025-08-18 10:15:10 - ppt_generator - INFO - 成功读取PPT字节数据，大小: 1093919 字节
+2025-08-18 10:15:10 - ppt_generator - INFO - 用户操作: PPT完美格式保留合并完成 - 成功: 6页, 跳过: 0页
+2025-08-18 10:15:14 - ppt_generator - INFO - PowerPoint COM资源已清理
+2025-08-18 10:15:14 - ppt_generator - INFO - Win32COM合并成功

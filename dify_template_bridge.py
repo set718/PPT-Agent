@@ -14,7 +14,7 @@ import time
 from typing import Dict, List, Any, Optional, Tuple
 from pathlib import Path
 from logger import get_logger, log_user_action
-from dify_api_client import DifyAPIConfig, APIKeyBalancer
+from dify_api_client import DifyAPIConfig, SmartAPIKeyPoller
 from utils import FileManager
 
 logger = get_logger()
@@ -42,11 +42,8 @@ class DifyTemplateBridge:
         self.config = config or DifyAPIConfig()
         self.templates_dir = os.path.join(os.path.dirname(__file__), "templates", "ppt_template")
         
-        # 使用单例负载均衡器
-        self.key_balancer = APIKeyBalancer(
-            self.config.api_keys, 
-            self.config.load_balance_strategy
-        )
+        # 智能API密钥轮询器
+        self.api_key_poller = SmartAPIKeyPoller(self.config) if self.config.api_keys else None
         
         # 添加缓存
         self._templates_cache = None
@@ -225,9 +222,21 @@ class DifyTemplateBridge:
             for attempt in range(self.config.max_retries):
                 result["attempt_count"] = attempt + 1
                 
-                # 获取API密钥
-                current_api_key = self.key_balancer.get_next_key()
+                # 获取API密钥（使用智能轮询器）
+                if not self.api_key_poller:
+                    result["error"] = "无可用的API密钥"
+                    return result
+                
+                key_info = self.api_key_poller.get_next_key()
+                if not key_info:
+                    result["error"] = "所有API密钥都不可用"
+                    return result
+                
+                current_api_key, key_index = key_info
                 result["used_api_key"] = current_api_key[:20] + "..."
+                
+                # 执行健康检查
+                self.api_key_poller.perform_health_check()
                 
                 headers = {
                     'Authorization': f'Bearer {current_api_key}',
@@ -235,8 +244,9 @@ class DifyTemplateBridge:
                 }
                 
                 try:
-                    logger.info(f"调用Dify API获取模板编号 (尝试 {attempt + 1}/{self.config.max_retries})")
+                    logger.info(f"调用Dify API获取模板编号 (尝试 {attempt + 1}/{self.config.max_retries})，使用密钥索引: {key_index}")
                     
+                    request_start_time = time.time()
                     async with session.post(url, json=request_data, headers=headers) as response:
                         if response.status == 200:
                             # 处理streaming响应
@@ -263,42 +273,79 @@ class DifyTemplateBridge:
                             # 尝试从响应中提取数字
                             template_number = self._extract_template_number(response_text)
                             
+                            request_end_time = time.time()
+                            response_time = request_end_time - request_start_time
+                            
                             if template_number is not None:
                                 result["success"] = True
                                 result["template_number"] = template_number
                                 result["response_text"] = response_text
                                 
-                                # 标记API密钥成功
-                                self.key_balancer.mark_key_success(current_api_key)
+                                # 记录成功的请求
+                                if self.api_key_poller:
+                                    self.api_key_poller.record_request_result(
+                                        current_api_key, True, response_time
+                                    )
                                 
-                                logger.info(f"成功获取模板编号: {template_number}")
+                                logger.info(f"成功获取模板编号: {template_number} (响应时间: {response_time:.2f}s)")
                                 return result
                             else:
+                                # 记录失败的请求（解析失败）
+                                if self.api_key_poller:
+                                    self.api_key_poller.record_request_result(
+                                        current_api_key, False, response_time, "parse_error"
+                                    )
+                                
                                 result["error"] = f"无法从API响应中提取有效的模板编号: {response_text}"
                                 logger.warning(f"API响应中未找到有效数字: {response_text}")
                         else:
+                            request_end_time = time.time()
+                            response_time = request_end_time - request_start_time
                             error_text = await response.text()
                             result["error"] = f"HTTP {response.status}: {error_text}"
                             logger.warning(f"API请求失败，状态码: {response.status}")
                             
-                            # 认证错误时标记密钥失败
+                            # 记录失败的请求
+                            if self.api_key_poller:
+                                error_type = "auth_error" if response.status in [401, 403] else "http_error"
+                                self.api_key_poller.record_request_result(
+                                    current_api_key, False, response_time, error_type
+                                )
+                            
+                            # 认证错误时记录日志
                             if response.status in [401, 403]:
-                                self.key_balancer.mark_key_failed(current_api_key)
+                                logger.warning(f"API密钥认证失败: {current_api_key[:20]}...")
                 
                 except asyncio.TimeoutError:
+                    request_end_time = time.time()
+                    response_time = request_end_time - request_start_time
                     result["error"] = "API请求超时"
                     logger.warning(f"API请求超时 (尝试 {attempt + 1})")
                     
-                    # 超时多次后标记密钥失败
+                    # 记录超时失败
+                    if self.api_key_poller:
+                        self.api_key_poller.record_request_result(
+                            current_api_key, False, response_time, "timeout"
+                        )
+                    
+                    # 超时处理
                     if attempt >= 2:
-                        self.key_balancer.mark_key_failed(current_api_key)
+                        logger.warning(f"API密钥多次超时: {current_api_key[:20]}...")
                 
                 except Exception as e:
+                    request_end_time = time.time()
+                    response_time = request_end_time - request_start_time
                     result["error"] = f"API请求异常: {str(e)}"
                     logger.error(f"API请求异常: {str(e)}")
                     
-                    # 异常时标记密钥失败
-                    self.key_balancer.mark_key_failed(current_api_key)
+                    # 记录异常失败
+                    if self.api_key_poller:
+                        self.api_key_poller.record_request_result(
+                            current_api_key, False, response_time, "exception"
+                        )
+                    
+                    # 异常处理
+                    logger.warning(f"API密钥请求异常: {current_api_key[:20]}...")
                 
                 # 如果不是最后一次尝试，等待后重试
                 if attempt < self.config.max_retries - 1:
@@ -388,6 +435,20 @@ class DifyTemplateBridge:
             test_result["processing_time"] = end_time - start_time
             
             logger.info(f"Dify模板桥接测试成功完成，耗时: {test_result['processing_time']:.2f}秒")
+            
+            # 输出API密钥健康报告
+            if self.api_key_poller:
+                health_report = self.api_key_poller.get_health_report()
+                test_result["api_key_health_report"] = health_report
+                logger.info("API密钥健康状态报告:")
+                for key, stats in health_report.items():
+                    if stats["total_requests"] > 0:
+                        logger.info(
+                            f"  {key}: {stats['total_requests']}次请求, "
+                            f"成功率{stats['success_rate']:.1%}, "
+                            f"平均响应时间{stats['avg_response_time']:.2f}s, "
+                            f"健康分数{stats['health_score']:.2f}"
+                        )
             
         except Exception as e:
             test_result["error"] = f"桥接测试异常: {str(e)}"

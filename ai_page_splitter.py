@@ -108,49 +108,29 @@ class AIPageSplitter:
                 # 获取实际使用的模型名称
                 actual_model = model_info.get('actual_model', self.config.ai_model)
                 
-                # 检查是否支持流式输出（Groq Kimi K2）
-                use_streaming = 'groq.com' in self.base_url.lower()
+                # 统一使用流式输出（所有OpenAI兼容的API）
+                stream_options = {}
                 
-                if use_streaming:
-                    # 使用流式输出
-                    stream_options = {}
-                    
-                    response = self.client.chat.completions.create(
-                        model=actual_model,
-                        messages=[
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_text}
-                        ],
-                        temperature=0.3,
-                        max_tokens=4000,
-                        stream=True,
-                        stream_options=stream_options,
-                        timeout=request_timeout
-                    )
-                    
-                    # 收集流式响应内容
-                    content = ""
-                    for chunk in response:
-                        if chunk.choices and chunk.choices[0].delta.content:
-                            content += chunk.choices[0].delta.content
-                    
-                    content = content.strip() if content else ""
-                else:
-                    # 使用传统非流式调用
-                    response = self.client.chat.completions.create(
-                        model=actual_model,
-                        messages=[
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_text}
-                        ],
-                        temperature=0.3,
-                        max_tokens=4000,
-                        stream=False,
-                        timeout=request_timeout
-                    )
-                    
-                    content = response.choices[0].message.content
-                    content = content.strip() if content else ""
+                response = self.client.chat.completions.create(
+                    model=actual_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_text}
+                    ],
+                    temperature=0.3,
+                    max_tokens=4000,
+                    stream=True,
+                    stream_options=stream_options,
+                    timeout=request_timeout
+                )
+                
+                # 收集流式响应内容
+                content = ""
+                for chunk in response:
+                    if chunk.choices and chunk.choices[0].delta.content:
+                        content += chunk.choices[0].delta.content
+                
+                content = content.strip() if content else ""
             
             # 解析AI返回的结果
             return self._parse_ai_response(content, user_text)

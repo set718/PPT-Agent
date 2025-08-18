@@ -207,7 +207,7 @@ class PPTVisualAnalyzer:
             # 构建分析提示
             prompt = self._build_visual_analysis_prompt(slide_context)
             
-            # 调用GPT-4V分析
+            # 调用GPT-4V分析（使用流式输出）
             response = self.client.chat.completions.create(
                 model=self.config.ai_model,
                 messages=[
@@ -229,10 +229,17 @@ class PPTVisualAnalyzer:
                     }
                 ],
                 max_tokens=1500,
-                temperature=0.3
+                temperature=0.3,
+                stream=True
             )
             
-            content = response.choices[0].message.content
+            # 收集流式响应内容
+            content = ""
+            for chunk in response:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    content += chunk.choices[0].delta.content
+            
+            content = content.strip() if content else ""
             return self._parse_visual_analysis_result(content)
             
         except Exception as e:

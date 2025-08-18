@@ -14,7 +14,7 @@ from config import get_config
 from logger import get_logger, log_user_action
 from ai_page_splitter import AIPageSplitter, PageContentFormatter
 from dify_template_bridge import DifyTemplateBridge, sync_test_dify_template_bridge
-from dify_api_client import process_pages_with_dify, DifyAPIConfig
+from dify_api_client import DifyAPIConfig, BatchProcessor
 from utils import FileManager
 
 # 获取配置
@@ -103,7 +103,13 @@ class IntegratedPPTGenerator:
         self.template_bridge = DifyTemplateBridge()
         self.dify_config = DifyAPIConfig()
         
-        logger.info("初始化集成PPT生成器")
+        # 初始化分批处理器
+        self.batch_processor = BatchProcessor(
+            self.dify_config, 
+            self.template_bridge.api_key_poller
+        )
+        
+        logger.info("初始化集成PPT生成器（支持分批处理）")
     
     def process_text_with_ai_pagination(self, user_text: str, target_pages: Optional[int] = None) -> Dict[str, Any]:
         """使用AI进行智能分页"""
@@ -198,6 +204,154 @@ class IntegratedPPTGenerator:
                         content_parts.append(f"{i}. {title}: {points_text}")
         
         return "\n\n".join(content_parts)
+    
+    def get_templates_for_each_page_batch(self, pages: List[Dict[str, Any]], 
+                                        progress_callback=None) -> Dict[str, Any]:
+        """为每页获取模板推荐（分批处理版本）"""
+        log_user_action("多页模板推荐（分批）", f"为{len(pages)}页内容分别推荐模板")
+        
+        try:
+            # 检查是否启用分批处理
+            if not self.dify_config.enable_batch_processing or len(pages) <= self.dify_config.batch_size:
+                # 不启用分批处理或页面数少，使用原来的方法
+                return self.get_templates_for_each_page(pages)
+            
+            # 使用异步运行分批处理
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+            
+            try:
+                result = loop.run_until_complete(
+                    self._async_get_templates_for_pages(pages, progress_callback)
+                )
+                return result
+            finally:
+                # 清理事件循环
+                if loop != asyncio.get_event_loop():
+                    loop.close()
+                    
+        except Exception as e:
+            logger.error(f"分批模板推荐异常: {str(e)}")
+            return {
+                "success": False,
+                "error": f"分批模板推荐异常: {str(e)}"
+            }
+    
+    async def _async_get_templates_for_pages(self, pages: List[Dict[str, Any]], 
+                                           progress_callback=None) -> Dict[str, Any]:
+        """异步处理页面模板推荐"""
+        
+        # 准备页面数据
+        pages_data = []
+        for i, page in enumerate(pages):
+            if page.get('page_type') == 'title':
+                # 标题页不需要调用API
+                continue
+            pages_data.append({
+                "page_index": i,
+                "page_data": page,
+                "page_text": self._build_page_recommendation_text(page)
+            })
+        
+        # 定义API调用函数
+        async def api_call_func(page_info):
+            page_data = page_info["page_data"]
+            page_text = page_info["page_text"]
+            
+            try:
+                # 调用Dify API
+                bridge_result = await self._async_call_dify_for_page(page_text)
+                
+                if bridge_result["success"]:
+                    dify_result = bridge_result["step_1_dify_api"]
+                    template_result = bridge_result["step_2_template_lookup"]
+                    
+                    return {
+                        "success": True,
+                        "page_number": page_data.get('page_number', page_info["page_index"] + 1),
+                        "page_type": page_data.get('page_type', 'content'),
+                        "template_number": dify_result["template_number"],
+                        "template_path": template_result["file_path"],
+                        "template_filename": template_result["filename"],
+                        "template_source": "dify_recommended"
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "page_number": page_data.get('page_number', page_info["page_index"] + 1),
+                        "page_type": page_data.get('page_type', 'content'),
+                        "error": bridge_result.get('error', '推荐失败'),
+                        "template_source": "failed"
+                    }
+                    
+            except Exception as e:
+                logger.error(f"页面API调用异常: {str(e)}")
+                return {
+                    "success": False,
+                    "page_number": page_data.get('page_number', page_info["page_index"] + 1),
+                    "error": str(e),
+                    "template_source": "exception"
+                }
+        
+        # 使用分批处理器处理
+        batch_result = await self.batch_processor.process_pages_in_batches(
+            pages_data, api_call_func, progress_callback
+        )
+        
+        # 重新组装结果以兼容原有格式
+        template_results = []
+        successful_templates = []
+        
+        # 首先添加标题页
+        for i, page in enumerate(pages):
+            if page.get('page_type') == 'title':
+                template_results.append({
+                    "page_number": page.get('page_number', i+1),
+                    "page_type": "title",
+                    "template_source": "fixed",
+                    "template_path": None,
+                    "success": True
+                })
+        
+        # 添加批处理的结果
+        if batch_result.get("success", False):
+            for batch_item in batch_result.get("page_templates", []):
+                result_data = batch_item.get("result", {})
+                if result_data.get("success", False):
+                    template_results.append(result_data)
+                    if result_data.get("template_path"):
+                        successful_templates.append(result_data["template_path"])
+                else:
+                    template_results.append(result_data)
+        
+        # 按页面编号排序
+        template_results.sort(key=lambda x: x.get("page_number", 0))
+        
+        return {
+            "success": True,
+            "page_templates": template_results,
+            "successful_count": len(successful_templates),
+            "total_pages": len(pages),
+            "template_paths": successful_templates,
+            "batch_details": batch_result.get("batch_details", []),
+            "total_processing_time": batch_result.get("total_processing_time", 0),
+            "total_batches": batch_result.get("total_batches", 0)
+        }
+    
+    async def _async_call_dify_for_page(self, page_text: str) -> Dict[str, Any]:
+        """异步调用Dify API为页面推荐模板"""
+        try:
+            # 调用桥接器的异步方法
+            result = await self.template_bridge.test_dify_template_bridge(page_text)
+            return result
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Dify API调用异常: {str(e)}"
+            }
     
     def get_templates_for_each_page(self, pages: List[Dict[str, Any]]) -> Dict[str, Any]:
         """为每页获取模板推荐"""

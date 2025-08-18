@@ -81,6 +81,9 @@ class Win32PPTMerger:
             return result
         
         try:
+            # 按页面编号排序，确保结尾页在最后
+            sorted_page_results = sorted(page_results, key=lambda x: x.get("page_number", 0))
+            
             # 关闭默认演示文稿
             if self.merged_presentation:
                 self.merged_presentation.Close()
@@ -94,7 +97,7 @@ class Win32PPTMerger:
                 self.merged_presentation.Slides(1).Delete()
             
             # 逐个插入每个模板文件的第一页，完全保留格式
-            for i, page_result in enumerate(page_results):
+            for i, page_result in enumerate(sorted_page_results):
                 template_path = page_result.get('template_path')
                 
                 if not template_path or not os.path.exists(template_path):
@@ -175,21 +178,24 @@ class Win32PPTMerger:
             return result
         
         try:
+            # 按页面编号排序，确保结尾页在最后
+            sorted_page_results = sorted(page_results, key=lambda x: x.get("page_number", 0))
+            
             # 关闭默认演示文稿
             if self.merged_presentation:
                 self.merged_presentation.Close()
                 self.merged_presentation = None
             
             # 使用第一个模板作为基础
-            first_template_path = os.path.abspath(page_results[0].get('template_path'))
+            first_template_path = os.path.abspath(sorted_page_results[0].get('template_path'))
             self.merged_presentation = self.ppt_app.Presentations.Open(first_template_path)
             result["processed_pages"] = 1
             
             logger.info(f"使用第一个模板作为基础: {os.path.basename(first_template_path)}")
             
             # 为后续模板使用Range.Copy和Paste方法
-            for i in range(1, len(page_results)):
-                template_path = page_results[i].get('template_path')
+            for i in range(1, len(sorted_page_results)):
+                template_path = sorted_page_results[i].get('template_path')
                 
                 if not template_path or not os.path.exists(template_path):
                     result["errors"].append(f"第{i+1}页模板文件不存在")
@@ -300,8 +306,11 @@ class Win32PPTMerger:
             if self.merged_presentation.Slides.Count > 0:
                 self.merged_presentation.Slides(1).Delete()
             
+            # 按页面编号排序，确保结尾页在最后
+            sorted_page_results = sorted(page_results, key=lambda x: x.get("page_number", 0))
+            
             # 逐个导入每个模板的第一页，保持完整原始格式
-            for i, page_result in enumerate(page_results):
+            for i, page_result in enumerate(sorted_page_results):
                 template_path = page_result.get('template_path')
                 
                 if not template_path or not os.path.exists(template_path):

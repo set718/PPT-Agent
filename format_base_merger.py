@@ -115,8 +115,11 @@ class FormatBaseMerger:
             
             result["processed_pages"] = 0
             
+            # 按页面编号排序，确保结尾页在最后
+            sorted_page_results = sorted(page_results, key=lambda x: x.get("page_number", 0))
+            
             # 逐个添加每个页面，但应用基准格式
-            for i, page_result in enumerate(page_results):
+            for i, page_result in enumerate(sorted_page_results):
                 template_path = page_result.get('template_path')
                 
                 if not template_path or not os.path.exists(template_path):
@@ -220,8 +223,11 @@ class FormatBaseMerger:
                 slides = base_ppt.slides
                 slides._sldIdLst.remove(slides._sldIdLst[0])
             
+            # 按页面编号排序，确保结尾页在最后
+            sorted_page_results = sorted(page_results, key=lambda x: x.get("page_number", 0))
+            
             # 逐个添加页面
-            for i, page_result in enumerate(page_results):
+            for i, page_result in enumerate(sorted_page_results):
                 template_path = page_result.get('template_path')
                 
                 if not template_path or not os.path.exists(template_path):

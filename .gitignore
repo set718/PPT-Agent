@@ -16,6 +16,7 @@ app.log
 output/
 temp_output/
 *.pptx
+!templates/**/*.pptx
 *.tmp
 
 # IDE配置文件

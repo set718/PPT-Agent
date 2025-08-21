@@ -220,9 +220,10 @@ class AIPageSplitter:
 4. **适量分配**：每页内容量适中，避免过于拥挤或空洞
 
 **分页策略：**
-- **标题页（第1页）**：仅提取文档标题和日期信息，其他所有文本内容都延后到第二页开始处理
-- **内容页（第2页开始）**：从第二页开始处理所有实际内容，按主要观点、时间顺序或逻辑结构分页
-- **概述页**：如果内容复杂，可在第二页作为概述页
+- **标题页（第1页）**：仅提取文档标题和日期信息，其他所有文本内容都延后到第三页开始处理
+- **目录页（第2页）**：固定的目录页模板，不需要AI生成内容
+- **内容页（第3页开始）**：从第三页开始处理所有实际内容，按主要观点、时间顺序或逻辑结构分页
+- **概述页**：如果内容复杂，可在第三页作为概述页
 - **结尾页**：不生成结尾页（使用预设的固定结尾页模板）
 
 **标题页处理规则：**
@@ -252,12 +253,12 @@ class AIPageSplitter:
 - 学术报告：20-25页（标题页 + 19-24个内容页，根据内容深度调整）
 
 **页面结构说明：**
-- 结尾页使用固定模板，不需要AI生成，因此总页数 = 生成页数 + 1个固定结尾页
-- **重要限制：总页数不得超过25页**（包括标题页、内容页和结尾页）
+- 目录页和结尾页使用固定模板，不需要AI生成，因此总页数 = 生成页数 + 1个固定目录页 + 1个固定结尾页
+- **重要限制：总页数不得超过25页**（包括标题页、目录页、内容页和结尾页）
 
 {target_instruction}请分析用户文本的结构和内容，智能分割为合适的页面数量。
 
-**严格要求：生成的页面数量必须控制在24页以内，为固定结尾页预留位置，确保总数不超过25页。**
+**严格要求：生成的页面数量必须控制在23页以内，为固定目录页和结尾页预留位置，确保总数不超过25页。**
 
 **输出格式要求：**
 请严格按照以下JSON格式返回：
@@ -415,7 +416,7 @@ class AIPageSplitter:
             "original_text_segment": title  # 只包含标题部分
         })
         
-        # 将除标题外的所有内容分配到第2页开始的内容页
+        # 将除标题外的所有内容分配到第3页开始的内容页（第2页是固定目录页）
         # 重新组织内容：去掉标题行后的所有文本
         remaining_text = user_text
         if lines and len(lines) > 1:
@@ -428,20 +429,20 @@ class AIPageSplitter:
         if not remaining_paragraphs and remaining_text:
             remaining_paragraphs = [remaining_text]
         
-        page_num = 2
+        page_num = 3  # 从第3页开始（第2页是固定目录页）
         if remaining_paragraphs:
             for i, paragraph in enumerate(remaining_paragraphs):
-                # 限制总页数不超过24页（为结尾页预留空间）
-                if page_num > 24:
-                    print(f"警告：内容过多，已达到24页上限，剩余{len(remaining_paragraphs) - i}段内容将被省略")
+                # 限制总页数不超过23页（为目录页和结尾页预留空间）
+                if page_num > 23:
+                    print(f"警告：内容过多，已达到23页上限，剩余{len(remaining_paragraphs) - i}段内容将被省略")
                     break
                     
                 pages.append({
                     "page_number": page_num,
                     "page_type": "content",
-                    "title": f"内容 {page_num - 1}",
+                    "title": f"内容 {page_num - 2}",
                     "subtitle": "",
-                    "content_summary": f"第{page_num - 1}部分内容（从第2页开始处理实际内容）",
+                    "content_summary": f"第{page_num - 2}部分内容（从第3页开始处理实际内容）",
                     "key_points": [paragraph[:50] + "..." if len(paragraph) > 50 else paragraph],
                     "original_text_segment": paragraph
                 })
@@ -449,11 +450,11 @@ class AIPageSplitter:
         else:
             # 如果没有剩余内容，至少创建一个空的内容页
             pages.append({
-                "page_number": 2,
+                "page_number": 3,
                 "page_type": "content",
                 "title": "内容页",
                 "subtitle": "",
-                "content_summary": "从第2页开始处理实际内容，但当前文本只包含标题",
+                "content_summary": "从第3页开始处理实际内容，但当前文本只包含标题",
                 "key_points": ["内容待补充"],
                 "original_text_segment": "无额外内容"
             })
@@ -471,10 +472,48 @@ class AIPageSplitter:
             "is_fallback": True
         }
         
-        # 添加固定的结尾页
+        # 添加固定的目录页和结尾页
+        self._add_table_of_contents_page(result)
         self._add_ending_page(result)
         
         return result
+    
+    def _add_table_of_contents_page(self, result: Dict[str, Any]) -> None:
+        """添加固定的目录页（第2页）"""
+        import os
+        
+        pages = result.get('pages', [])
+        if not pages:
+            return
+        
+        # 调整现有页面的页码（为目录页腾出第2页位置）
+        for page in pages:
+            if page.get('page_number', 1) > 1:
+                page['page_number'] = page['page_number'] + 1
+        
+        # 创建目录页信息
+        table_of_contents_page = {
+            "page_number": 2,
+            "page_type": "table_of_contents",
+            "title": "目录",
+            "subtitle": "Contents",
+            "content_summary": "固定目录页模板，展示内容结构",
+            "key_points": [
+                "演示内容导航",
+                "章节结构预览"
+            ],
+            "original_text_segment": "",
+            "template_path": os.path.join("templates", "table_of_contents_slides.pptx"),
+            "is_fixed_template": True,
+            "skip_dify_api": True  # 标记为跳过Dify API调用
+        }
+        
+        # 将目录页插入到第2位
+        pages.insert(1, table_of_contents_page)
+        
+        # 更新分析信息中的总页数
+        if 'analysis' in result:
+            result['analysis']['total_pages'] = len(pages)
     
     def _add_ending_page(self, result: Dict[str, Any]) -> None:
         """添加固定的结尾页"""

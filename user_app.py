@@ -119,9 +119,11 @@ def show_results_section(pages, page_results):
     st.markdown("### 📄 页面详情")
     
     for i, page_result in enumerate(page_results):
-        # 区分封面页、结尾页和普通页面的显示标题
+        # 区分封面页、目录页、结尾页和普通页面的显示标题
         if page_result.get('is_title_page', False):
             expander_title = f"第{page_result['page_number']}页 - 📋 封面页(固定模板)"
+        elif page_result.get('is_toc_page', False):
+            expander_title = f"第{page_result['page_number']}页 - 📑 目录页(固定模板)"
         elif page_result.get('is_ending_page', False):
             expander_title = f"第{page_result['page_number']}页 - 🔚 结尾页(固定模板)"
         else:
@@ -134,6 +136,10 @@ def show_results_section(pages, page_results):
                 st.text(f"📄 页面编号: {page_result['page_number']}")
                 if page_result.get('is_title_page', False):
                     st.text(f"📋 页面类型: 封面页")
+                    st.text(f"📁 固定模板: {page_result['template_filename']}")
+                    st.text(f"⚡ 处理方式: 直接匹配，无需API调用")
+                elif page_result.get('is_toc_page', False):
+                    st.text(f"📑 页面类型: 目录页")
                     st.text(f"📁 固定模板: {page_result['template_filename']}")
                     st.text(f"⚡ 处理方式: 直接匹配，无需API调用")
                 elif page_result.get('is_ending_page', False):
@@ -614,7 +620,11 @@ def main():
     available_models = config.available_models
     model_options = {}
     for model_key, model_info in available_models.items():
-        display_name = f"{model_info['name']} ({model_info['cost']}成本)"
+        # 只对有成本信息的模型显示成本
+        if model_info['cost']:
+            display_name = f"{model_info['name']} ({model_info['cost']}成本)"
+        else:
+            display_name = model_info['name']
         if not model_info['supports_vision']:
             display_name += " - ⚠️ 无视觉分析"
         model_options[display_name] = model_key
@@ -625,7 +635,7 @@ def main():
             "选择适合您需求的AI模型：",
             options=list(model_options.keys()),
             index=0,
-            help="不同模型有不同的功能和成本特点"
+            help="不同模型有不同的功能特点"
         )
         
         selected_model = model_options[selected_display]
@@ -1016,6 +1026,19 @@ def main():
                                     'is_title_page': True
                                 })
                                 st.info(f"📋 第{page_number}页(封面页)：使用固定标题模板")
+                            elif page_type == 'table_of_contents':
+                                toc_template_path = page.get('template_path', os.path.join("templates", "table_of_contents_slides.pptx"))
+                                page_results.append({
+                                    'page_number': page_number,
+                                    'content': page_content,
+                                    'template_number': 'table_of_contents',
+                                    'template_path': toc_template_path,
+                                    'template_filename': "table_of_contents_slides.pptx",
+                                    'dify_response': '目录页使用固定目录模板',
+                                    'processing_time': 0,
+                                    'is_toc_page': True
+                                })
+                                st.info(f"📑 第{page_number}页(目录页)：使用固定目录模板")
                             elif page_type == 'ending' or page.get('skip_dify_api', False):
                                 ending_template_path = page.get('template_path', os.path.join("templates", "ending_slides.pptx"))
                                 page_results.append({
@@ -1195,6 +1218,21 @@ def main():
                                 'is_title_page': True
                             })
                             st.info(f"📋 第{page_number}页(封面页)：使用固定标题模板 title_slides.pptx")
+                        
+                        # 目录页直接使用 table_of_contents_slides.pptx，不调用Dify API
+                        elif page_type == 'table_of_contents':
+                            toc_template_path = page.get('template_path', os.path.join("templates", "table_of_contents_slides.pptx"))
+                            page_results.append({
+                                'page_number': page_number,
+                                'content': page_content,
+                                'template_number': 'table_of_contents',
+                                'template_path': toc_template_path,
+                                'template_filename': "table_of_contents_slides.pptx",
+                                'dify_response': '目录页使用固定目录模板',
+                                'processing_time': 0,
+                                'is_toc_page': True
+                            })
+                            st.info(f"📑 第{page_number}页(目录页)：使用固定目录模板 table_of_contents_slides.pptx")
                         
                         # 结尾页直接使用 ending_slides.pptx，不调用Dify API
                         elif page_type == 'ending' or page.get('skip_dify_api', False):

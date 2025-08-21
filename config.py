@@ -31,20 +31,20 @@ class Config:
     
     # 模型选择配置
     available_models: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
-        "gpt-4o": {
-            "name": "GPT-4o",
-            "description": "OpenAI GPT-4o模型，支持视觉分析功能",
+        "gpt-5": {
+            "name": "GPT-5",
+            "description": "OpenAI GPT-5模型，支持视觉分析功能",
             "supports_vision": True,
             "cost": "较高",
-            "base_url": "https://openrouter.ai/api/v1",
-            "api_provider": "OpenRouter",
-            "api_key_url": "https://openrouter.ai/keys"
+            "base_url": "https://api.openai.com/v1",
+            "api_provider": "OpenAI",
+            "api_key_url": "https://platform.openai.com/api-keys"
         },
         "liai-chat": {
-            "name": "Liai Chat",
+            "name": "Liai Chat（保密信息请选择此模型）",
             "description": "Liai智能对话模型，支持多模态输入",
             "supports_vision": True,
-            "cost": "中等",
+            "cost": "",
             "base_url": "https://liai-app.chj.cloud/v1",
             "api_provider": "Liai",
             "api_key_url": "https://liai-app.chj.cloud",

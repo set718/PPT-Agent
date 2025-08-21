@@ -59,218 +59,7 @@ class Win32PPTMerger:
             logger.error(f"PowerPoint启动失败: {str(e)}")
             raise
     
-    def merge_template_pages_to_ppt_file_level(self, page_results: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        文件级别的PPT合并 - 完全保留每个模板的原始格式
-        """
-        log_user_action("PPT文件级别合并(Win32COM)", f"开始合并{len(page_results)}个模板文件")
-        
-        result = {
-            "success": False,
-            "total_pages": 0,
-            "processed_pages": 0,
-            "skipped_pages": 0,
-            "errors": [],
-            "presentation_bytes": None,
-            "output_path": None,
-            "error": None
-        }
-        
-        if len(page_results) == 0:
-            result["error"] = "没有页面需要合并"
-            return result
-        
-        try:
-            # 按页面编号排序，确保结尾页在最后
-            sorted_page_results = sorted(page_results, key=lambda x: x.get("page_number", 0))
-            
-            # 关闭默认演示文稿
-            if self.merged_presentation:
-                self.merged_presentation.Close()
-                self.merged_presentation = None
-            
-            # 创建一个临时的合并演示文稿
-            self.merged_presentation = self.ppt_app.Presentations.Add()
-            
-            # 删除默认空白页
-            if self.merged_presentation.Slides.Count > 0:
-                self.merged_presentation.Slides(1).Delete()
-            
-            # 逐个插入每个模板文件的第一页，完全保留格式
-            for i, page_result in enumerate(sorted_page_results):
-                template_path = page_result.get('template_path')
-                
-                if not template_path or not os.path.exists(template_path):
-                    result["errors"].append(f"第{i+1}页模板文件不存在")
-                    result["skipped_pages"] += 1
-                    continue
-                
-                try:
-                    abs_path = os.path.abspath(template_path)
-                    
-                    # 打开源模板以保持完整格式
-                    temp_ppt = self.ppt_app.Presentations.Open(abs_path, ReadOnly=True, WithWindow=False)
-                    
-                    if temp_ppt.Slides.Count > 0:
-                        # 使用Duplicate方法完全复制幻灯片，包括所有格式
-                        source_slide = temp_ppt.Slides(1)
-                        duplicated_slide = source_slide.Duplicate()
-                        
-                        # 将复制的幻灯片移动到目标演示文稿
-                        duplicated_slide.MoveTo(self.merged_presentation.Slides.Count + 1)
-                    
-                    # 关闭临时演示文稿
-                    temp_ppt.Close()
-                    
-                    result["processed_pages"] += 1
-                    logger.info(f"文件级别合并页面: {os.path.basename(template_path)}")
-                    
-                except Exception as e:
-                    error_msg = f"第{i+1}页文件合并失败: {str(e)}"
-                    result["errors"].append(error_msg)
-                    result["skipped_pages"] += 1
-                    logger.error(error_msg)
-            
-            # 保存合并结果
-            output_path = self._save_presentation()
-            if output_path:
-                result["output_path"] = output_path
-                result["success"] = True
-                result["total_pages"] = self.merged_presentation.Slides.Count
-                
-                # 读取文件字节数据
-                try:
-                    with open(output_path, 'rb') as f:
-                        result["presentation_bytes"] = f.read()
-                except Exception as read_e:
-                    logger.warning(f"读取PPT字节数据失败: {str(read_e)}")
-                
-                log_user_action("PPT文件级别合并完成", 
-                               f"成功: {result['processed_pages']}页, 跳过: {result['skipped_pages']}页")
-            else:
-                result["error"] = "PPT文件保存失败"
-        
-        except Exception as e:
-            result["error"] = f"文件级别合并异常: {str(e)}"
-            logger.error(f"文件级别合并异常: {str(e)}")
-        
-        return result
 
-    def merge_template_pages_to_ppt_append_style(self, page_results: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        使用AppendSlide风格的合并，类似Spire.Presentation的AppendBySlide
-        """
-        log_user_action("PPT AppendSlide风格合并", f"开始合并{len(page_results)}个模板文件")
-        
-        result = {
-            "success": False,
-            "total_pages": 0,
-            "processed_pages": 0,
-            "skipped_pages": 0,
-            "errors": [],
-            "presentation_bytes": None,
-            "output_path": None,
-            "error": None
-        }
-        
-        if len(page_results) == 0:
-            result["error"] = "没有页面需要合并"
-            return result
-        
-        try:
-            # 按页面编号排序，确保结尾页在最后
-            sorted_page_results = sorted(page_results, key=lambda x: x.get("page_number", 0))
-            
-            # 关闭默认演示文稿
-            if self.merged_presentation:
-                self.merged_presentation.Close()
-                self.merged_presentation = None
-            
-            # 使用第一个模板作为基础
-            first_template_path = os.path.abspath(sorted_page_results[0].get('template_path'))
-            self.merged_presentation = self.ppt_app.Presentations.Open(first_template_path)
-            result["processed_pages"] = 1
-            
-            logger.info(f"使用第一个模板作为基础: {os.path.basename(first_template_path)}")
-            
-            # 为后续模板使用Range.Copy和Paste方法
-            for i in range(1, len(sorted_page_results)):
-                template_path = sorted_page_results[i].get('template_path')
-                
-                if not template_path or not os.path.exists(template_path):
-                    result["errors"].append(f"第{i+1}页模板文件不存在")
-                    result["skipped_pages"] += 1
-                    continue
-                
-                try:
-                    abs_path = os.path.abspath(template_path)
-                    
-                    # 创建临时演示文稿
-                    temp_ppt = self.ppt_app.Presentations.Open(abs_path, ReadOnly=True, WithWindow=False)
-                    
-                    if temp_ppt.Slides.Count > 0:
-                        # 使用Duplicate方法完全复制，保持所有格式属性
-                        source_slide = temp_ppt.Slides(1)
-                        
-                        # 先选择源幻灯片
-                        source_slide.Select()
-                        
-                        # 复制整个幻灯片，包括母版信息
-                        source_slide.Copy()
-                        
-                        # 粘贴到目标演示文稿，使用源格式
-                        slide_index = self.merged_presentation.Slides.Count + 1
-                        pasted_slides = self.merged_presentation.Slides.Paste(slide_index)
-                        
-                        # 确保新粘贴的幻灯片使用源演示文稿的设计模板
-                        if pasted_slides.Count > 0:
-                            new_slide = pasted_slides(1)
-                            # 应用源幻灯片的设计模板
-                            try:
-                                new_slide.Design = source_slide.Design
-                                new_slide.ColorScheme = source_slide.ColorScheme
-                            except:
-                                pass  # 某些版本可能不支持直接设置
-                        
-                        result["processed_pages"] += 1
-                        logger.info(f"增强格式保留合并: {os.path.basename(template_path)}")
-                    else:
-                        result["skipped_pages"] += 1
-                        result["errors"].append(f"第{i+1}页模板文件为空")
-                    
-                    # 关闭临时演示文稿
-                    temp_ppt.Close()
-                    
-                except Exception as e:
-                    error_msg = f"第{i+1}页Range.Copy失败: {str(e)}"
-                    result["errors"].append(error_msg)
-                    result["skipped_pages"] += 1
-                    logger.error(error_msg)
-            
-            # 保存合并结果
-            output_path = self._save_presentation()
-            if output_path:
-                result["output_path"] = output_path
-                result["success"] = True
-                result["total_pages"] = self.merged_presentation.Slides.Count
-                
-                # 读取文件字节数据
-                try:
-                    with open(output_path, 'rb') as f:
-                        result["presentation_bytes"] = f.read()
-                except Exception as read_e:
-                    logger.warning(f"读取PPT字节数据失败: {str(read_e)}")
-                
-                log_user_action("PPT AppendSlide风格合并完成", 
-                               f"成功: {result['processed_pages']}页, 跳过: {result['skipped_pages']}页")
-            else:
-                result["error"] = "PPT文件保存失败"
-        
-        except Exception as e:
-            result["error"] = f"AppendSlide风格合并异常: {str(e)}"
-            logger.error(f"AppendSlide风格合并异常: {str(e)}")
-        
-        return result
 
     def merge_template_pages_to_ppt_perfect_format(self, page_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
@@ -299,18 +88,27 @@ class Win32PPTMerger:
                 self.merged_presentation.Close()
                 self.merged_presentation = None
             
-            # 创建新的空白演示文稿，不使用任何母版
-            self.merged_presentation = self.ppt_app.Presentations.Add()
-            
-            # 删除默认空白页
-            if self.merged_presentation.Slides.Count > 0:
-                self.merged_presentation.Slides(1).Delete()
-            
             # 按页面编号排序，确保结尾页在最后
             sorted_page_results = sorted(page_results, key=lambda x: x.get("page_number", 0))
             
-            # 逐个导入每个模板的第一页，保持完整原始格式
-            for i, page_result in enumerate(sorted_page_results):
+            # 关键改进：以第一个模板为基础创建演示文稿，而不是空白演示文稿
+            if sorted_page_results:
+                first_template_path = os.path.abspath(sorted_page_results[0].get('template_path'))
+                self.merged_presentation = self.ppt_app.Presentations.Open(first_template_path, ReadOnly=False, WithWindow=False)
+                result["processed_pages"] = 1
+                logger.info(f"以第一个模板为基础创建演示文稿: {os.path.basename(first_template_path)}")
+                
+                # 从第二个模板开始处理剩余页面
+                remaining_results = sorted_page_results[1:]
+            else:
+                # 如果没有模板，创建空白演示文稿（备用方案）
+                self.merged_presentation = self.ppt_app.Presentations.Add()
+                if self.merged_presentation.Slides.Count > 0:
+                    self.merged_presentation.Slides(1).Delete()
+                remaining_results = sorted_page_results
+            
+            # 逐个导入剩余模板页面，保持完整原始格式
+            for i, page_result in enumerate(remaining_results):
                 template_path = page_result.get('template_path')
                 
                 if not template_path or not os.path.exists(template_path):
@@ -332,7 +130,16 @@ class Win32PPTMerger:
                         source_slide.Copy()
                         
                         # 粘贴到目标演示文稿
-                        self.merged_presentation.Slides.Paste(self.merged_presentation.Slides.Count + 1)
+                        paste_index = self.merged_presentation.Slides.Count + 1
+                        self.merged_presentation.Slides.Paste(paste_index)
+                        
+                        # 获取刚粘贴的幻灯片，进行额外的颜色保留验证
+                        pasted_slide = self.merged_presentation.Slides(paste_index)
+                        try:
+                            self._preserve_slide_colors_and_format(source_slide, pasted_slide)
+                            logger.debug(f"完美格式合并额外颜色保留检查完成: {os.path.basename(template_path)}")
+                        except Exception as color_e:
+                            logger.debug(f"完美格式合并额外颜色保留异常: {color_e}")
                         
                         result["processed_pages"] += 1
                         logger.info(f"完美格式保留合并: {os.path.basename(template_path)}")
@@ -435,25 +242,11 @@ class Win32PPTMerger:
             # 获取刚粘贴的幻灯片
             pasted_slide = self.merged_presentation.Slides(self.merged_presentation.Slides.Count)
             
-            # 确保保留源幻灯片的背景和主题
+            # 增强的颜色和格式保留机制
             try:
-                # 复制背景格式
-                if hasattr(template_slide, 'Background') and hasattr(pasted_slide, 'Background'):
-                    # 复制背景填充
-                    pasted_slide.Background.Fill.ForeColor.RGB = template_slide.Background.Fill.ForeColor.RGB
-                    pasted_slide.Background.Fill.BackColor.RGB = template_slide.Background.Fill.BackColor.RGB
-                    pasted_slide.Background.Fill.Type = template_slide.Background.Fill.Type
-                    
-                # 复制颜色方案
-                if hasattr(template_slide, 'ColorScheme') and hasattr(pasted_slide, 'ColorScheme'):
-                    for i in range(1, 9):  # PowerPoint有8种颜色方案
-                        try:
-                            pasted_slide.ColorScheme.Colors(i).RGB = template_slide.ColorScheme.Colors(i).RGB
-                        except:
-                            pass
-                            
+                self._preserve_slide_colors_and_format(template_slide, pasted_slide)
             except Exception as format_e:
-                logger.warning(f"格式复制异常: {str(format_e)}")
+                logger.warning(f"增强格式保留异常: {str(format_e)}")
             
             logger.info(f"成功复制模板页面(Win32COM): {os.path.basename(template_path)}")
             return True
@@ -461,6 +254,119 @@ class Win32PPTMerger:
         except Exception as e:
             logger.error(f"Win32COM页面复制失败: {str(e)}")
             return False
+    
+    def _preserve_slide_colors_and_format(self, source_slide, target_slide):
+        """
+        增强的颜色和格式保留方法
+        
+        Args:
+            source_slide: 源幻灯片
+            target_slide: 目标幻灯片
+        """
+        try:
+            # 1. 保留设计模板和颜色方案
+            if hasattr(source_slide, 'Design') and hasattr(target_slide, 'Design'):
+                try:
+                    target_slide.Design = source_slide.Design
+                    logger.debug("设计模板保留成功")
+                except Exception as e:
+                    logger.debug(f"设计模板保留失败: {e}")
+            
+            if hasattr(source_slide, 'ColorScheme') and hasattr(target_slide, 'ColorScheme'):
+                try:
+                    target_slide.ColorScheme = source_slide.ColorScheme
+                    logger.debug("颜色方案保留成功")
+                except Exception as e:
+                    logger.debug(f"颜色方案保留失败: {e}")
+                    # 尝试逐个复制颜色
+                    try:
+                        for i in range(1, 9):  # PowerPoint标准8色方案
+                            target_slide.ColorScheme.Colors(i).RGB = source_slide.ColorScheme.Colors(i).RGB
+                    except:
+                        pass
+            
+            # 2. 保留背景格式
+            if hasattr(source_slide, 'Background') and hasattr(target_slide, 'Background'):
+                try:
+                    # 复制背景类型
+                    if hasattr(source_slide.Background, 'Type'):
+                        target_slide.Background.Type = source_slide.Background.Type
+                    
+                    # 复制背景填充
+                    if hasattr(source_slide.Background, 'Fill') and hasattr(target_slide.Background, 'Fill'):
+                        target_slide.Background.Fill.Type = source_slide.Background.Fill.Type
+                        
+                        # 复制前景色和背景色
+                        if hasattr(source_slide.Background.Fill, 'ForeColor'):
+                            target_slide.Background.Fill.ForeColor.RGB = source_slide.Background.Fill.ForeColor.RGB
+                        if hasattr(source_slide.Background.Fill, 'BackColor'):
+                            target_slide.Background.Fill.BackColor.RGB = source_slide.Background.Fill.BackColor.RGB
+                        
+                        # 复制渐变属性（如果有）
+                        if hasattr(source_slide.Background.Fill, 'GradientAngle'):
+                            target_slide.Background.Fill.GradientAngle = source_slide.Background.Fill.GradientAngle
+                    
+                    logger.debug("背景格式保留成功")
+                except Exception as e:
+                    logger.debug(f"背景格式保留失败: {e}")
+            
+            # 3. 保留主题信息
+            if hasattr(source_slide, 'ThemeColorScheme') and hasattr(target_slide, 'ThemeColorScheme'):
+                try:
+                    target_slide.ThemeColorScheme = source_slide.ThemeColorScheme
+                    logger.debug("主题颜色方案保留成功")
+                except Exception as e:
+                    logger.debug(f"主题颜色方案保留失败: {e}")
+            
+            # 4. 尝试保留形状颜色（仅作为备用措施）
+            try:
+                self._preserve_shapes_colors(source_slide, target_slide)
+            except Exception as e:
+                logger.debug(f"形状颜色保留过程异常: {e}")
+                
+        except Exception as e:
+            logger.warning(f"颜色格式保留总体异常: {e}")
+    
+    def _preserve_shapes_colors(self, source_slide, target_slide):
+        """
+        保留形状的颜色属性（备用方案）
+        
+        Args:
+            source_slide: 源幻灯片
+            target_slide: 目标幻灯片
+        """
+        try:
+            if (hasattr(source_slide, 'Shapes') and hasattr(target_slide, 'Shapes') and 
+                source_slide.Shapes.Count == target_slide.Shapes.Count):
+                
+                for i in range(1, source_slide.Shapes.Count + 1):
+                    try:
+                        source_shape = source_slide.Shapes(i)
+                        target_shape = target_slide.Shapes(i)
+                        
+                        # 保留填充颜色
+                        if (hasattr(source_shape, 'Fill') and hasattr(target_shape, 'Fill') and
+                            hasattr(source_shape.Fill, 'ForeColor') and hasattr(target_shape.Fill, 'ForeColor')):
+                            target_shape.Fill.ForeColor.RGB = source_shape.Fill.ForeColor.RGB
+                        
+                        # 保留线条颜色
+                        if (hasattr(source_shape, 'Line') and hasattr(target_shape, 'Line') and
+                            hasattr(source_shape.Line, 'ForeColor') and hasattr(target_shape.Line, 'ForeColor')):
+                            target_shape.Line.ForeColor.RGB = source_shape.Line.ForeColor.RGB
+                        
+                        # 保留文本颜色
+                        if (hasattr(source_shape, 'TextFrame') and hasattr(target_shape, 'TextFrame') and
+                            hasattr(source_shape.TextFrame, 'TextRange') and hasattr(target_shape.TextFrame, 'TextRange')):
+                            if (hasattr(source_shape.TextFrame.TextRange, 'Font') and 
+                                hasattr(target_shape.TextFrame.TextRange, 'Font')):
+                                target_shape.TextFrame.TextRange.Font.Color.RGB = source_shape.TextFrame.TextRange.Font.Color.RGB
+                                
+                    except Exception as shape_e:
+                        # 单个形状颜色保留失败不影响整体
+                        continue
+                        
+        except Exception as e:
+            logger.debug(f"形状颜色保留异常: {e}")
     
     def _save_presentation(self) -> Optional[str]:
         """

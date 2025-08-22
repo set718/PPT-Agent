@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 PPT视觉分析器
-使用GPT-4V分析PPT页面的视觉美观度并提供优化建议
+使用GPT-5分析PPT页面的视觉美观度并提供优化建议
 """
 
 import os
@@ -35,7 +35,7 @@ class PPTVisualAnalyzer:
         self.api_key = api_key or self.config.openai_api_key
         
         if not self.api_key:
-            raise ValueError("请设置OpenRouter API密钥")
+            raise ValueError("请设置OpenAI API密钥")
             
         self.client = OpenAI(
             api_key=self.api_key,
@@ -207,7 +207,7 @@ class PPTVisualAnalyzer:
             # 构建分析提示
             prompt = self._build_visual_analysis_prompt(slide_context)
             
-            # 调用GPT-4V分析（使用流式输出）
+            # 调用GPT-5分析（使用流式输出）
             response = self.client.chat.completions.create(
                 model=self.config.ai_model,
                 messages=[

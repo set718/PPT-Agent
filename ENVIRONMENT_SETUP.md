@@ -22,8 +22,7 @@ DIFY_API_KEY_3=your-actual-dify-key-3
 DIFY_API_KEY_4=your-actual-dify-key-4
 DIFY_API_KEY_5=your-actual-dify-key-5
 
-# Groq API密钥（用于Kimi K2模型）
-GROQ_API_KEY=your-actual-groq-key
+
 ```
 
 ### 3. 安装python-dotenv（可选）
@@ -38,13 +37,13 @@ pip install python-dotenv
 **Windows:**
 ```cmd
 set DIFY_API_KEY_1=your-key-here
-set GROQ_API_KEY=your-key-here
+
 ```
 
 **Linux/MacOS:**
 ```bash
 export DIFY_API_KEY_1=your-key-here
-export GROQ_API_KEY=your-key-here
+
 ```
 
 ## 安全说明
@@ -54,4 +53,3 @@ export GROQ_API_KEY=your-key-here
 
 ## API密钥获取
 - **Dify API密钥**: 从你的Dify平台获取
-- **Groq API密钥**: 从 https://console.groq.com/keys 获取

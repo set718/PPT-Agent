@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 文本转PPT填充器 - 用户版Web界面
-使用OpenAI GPT-4V将文本填入现有PPT文件
+使用OpenAI GPT-5将文本填入现有PPT文件
 集成AI智能分页与Dify-模板桥接功能
 """
 
@@ -123,7 +123,7 @@ def show_results_section(pages, page_results):
         if page_result.get('is_title_page', False):
             expander_title = f"第{page_result['page_number']}页 - 📋 封面页(固定模板)"
         elif page_result.get('is_toc_page', False):
-            expander_title = f"第{page_result['page_number']}页 - 📑 目录页(固定模板)"
+            expander_title = f"第{page_result['page_number']}页 - 📑 目录页(内容提取)"
         elif page_result.get('is_ending_page', False):
             expander_title = f"第{page_result['page_number']}页 - 🔚 结尾页(固定模板)"
         else:
@@ -140,8 +140,8 @@ def show_results_section(pages, page_results):
                     st.text(f"⚡ 处理方式: 直接匹配，无需API调用")
                 elif page_result.get('is_toc_page', False):
                     st.text(f"📑 页面类型: 目录页")
-                    st.text(f"📁 固定模板: {page_result['template_filename']}")
-                    st.text(f"⚡ 处理方式: 直接匹配，无需API调用")
+                    st.text(f"📁 模板文件: {page_result['template_filename']}")
+                    st.text(f"⚡ 处理方式: AI分页时提取内容页标题，无需API调用")
                 elif page_result.get('is_ending_page', False):
                     st.text(f"🔚 页面类型: 结尾页")
                     st.text(f"📁 固定模板: {page_result['template_filename']}")
@@ -647,16 +647,12 @@ def main():
     
     with model_col2:
         st.markdown("**模型对比**")
-        if model_info['supports_vision']:
-            st.success("✅ 支持视觉分析\n✅ 效果更佳\n💰 成本较高")
-        else:
-            st.info("⚡ 响应更快\n💸 成本更低\n❌ 无视觉分析")
+        if selected_model == "liai-chat":
+            st.info("🏢 调用公司融合云AgentOps私有化模型\n🔒 数据安全保障\n✅ 支持视觉分析")
+        else:  # GPT-5
+            st.success("✅ 支持视觉分析\n✅ 效果更佳\n🌐 OpenAI官方模型")
     
-    # 显示当前选择的模型信息
-    if model_info['supports_vision']:
-        st.markdown('<div class="success-box">🎨 已选择具备视觉分析功能的模型，将为您提供最佳的PPT美化效果</div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="info-box">⚡ 已选择高效文本处理模型，将专注于内容智能分配，节省您的成本</div>', unsafe_allow_html=True)
+
     
     st.markdown("---")
     
@@ -665,15 +661,18 @@ def main():
     
     # 根据选择的模型动态显示API密钥输入信息
     current_model_info = config.get_model_info()
-    api_provider = current_model_info.get('api_provider', 'OpenRouter')
-    api_key_url = current_model_info.get('api_key_url', 'https://openrouter.ai/keys')
+    api_provider = current_model_info.get('api_provider', 'OpenAI')
+    api_key_url = current_model_info.get('api_key_url', 'https://platform.openai.com/api-keys')
     
     col1, col2 = st.columns([2, 1])
     with col1:
-        if api_provider == "OpenRouter":
+        if api_provider == "OpenAI":
+            placeholder_text = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            help_text = "OpenAI官方API密钥，API密钥不会被保存"
+        elif api_provider == "OpenRouter":
             placeholder_text = "sk-or-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             help_text = "通过OpenRouter访问AI模型，API密钥不会被保存"
-        else:  # 阿里云通义千问
+        else:  # 其他平台
             placeholder_text = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             help_text = f"通过{api_provider}平台访问AI模型，API密钥不会被保存"
             
@@ -721,15 +720,15 @@ def main():
         with col1:
             st.markdown("""
             **第一步：选择模型** 🤖
-            - GPT-4o：功能完整，支持视觉分析
-            - Qwen Max：阿里云通义千问Max模型，顶级性能和理解能力
+            - GPT-5：OpenAI最新模型，非保密场景推荐
+            - Liai Chat：保密信息专用模型，安全可靠
             """)
         
         with col2:
             st.markdown("""
             **第二步：准备API密钥** 🔑
             - 根据选择的模型注册相应平台账号
-            - OpenRouter/阿里云获取API密钥
+            - OpenAI/Liai平台获取API密钥
             - 在上方输入密钥
             """)
         
@@ -808,13 +807,17 @@ def main():
         return
     
     # 验证API密钥格式（根据选择的API提供商）
-    if api_provider == "OpenRouter":
+    if api_provider == "OpenAI":
+        if not api_key.startswith('sk-'):
+            st.markdown('<div class="warning-box">⚠️ OpenAI API密钥格式可能不正确，通常以"sk-"开头</div>', unsafe_allow_html=True)
+            return
+    elif api_provider == "OpenRouter":
         if not (api_key.startswith('sk-or-') or api_key.startswith('sk-')):
             st.markdown('<div class="warning-box">⚠️ OpenRouter API密钥格式可能不正确，通常以"sk-or-"开头</div>', unsafe_allow_html=True)
             return
-    elif api_provider == "阿里云":
+    elif api_provider == "Liai":
         if not api_key.startswith('sk-'):
-            st.markdown('<div class="warning-box">⚠️ 阿里云API密钥格式可能不正确，请检查密钥格式</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">⚠️ Liai API密钥格式可能不正确，请检查密钥格式</div>', unsafe_allow_html=True)
             return
     
     # 跳过系统默认模板检查，直接使用Dify API和模板库
@@ -881,7 +884,7 @@ def main():
             show_results_section(pages, page_results)
         else:
             # 显示输入界面
-            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能结合AI智能分页与Dify模板桥接：<br>1. 用户输入长文本<br>2. AI模型智能分页（Qwen Max/GPT-4o）<br>3. 每页内容单独调用Dify API获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
+            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能结合AI智能分页与Dify模板桥接：<br>1. 用户输入长文本<br>2. AI模型智能分页（GPT-5/Liai Chat）<br>3. 每页内容单独调用Dify API获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
     
         # 文本输入
         st.markdown("#### 📝 输入您的内容")
@@ -921,7 +924,7 @@ def main():
                 min_value=0,
                 max_value=25,
                 value=0,
-                help="设置为0时，AI将自动判断最佳页面数量"
+                help="设置为0时AI自动判断，手动设置时最少3页（封面+目录+结尾）"
             )
             
             # 页数建议
@@ -967,6 +970,10 @@ def main():
                 
                 from ai_page_splitter import AIPageSplitter
                 page_splitter = AIPageSplitter(api_key)
+                # 验证页面数设置：手动设置时最少3页（封面+目录+结尾）
+                if target_pages > 0 and target_pages < 3:
+                    st.error("❌ 页面数量不能少于3页（封面页+目录页+结尾页）")
+                    return
                 target_page_count = int(target_pages) if target_pages > 0 else None
                 split_result = page_splitter.split_text_to_pages(user_text.strip(), target_page_count)
                 
@@ -1034,11 +1041,11 @@ def main():
                                     'template_number': 'table_of_contents',
                                     'template_path': toc_template_path,
                                     'template_filename': "table_of_contents_slides.pptx",
-                                    'dify_response': '目录页使用固定目录模板',
+                                    'dify_response': '目录页使用提取的内容页标题动态生成',
                                     'processing_time': 0,
                                     'is_toc_page': True
                                 })
-                                st.info(f"📑 第{page_number}页(目录页)：使用固定目录模板")
+                                st.info(f"📑 第{page_number}页(目录页)：使用提取的内容页标题")
                             elif page_type == 'ending' or page.get('skip_dify_api', False):
                                 ending_template_path = page.get('template_path', os.path.join("templates", "ending_slides.pptx"))
                                 page_results.append({
@@ -1228,11 +1235,11 @@ def main():
                                 'template_number': 'table_of_contents',
                                 'template_path': toc_template_path,
                                 'template_filename': "table_of_contents_slides.pptx",
-                                'dify_response': '目录页使用固定目录模板',
+                                'dify_response': '目录页使用提取的内容页标题动态生成',
                                 'processing_time': 0,
                                 'is_toc_page': True
                             })
-                            st.info(f"📑 第{page_number}页(目录页)：使用固定目录模板 table_of_contents_slides.pptx")
+                            st.info(f"📑 第{page_number}页(目录页)：使用提取的内容页标题")
                         
                         # 结尾页直接使用 ending_slides.pptx，不调用Dify API
                         elif page_type == 'ending' or page.get('skip_dify_api', False):
@@ -1951,7 +1958,7 @@ def main():
     st.markdown("---")
     st.markdown(
         '<div style="text-align: center; color: #666; padding: 2rem;">'
-        '💡 由OpenRouter GPT-4V驱动 | 🎨 专业PPT自动生成'
+        '💡 由OpenAI API驱动 | 🎨 专业PPT自动生成'
         '</div>', 
         unsafe_allow_html=True
     )

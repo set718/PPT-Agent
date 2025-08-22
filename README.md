@@ -119,7 +119,7 @@ streamlit run user_app.py
 - **网络**: 稳定的互联网连接
 
 ### API密钥
-- **OpenAI兼容API**: 支持OpenRouter、DeepSeek、GPT-4o等
+- **OpenAI兼容API**: 支持OpenAI、DeepSeek、GPT-4o等
 - **Dify API**: 已预配置8个密钥，支持负载均衡
 
 ### 依赖包（自动安装）
@@ -176,6 +176,7 @@ pip install streamlit python-pptx openai aiohttp
 
 #### 3. API密钥无效
 **解决方案**：检查API密钥格式和余额
+- OpenAI: `sk-xxxxxxxx`
 - OpenRouter: `sk-or-xxxxxxxx`
 - DeepSeek: `sk-xxxxxxxx`
 

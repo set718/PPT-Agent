@@ -14,7 +14,7 @@ class Config:
     """项目配置类"""
     
     # API配置
-    openai_base_url: str = "https://openrouter.ai/api/v1"
+    openai_base_url: str = "https://api.openai.com/v1"
     openai_api_key: str = ""
     
     # PPT模板配置
@@ -25,17 +25,17 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "kimi-k2"
+    ai_model: str = "gpt-5"
     ai_temperature: float = 0.3
     ai_max_tokens: int = 2000
     
     # 模型选择配置
     available_models: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
         "gpt-5": {
-            "name": "GPT-5",
+            "name": "GPT-5（非保密场景请选择此模型）",
             "description": "OpenAI GPT-5模型，支持视觉分析功能",
             "supports_vision": True,
-            "cost": "较高",
+            "cost": "",
             "base_url": "https://api.openai.com/v1",
             "api_provider": "OpenAI",
             "api_key_url": "https://platform.openai.com/api-keys"
@@ -50,17 +50,6 @@ class Config:
             "api_key_url": "https://liai-app.chj.cloud",
             "chat_endpoint": "/chat-messages",
             "request_format": "dify_compatible"
-        },
-        "kimi-k2": {
-            "name": "Kimi K2",
-            "description": "Moonshot AI最新模型，支持长上下文和流式输出",
-            "supports_vision": False,
-            "cost": "中等",
-            "base_url": "https://api.groq.com/openai/v1",
-            "api_provider": "Groq",
-            "api_key_url": "https://console.groq.com/keys",
-            "api_key_env": "GROQ_API_KEY",
-            "actual_model": "moonshotai/kimi-k2-instruct"
         }
     })
     

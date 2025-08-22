@@ -40,11 +40,8 @@ class AIPageSplitter:
         
         self.base_url = model_info.get('base_url', config.openai_base_url)
         
-        # 针对不同API提供商优化超时设置
-        if 'groq.com' in self.base_url.lower():
-            timeout = 45.0
-        else:
-            timeout = 30.0
+        # 设置API超时时间
+        timeout = 30.0
         
         self.client = OpenAI(
             api_key=self.api_key,
@@ -55,26 +52,7 @@ class AIPageSplitter:
         
         # 创建持久化session用于HTTP连接复用
         self.session = requests.Session()
-        # 针对API提供商优化适配器配置
-        if 'groq.com' in self.base_url.lower():
-            from requests.adapters import HTTPAdapter
-            from urllib3.util.retry import Retry
-            
-            retry_strategy = Retry(
-                total=3,
-                backoff_factor=1,
-                status_forcelist=[429, 500, 502, 503, 504],
-                allowed_methods=["POST"]
-            )
-            adapter = HTTPAdapter(
-                max_retries=retry_strategy,
-                pool_connections=5,
-                pool_maxsize=10
-            )
-            self.session.mount("http://", adapter)
-            self.session.mount("https://", adapter)
-            # 设置keep-alive
-            self.session.headers.update({'Connection': 'keep-alive'})
+
         
         # 简单的内存缓存
         self._cache = {}
@@ -221,7 +199,7 @@ class AIPageSplitter:
 
 **分页策略：**
 - **标题页（第1页）**：仅提取文档标题和日期信息，其他所有文本内容都延后到第三页开始处理
-- **目录页（第2页）**：固定的目录页模板，不需要AI生成内容
+- **目录页（第2页）**：根据内容页标题动态生成，需要收集所有内容页的标题信息
 - **内容页（第3页开始）**：从第三页开始处理所有实际内容，按主要观点、时间顺序或逻辑结构分页
 - **概述页**：如果内容复杂，可在第三页作为概述页
 - **结尾页**：不生成结尾页（使用预设的固定结尾页模板）
@@ -239,40 +217,27 @@ class AIPageSplitter:
 - 保持内容的**连贯性**和**完整性**
 
 **分页建议：**
-- 短文本（<200字）：建议2-3页（1个标题页 + 1-2个内容页）
-- 中等文本（200-800字）：建议3-6页（1个标题页 + 2-5个内容页）  
-- 长文本（800-2000字）：建议6-12页（1个标题页 + 5-11个内容页）
-- 超长文本（2000-5000字）：建议12-20页（1个标题页 + 11-19个内容页）
-- 特长文本（>5000字）：建议20-25页（1个标题页 + 19-24个内容页）
-
-**演示时间参考：**
-- 5分钟演示：3-5页（标题页 + 2-4个内容页，每页1-2分钟）
-- 10分钟演示：5-8页（标题页 + 4-7个内容页，每页1-2分钟）
-- 15分钟演示：8-12页（标题页 + 7-11个内容页，每页1-2分钟）
-- 30分钟演示：15-20页（标题页 + 14-19个内容页，每页1-2分钟）
-- 学术报告：20-25页（标题页 + 19-24个内容页，根据内容深度调整）
-
-**页面结构说明：**
-- 目录页和结尾页使用固定模板，不需要AI生成，因此总页数 = 生成页数 + 1个固定目录页 + 1个固定结尾页
-- **重要限制：总页数不得超过25页**（包括标题页、目录页、内容页和结尾页）
+- 短文本（<800字）：3-6页内容
+- 中长文本（800-2000字）：6-12页内容  
+- 长文本（2000-5000字）：12-20页内容
+- 超长文本（>5000字）：20-25页内容
+- **重要限制：总页数≤25页，生成页数≤23页**
 
 {target_instruction}请分析用户文本的结构和内容，智能分割为合适的页面数量。
-
-**严格要求：生成的页面数量必须控制在23页以内，为固定目录页和结尾页预留位置，确保总数不超过25页。**
 
 **输出格式要求：**
 请严格按照以下JSON格式返回：
 
 ```json
-{{
-  "analysis": {{
+{{{{
+  "analysis": {{{{
     "total_pages": 4,
     "content_type": "技术介绍",
     "split_strategy": "按发展阶段分页",
     "reasoning": "文本描述了技术发展的多个阶段，适合按时间线分页展示"
-  }},
+  }}}},
   "pages": [
-         {{
+         {{{{
        "page_number": 1,
        "page_type": "title",
        "title": "人工智能发展历程",
@@ -284,13 +249,13 @@ class AIPageSplitter:
          "日期：2024年7月"
        ],
        "original_text_segment": "人工智能发展历程"
-     }},
-    {{
-      "page_number": 2,
-      "page_type": "content",
+     }}}},
+   {{{{
+      "page_number": 3,
+      "page_type": "content", 
       "title": "AI发展概述",
       "subtitle": "技术演进的主要阶段",
-      "content_summary": "从第二页开始处理所有实际内容，介绍AI发展的各个阶段",
+      "content_summary": "从第三页开始处理所有实际内容，介绍AI发展的各个阶段",
       "key_points": [
         "1950年代符号主义起始",
         "1980年代专家系统兴起", 
@@ -298,22 +263,19 @@ class AIPageSplitter:
         "当前大语言模型时代"
       ],
       "original_text_segment": "人工智能技术发展经历了多个重要阶段。从1950年代的符号主义开始..."
-    }}
-  ]
-}}
+   }}}}
+ ]
+}}}}
 ```
 
 **页面类型说明：**
-- `title`: 标题页，仅包含文档标题和日期（其他内容固定）
+- `title`: 标题页，仅包含文档标题和日期
 - `overview`: 概述页，总体介绍内容框架（可选）
 - `content`: 内容页，具体的要点和详细内容（分页重点）
 
-**重要说明：**
-- **标题页处理**：第1页只提取文档标题和日期，所有其他文本内容（包括简介、背景、正文等）都保留给第2页及后续页面处理
-- **内容分配**：确保除了标题信息外，原文的所有实际内容都从第2页开始分配，不要在标题页中包含任何正文内容
-- **日期处理**：如果原文没有明确日期，自动生成当前年月
+**关键注意事项：**
+- 每个内容页的title字段必须准确概括内容（用于生成目录）
 - 不要生成结尾页，系统将使用预设的固定结尾页模板
-- 专注于从第2页开始的内容页智能分割，确保逻辑清晰、内容均衡
 
 只返回JSON格式，不要其他文字。"""
     
@@ -479,7 +441,7 @@ class AIPageSplitter:
         return result
     
     def _add_table_of_contents_page(self, result: Dict[str, Any]) -> None:
-        """添加固定的目录页（第2页）"""
+        """添加动态目录页（第2页）"""
         import os
         
         pages = result.get('pages', [])
@@ -491,21 +453,40 @@ class AIPageSplitter:
             if page.get('page_number', 1) > 1:
                 page['page_number'] = page['page_number'] + 1
         
-        # 创建目录页信息
+        # 提取所有内容页的标题信息，生成动态目录
+        content_titles = []
+        for page in pages:
+            if page.get('page_type') == 'content' and page.get('title'):
+                page_number = page.get('page_number', 0)
+                title = page.get('title', '').strip()
+                subtitle = page.get('subtitle', '').strip()
+                
+                # 构建目录项
+                if subtitle:
+                    toc_item = f"{page_number}. {title} - {subtitle}"
+                else:
+                    toc_item = f"{page_number}. {title}"
+                content_titles.append(toc_item)
+        
+        # 如果没有提取到标题，使用默认目录
+        if not content_titles:
+            content_titles = [
+                "演示内容导航",
+                "章节结构预览"
+            ]
+        
+        # 创建动态目录页信息
         table_of_contents_page = {
             "page_number": 2,
             "page_type": "table_of_contents",
             "title": "目录",
             "subtitle": "Contents",
-            "content_summary": "固定目录页模板，展示内容结构",
-            "key_points": [
-                "演示内容导航",
-                "章节结构预览"
-            ],
+            "content_summary": f"根据内容页标题动态生成的目录，包含{len(content_titles)}个主要章节",
+            "key_points": content_titles,
             "original_text_segment": "",
             "template_path": os.path.join("templates", "table_of_contents_slides.pptx"),
-            "is_fixed_template": True,
-            "skip_dify_api": True  # 标记为跳过Dify API调用
+            "is_toc_page": True,  # 标记为目录页
+            "skip_dify_api": True  # 不需要调用Dify API，但内容已动态提取
         }
         
         # 将目录页插入到第2位

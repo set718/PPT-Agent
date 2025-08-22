@@ -861,16 +861,16 @@ def main():
         st.error(f"详细错误: {error_msg}")
         return
     
-    st.markdown('<div class="success-box">✅ AI助手已准备就绪！可以使用Dify API和模板库功能</div>', unsafe_allow_html=True)
+    st.markdown('<div class="success-box">✅ AI助手已准备就绪！可以使用智能PPT生成功能</div>', unsafe_allow_html=True)
     
     # 功能选择选项卡
     st.markdown("---")
-    # 仅保留核心入口，移除“AI智能分页（预览）”和“Dify-模板桥接测试”
+    # 仅保留核心入口功能
     tab1, tab3 = st.tabs(["🎨 智能PPT生成", "🧪 自定义模板测试"])
     
     with tab1:
-        # 智能PPT生成功能 - AI分页 + Dify模板桥接
-        st.markdown("### 🚀 智能PPT生成 (AI分页 + Dify模板桥接)")
+        # 智能PPT生成功能 - AI分页 + 模板匹配
+        st.markdown("### 🚀 智能PPT生成 (AI分页 + 智能模板匹配)")
         
         # 检查是否有保存的处理结果
         if 'current_page_results' in st.session_state and 'current_pages' in st.session_state:
@@ -884,7 +884,7 @@ def main():
             show_results_section(pages, page_results)
         else:
             # 显示输入界面
-            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能结合AI智能分页与Dify模板桥接：<br>1. 用户输入长文本<br>2. AI模型智能分页（GPT-5/Liai Chat）<br>3. 每页内容单独调用Dify API获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
+            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能使用AI智能分页与模板匹配：<br>1. 用户输入长文本<br>2. AI模型智能分页（GPT-5/Liai Chat）<br>3. 每页内容调用AI模型获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
     
         # 文本输入
         st.markdown("#### 📝 输入您的内容")
@@ -908,7 +908,7 @@ def main():
 
 未来发展趋势：
 人工智能将继续向更加智能化、人性化的方向发展，实现更好的人机协作，为人类社会带来更多便利和创新可能性。同时需要关注AI安全和伦理问题。""",
-            help="AI将分析文本结构进行智能分页，每页内容调用Dify API获取对应模板"
+            help="AI将分析文本结构进行智能分页，每页内容调用AI模型获取对应模板"
         )
         
         # 页面数量限制提醒
@@ -951,14 +951,14 @@ def main():
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             process_button = st.button(
-                "🚀 开始生成PPT（AI分页 + 模板匹配 + 自动整合）",
+                "🚀 开始生成PPT（AI分页 + 智能模板匹配 + 自动整合）",
                 type="primary",
                 use_container_width=True,
                 disabled=not user_text.strip(),
-                help="AI分页 → Dify模板匹配 → 自动整合PPT → 可直接下载"
+                help="AI分页 → 智能模板匹配 → 自动整合PPT → 可直接下载"
             )
     
-        # 处理逻辑 - AI分页 + Dify模板桥接
+        # 处理逻辑 - AI分页 + 智能模板匹配
         if process_button and user_text.strip():
             progress_bar = st.progress(0)
             status_text = st.empty()
@@ -988,8 +988,8 @@ def main():
                 
                 st.success(f"✅ AI智能分页完成！共生成 {len(pages)} 页")
                 
-                # 步骤2：为每页内容调用Dify API获取模板
-                status_text.text("🔗 正在为每页内容调用Dify API获取对应模板...")
+                # 步骤2：为每页内容调用AI模型获取模板
+                status_text.text("🔗 正在为每页内容调用AI模型获取对应模板...")
                 progress_bar.progress(40)
                 
                 from dify_template_bridge import sync_test_dify_template_bridge
@@ -1685,274 +1685,7 @@ def main():
             
             st.markdown('<div class="warning-box">💡 <strong>提示：</strong> 请确保您的PPT模板中包含形如 {标题}、{内容}、{要点} 等占位符，AI将根据这些占位符的名称智能分配相应的内容。</div>', unsafe_allow_html=True)
     
-    # 原 tab4（Dify-模板桥接测试）已移除
-        
-        st.markdown('<div class="info-box">🎯 <strong>功能说明</strong><br>此功能测试Dify API与模板文件库的桥接流程：<br>1. 用户输入文本内容<br>2. Dify API分析并返回模板编号(1-250)<br>3. 系统根据编号查找对应的PPT模板文件<br>4. 返回匹配的模板文件供下载测试<br><br>⚠️ 注意：此为桥接测试，暂不进行文本填充工作</div>', unsafe_allow_html=True)
-        
-        # 先显示可用模板概览
-        st.markdown("#### 📊 模板库概览")
-        
-        try:
-            from dify_template_bridge import DifyTemplateBridge
-            
-            # 扫描模板库
-            bridge = DifyTemplateBridge()
-            templates_info = bridge.scan_available_templates()
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("📁 模板总数", templates_info["total_count"])
-            with col2:
-                number_range = templates_info["number_range"]
-                if number_range["min"] and number_range["max"]:
-                    st.metric("🔢 编号范围", f"{number_range['min']}-{number_range['max']}")
-                else:
-                    st.metric("🔢 编号范围", "无可用模板")
-            with col3:
-                st.metric("📂 模板目录", "templates/ppt_template/")
-            
-            # 显示部分模板列表
-            if templates_info["templates"]:
-                with st.expander("🔍 查看部分模板文件", expanded=False):
-                    # 显示前10个和后10个模板
-                    templates = templates_info["templates"]
-                    display_templates = templates[:10]
-                    if len(templates) > 20:
-                        display_templates.extend(templates[-10:])
-                    elif len(templates) > 10:
-                        display_templates.extend(templates[10:])
-                    
-                    for template in display_templates:
-                        st.text(f"📄 {template['filename']} ({template['file_size_kb']}KB)")
-                    
-                    if len(templates) > 20:
-                        st.text(f"... 还有 {len(templates) - 20} 个模板文件")
-        
-        except ImportError:
-            st.error("❌ Dify桥接模块未找到，请检查 dify_template_bridge.py 文件")
-        except Exception as e:
-            st.error(f"❌ 模板库扫描失败: {str(e)}")
-        
-        st.markdown("---")
-        
-        # 桥接测试区域
-        st.markdown("#### 🧪 桥接流程测试")
-        
-        # 文本输入
-        bridge_test_text = st.text_area(
-            "请输入测试文本内容：",
-            height=150,
-            placeholder="""例如：
 
-企业数字化转型战略规划
-
-随着数字技术的快速发展，企业数字化转型已成为提升竞争力的关键。本报告将从战略规划、技术选型、实施路径等方面进行深入分析。
-
-主要内容包括：
-- 数字化转型的必要性分析
-- 技术架构设计与选型
-- 实施计划与风险控制
-- 预期效果与投资回报
-
-通过系统化的规划和实施，企业可以实现运营效率提升、客户体验优化和商业模式创新。""",
-            help="Dify API将分析此文本内容并返回对应的模板编号",
-            key="bridge_test_text"
-        )
-        
-        # 测试选项
-        col1, col2 = st.columns(2)
-        with col1:
-            if bridge_test_text:
-                char_count = len(bridge_test_text)
-                word_count = len(bridge_test_text.split())
-                st.metric("📊 文本统计", f"{char_count}字符 | {word_count}词")
-        
-        with col2:
-            st.markdown("**测试步骤预览：**")
-            st.text("1. 🤖 调用Dify API分析文本")
-            st.text("2. 🔢 获取模板编号(1-250)")
-            st.text("3. 📁 查找对应PPT文件")
-            st.text("4. ✅ 返回模板文件信息")
-        
-        # 测试按钮
-        st.markdown("#### 🚀 开始桥接测试")
-        
-        test_bridge_button = st.button(
-            "🔗 测试Dify API桥接",
-            type="primary",
-            use_container_width=True,
-            disabled=not bridge_test_text.strip(),
-            help="测试Dify API返回编号与模板文件的对应关系",
-            key="test_bridge_btn"
-        )
-        
-        # 执行桥接测试
-        if test_bridge_button and bridge_test_text.strip():
-            progress_bar = st.progress(0)
-            status_text = st.empty()
-            
-            try:
-                from dify_template_bridge import sync_test_dify_template_bridge
-                
-                # 步骤1: 调用Dify API
-                status_text.text("🤖 正在调用Dify API分析文本...")
-                progress_bar.progress(25)
-                
-                bridge_result = sync_test_dify_template_bridge(bridge_test_text.strip())
-                
-                # 步骤2: 处理结果
-                status_text.text("📊 正在处理API响应...")
-                progress_bar.progress(50)
-                
-                # 步骤3: 查找模板文件
-                status_text.text("📁 正在查找对应模板文件...")
-                progress_bar.progress(75)
-                
-                # 步骤4: 完成
-                status_text.text("✅ 桥接测试完成")
-                progress_bar.progress(100)
-                
-                # 清除进度显示
-                progress_bar.empty()
-                status_text.empty()
-                
-                # 显示测试结果
-                if bridge_result["success"]:
-                    st.markdown('<div class="success-box">🎉 Dify API桥接测试成功！</div>', unsafe_allow_html=True)
-                    
-                    # 显示详细结果
-                    st.markdown("### 📋 桥接测试结果")
-                    
-                    # 基本信息
-                    col1, col2, col3, col4 = st.columns(4)
-                    
-                    dify_result = bridge_result["step_1_dify_api"]
-                    template_result = bridge_result["step_2_template_lookup"]
-                    
-                    with col1:
-                        st.metric("🔢 Dify返回编号", dify_result["template_number"])
-                    
-                    with col2:
-                        st.metric("📄 模板文件名", template_result["filename"].replace("split_presentations_", "").replace(".pptx", ""))
-                    
-                    with col3:
-                        st.metric("📦 文件大小", f"{template_result['file_size_kb']}KB")
-                    
-                    with col4:
-                        st.metric("⏱️ 处理耗时", f"{bridge_result['processing_time']:.2f}秒")
-                    
-                    # Dify API详情
-                    st.markdown("#### 🤖 Dify API 调用详情")
-                    
-                    col1, col2 = st.columns([1, 2])
-                    with col1:
-                        st.text(f"🔑 使用API密钥: {dify_result['used_api_key']}")
-                        st.text(f"🔄 尝试次数: {dify_result['attempt_count']}")
-                        st.text(f"✅ 调用状态: 成功")
-                    
-                    with col2:
-                        if "response_text" in dify_result:
-                            st.text_area(
-                                "API响应内容:",
-                                value=dify_result["response_text"],
-                                height=100,
-                                disabled=True,
-                                key="dify_response_display"
-                            )
-                    
-                    # 模板文件详情
-                    st.markdown("#### 📁 模板文件详情")
-                    
-                    col1, col2 = st.columns([1, 2])
-                    with col1:
-                        st.text(f"📂 文件路径: {template_result['filename']}")
-                        st.text(f"💾 文件大小: {template_result['file_size']} 字节")
-                        st.text(f"✅ 文件状态: 存在且有效")
-                    
-                    with col2:
-                        # 提供模板文件下载
-                        try:
-                            with open(template_result["file_path"], "rb") as f:
-                                template_bytes = f.read()
-                            
-                            st.download_button(
-                                label="📥 下载对应的模板文件",
-                                data=template_bytes,
-                                file_name=template_result["filename"],
-                                mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                                key="download_matched_template"
-                            )
-                            
-                            st.markdown('<div class="info-box">💡 <strong>提示：</strong> 下载的模板文件是根据Dify API返回的编号自动匹配的，您可以在PowerPoint中打开查看模板结构。</div>', unsafe_allow_html=True)
-                            
-                        except Exception as e:
-                            st.error(f"❌ 模板文件读取失败: {str(e)}")
-                    
-                    # 完整响应数据（调试用）
-                    with st.expander("🔍 查看完整测试数据（调试信息）", expanded=False):
-                        st.json(bridge_result)
-                
-                else:
-                    st.markdown('<div class="error-box">❌ Dify API桥接测试失败</div>', unsafe_allow_html=True)
-                    st.error(f"错误信息: {bridge_result['error']}")
-                    
-                    # 显示失败详情
-                    if bridge_result["step_1_dify_api"]:
-                        st.markdown("#### 🤖 Dify API 调用详情")
-                        dify_result = bridge_result["step_1_dify_api"]
-                        
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.text(f"🔑 使用API密钥: {dify_result.get('used_api_key', 'N/A')}")
-                            st.text(f"🔄 尝试次数: {dify_result.get('attempt_count', 'N/A')}")
-                            st.text(f"❌ 调用状态: 失败")
-                        
-                        with col2:
-                            if dify_result.get("api_response"):
-                                st.text_area(
-                                    "API响应内容:",
-                                    value=str(dify_result["api_response"]),
-                                    height=100,
-                                    disabled=True,
-                                    key="failed_dify_response"
-                                )
-                    
-                    # 调试信息
-                    with st.expander("🔍 查看失败详情（调试信息）", expanded=False):
-                        st.json(bridge_result)
-                
-            except ImportError:
-                st.error("❌ Dify桥接模块未找到，请检查 dify_template_bridge.py 文件")
-            except Exception as e:
-                progress_bar.empty()
-                status_text.empty()
-                st.error(f"❌ 桥接测试过程中出现异常: {str(e)}")
-                logger.error("Dify桥接测试异常: %s", str(e))
-        
-        # 功能说明
-        st.markdown("---")
-        st.markdown("#### 🎯 测试目标")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("""
-            **🔍 验证内容：**
-            - Dify API能否正常响应
-            - 返回的数字是否在有效范围(1-250)
-            - 对应的模板文件是否存在
-            - 模板文件格式是否有效
-            """)
-        
-        with col2:
-            st.markdown("""
-            **📋 后续计划：**
-            - 第一阶段：桥接流程验证 ✅
-            - 第二阶段：模板内容分析
-            - 第三阶段：智能文本填充
-            - 第四阶段：完整工作流集成
-            """)
-        
-        st.markdown('<div class="warning-box">⚠️ <strong>重要说明：</strong> 当前功能仅测试Dify API与模板文件的对应关系，不进行实际的文本填充工作。这是分步实现的第一阶段，确保基础桥接流程正常工作。</div>', unsafe_allow_html=True)
     
     # 页脚信息
     st.markdown("---")

@@ -25,15 +25,15 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "gpt-5"
+    ai_model: str = "gpt-4.1"
     ai_temperature: float = 0.3
     ai_max_tokens: int = 2000
     
     # 模型选择配置
     available_models: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
-        "gpt-5": {
-            "name": "GPT-5（非保密场景请选择此模型）",
-            "description": "OpenAI GPT-5模型，支持视觉分析功能",
+        "gpt-4.1": {
+            "name": "GPT-4.1（非保密场景请选择此模型）",
+            "description": "OpenAI GPT-4.1模型，支持视觉分析功能",
             "supports_vision": True,
             "cost": "",
             "base_url": "https://api.openai.com/v1",

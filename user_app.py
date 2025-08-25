@@ -399,23 +399,49 @@ class UserPPTGenerator:
         try:
             log_user_action("用户界面清理占位符", f"已填充: {len(self.ppt_processor.filled_placeholders)}")
             
-            # 手动清理占位符
+            # 智能清理占位符，只清理未填充的
             cleanup_count = 0
+            cleaned_placeholders = []
+            
             for slide_idx, slide in enumerate(self.presentation.slides):
+                # 获取该页已填充的占位符
+                filled_placeholders_in_slide = self.ppt_processor.filled_placeholders.get(slide_idx, set())
+                
                 for shape in slide.shapes:
                     if hasattr(shape, 'text') and shape.text:
                         original_text = shape.text
-                        # 移除所有剩余的占位符模式 {xxx}
+                        
+                        # 找出文本中的所有占位符
                         import re
-                        cleaned_text = re.sub(r'\{[^}]+\}', '', original_text)
-                        if cleaned_text != original_text:
-                            shape.text = cleaned_text.strip()
-                            cleanup_count += 1
+                        placeholder_matches = re.findall(r'\{([^}]+)\}', original_text)
+                        
+                        if placeholder_matches:
+                            # 检查哪些占位符未被填充
+                            unfilled_placeholders = [
+                                p for p in placeholder_matches 
+                                if p not in filled_placeholders_in_slide
+                            ]
+                            
+                            # 只移除未填充的占位符
+                            if unfilled_placeholders:
+                                cleaned_text = original_text
+                                for unfilled_placeholder in unfilled_placeholders:
+                                    pattern = f"{{{unfilled_placeholder}}}"
+                                    cleaned_text = cleaned_text.replace(pattern, "")
+                                    cleaned_placeholders.append(f"第{slide_idx+1}页: {{{unfilled_placeholder}}}")
+                                
+                                # 清理多余的空白
+                                cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
+                                
+                                if cleaned_text != original_text:
+                                    shape.text = cleaned_text
+                                    cleanup_count += 1
             
             return {
                 "success": True,
                 "cleaned_placeholders": cleanup_count,
-                "message": f"清理了{cleanup_count}个未填充的占位符"
+                "cleaned_placeholder_list": cleaned_placeholders,
+                "message": f"清理了{cleanup_count}个文本框中的未填充占位符"
             }
             
         except Exception as e:
@@ -649,7 +675,7 @@ def main():
         st.markdown("**模型对比**")
         if selected_model == "liai-chat":
             st.info("🏢 调用公司融合云AgentOps私有化模型\n🔒 数据安全保障\n✅ 支持视觉分析")
-        else:  # GPT-5
+        else:  # GPT-4.1
             st.success("✅ 支持视觉分析\n✅ 效果更佳\n🌐 OpenAI官方模型")
     
 
@@ -699,12 +725,22 @@ def main():
                         st.error(f"❌ API密钥验证失败: {str(e)}")
                     except Exception as e:
                         error_msg = str(e)
-                        if "authentication" in error_msg.lower() or "unauthorized" in error_msg.lower():
+                        if hasattr(e, 'status_code'):
+                            status_code = e.status_code
+                            if status_code == 401:
+                                st.error("❌ API认证失败 (401): API密钥无效")
+                            elif status_code == 402:
+                                st.error("❌ API付费限制 (402): 账户余额不足")
+                            elif status_code == 429:
+                                st.error("❌ API请求频率限制 (429): 请求过于频繁")
+                            else:
+                                st.error(f"❌ API错误 ({status_code}): 这是API服务的问题")
+                        elif "authentication" in error_msg.lower() or "unauthorized" in error_msg.lower():
                             st.error("❌ API密钥认证失败，请检查密钥是否正确")
                         elif "network" in error_msg.lower() or "connection" in error_msg.lower():
                             st.error("❌ 网络连接异常，请检查网络连接")
                         else:
-                            st.error("❌ 验证过程出现异常")
+                            st.error("❌ API调用异常，这不是应用程序的问题")
                         st.error(f"详细错误: {error_msg}")
     
     # 检查API密钥
@@ -720,7 +756,7 @@ def main():
         with col1:
             st.markdown("""
             **第一步：选择模型** 🤖
-            - GPT-5：OpenAI最新模型，非保密场景推荐
+            - GPT-4.1：OpenAI先进模型，非保密场景推荐
             - Liai Chat：保密信息专用模型，安全可靠
             """)
         
@@ -815,10 +851,8 @@ def main():
         if not (api_key.startswith('sk-or-') or api_key.startswith('sk-')):
             st.markdown('<div class="warning-box">⚠️ OpenRouter API密钥格式可能不正确，通常以"sk-or-"开头</div>', unsafe_allow_html=True)
             return
-    elif api_provider == "Liai":
-        if not api_key.startswith('sk-'):
-            st.markdown('<div class="warning-box">⚠️ Liai API密钥格式可能不正确，请检查密钥格式</div>', unsafe_allow_html=True)
-            return
+    # elif api_provider == "Liai":
+    #     # Liai API密钥格式检查已移除，直接通过格式验证
     
     # 跳过系统默认模板检查，直接使用Dify API和模板库
     # 注释掉原有的模板检查，改为检查模板库是否可用
@@ -839,7 +873,6 @@ def main():
     try:
         with st.spinner("正在验证API密钥..."):
             # 直接初始化AI处理器用于Dify API调用
-            from utils import AIProcessor
             ai_processor = AIProcessor(api_key)
             # 测试API密钥有效性
             ai_processor._ensure_client()
@@ -884,7 +917,7 @@ def main():
             show_results_section(pages, page_results)
         else:
             # 显示输入界面
-            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能使用AI智能分页与模板匹配：<br>1. 用户输入长文本<br>2. AI模型智能分页（GPT-5/Liai Chat）<br>3. 每页内容调用AI模型获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
+            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能使用AI智能分页与模板匹配：<br>1. 用户输入长文本<br>2. AI模型智能分页（GPT-4.1/Liai Chat）<br>3. 每页内容调用AI模型获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
     
         # 文本输入
         st.markdown("#### 📝 输入您的内容")
@@ -1576,6 +1609,16 @@ def main():
                             with col2:
                                 cleanup_count = cleanup_results.get('cleaned_placeholders', 0) if cleanup_results else 0
                                 st.metric("🧹 清理占位符", cleanup_count)
+                                
+                                # 显示清理详情
+                                if cleanup_results and cleanup_results.get('cleaned_placeholder_list'):
+                                    with st.expander("🔍 查看清理详情", expanded=False):
+                                        st.write("**已清理的未填充占位符：**")
+                                        for item in cleanup_results['cleaned_placeholder_list']:
+                                            st.text(f"• {item}")
+                                        st.info("💡 已填充的占位符保持不变")
+                                elif cleanup_count == 0:
+                                    st.success("✅ 所有占位符都已被正确填充")
                             
                             with col3:
                                 removed_empty = summary.get('removed_empty_slides_count', 0)
@@ -1610,6 +1653,35 @@ def main():
                             st.markdown("🎯 **测试内容：** 基于您的自定义模板生成")
                             st.markdown("📋 **说明：** 可以在PowerPoint中查看AI填充效果")
                             st.markdown('</div>', unsafe_allow_html=True)
+                            
+                            # 添加调试信息展示
+                            with st.expander("🔧 调试信息：占位符填充状态", expanded=False):
+                                if hasattr(custom_generator.ppt_processor, 'filled_placeholders'):
+                                    filled_info = custom_generator.ppt_processor.filled_placeholders
+                                    if filled_info:
+                                        st.write("**已成功填充的占位符：**")
+                                        for slide_idx, placeholders in filled_info.items():
+                                            if placeholders:
+                                                st.write(f"第{slide_idx+1}页: {', '.join([f'{{{p}}}' for p in placeholders])}")
+                                        
+                                        # 显示分配方案
+                                        if 'assignments' in assignments and assignments['assignments']:
+                                            st.write("**AI分配方案：**")
+                                            for i, assignment in enumerate(assignments['assignments'][:5]):  # 只显示前5个
+                                                slide_num = assignment.get('slide_index', 0) + 1
+                                                placeholder = assignment.get('placeholder', '')
+                                                content = assignment.get('content', '')[:50]
+                                                reason = assignment.get('reason', '')
+                                                st.write(f"{i+1}. 第{slide_num}页 `{{{placeholder}}}` → {content}{'...' if len(assignment.get('content', '')) > 50 else ''}")
+                                                if reason:
+                                                    st.caption(f"   理由: {reason}")
+                                            
+                                            if len(assignments['assignments']) > 5:
+                                                st.write(f"... 还有 {len(assignments['assignments']) - 5} 个分配方案")
+                                    else:
+                                        st.warning("⚠️ 没有占位符被成功填充，请检查模板格式和内容匹配度")
+                                else:
+                                    st.error("❌ 无法获取填充状态信息")
                             
                         except Exception as e:
                             st.error(f"❌ 文件生成失败: {str(e)}")

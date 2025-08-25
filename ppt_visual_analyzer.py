@@ -207,7 +207,7 @@ class PPTVisualAnalyzer:
             # 构建分析提示
             prompt = self._build_visual_analysis_prompt(slide_context)
             
-            # 调用GPT-5分析（使用流式输出）
+            # 调用GPT-4.1分析（使用流式输出）
             response = self.client.chat.completions.create(
                 model=self.config.ai_model,
                 messages=[

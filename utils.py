@@ -141,39 +141,139 @@ class AIProcessor:
         # 构建系统提示
         system_prompt = self._build_system_prompt(ppt_description)
         
+        # 检查是否为Liai API
+        model_info = self.config.get_model_info()
+        if model_info.get('request_format') == 'dify_compatible':
+            # 使用Liai API格式
+            content = self._call_liai_api(system_prompt, user_text)
+        else:
+            # 使用OpenAI格式
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.config.ai_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_text}
+                    ],
+                    temperature=self.config.ai_temperature,
+                    max_tokens=self.config.ai_max_tokens,
+                    stream=True
+                )
+                
+                # 收集流式响应内容
+                content = ""
+                for chunk in response:
+                    if chunk.choices and chunk.choices[0].delta.content:
+                        content += chunk.choices[0].delta.content
+                
+                content = content.strip() if content else ""
+            except Exception as e:
+                raise e
+        
         try:
-            # 使用流式输出
-            response = self.client.chat.completions.create(
-                model=self.config.ai_model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_text}
-                ],
-                temperature=self.config.ai_temperature,
-                max_tokens=self.config.ai_max_tokens,
-                stream=True
-            )
-            
-            # 收集流式响应内容
-            content = ""
-            for chunk in response:
-                if chunk.choices and chunk.choices[0].delta.content:
-                    content += chunk.choices[0].delta.content
-            
-            content = content.strip() if content else ""
-            
             # 提取JSON内容
             return self._extract_json_from_response(content, user_text)
             
-        except ConnectionError as e:
-            print("网络连接错误: %s", str(e))
-            return self._create_fallback_assignment(user_text, f"网络连接错误: {str(e)}")
-        except TimeoutError as e:
-            print("请求超时: %s", str(e))
-            return self._create_fallback_assignment(user_text, f"请求超时: {str(e)}")
         except Exception as e:
             print("调用AI API时出错: %s", str(e))
-            return self._create_fallback_assignment(user_text, f"API调用失败: {str(e)}")
+            error_msg = str(e)
+            
+            # 检查是否是OpenAI API的特定错误
+            if hasattr(e, 'status_code'):
+                status_code = e.status_code
+                if status_code == 401:
+                    return self._create_fallback_assignment(user_text, f"❌ GPT API认证失败 (401): API密钥无效，请检查密钥是否正确")
+                elif status_code == 402:
+                    return self._create_fallback_assignment(user_text, f"❌ GPT API付费限制 (402): 账户余额不足，请充值后重试")
+                elif status_code == 403:
+                    return self._create_fallback_assignment(user_text, f"❌ GPT API权限拒绝 (403): 当前API密钥没有访问权限")
+                elif status_code == 404:
+                    return self._create_fallback_assignment(user_text, f"❌ GPT API模型不存在 (404): 请检查模型名称是否正确")
+                elif status_code == 429:
+                    return self._create_fallback_assignment(user_text, f"❌ GPT API请求频率限制 (429): 请求过于频繁，请稍后重试")
+                elif status_code == 500:
+                    return self._create_fallback_assignment(user_text, f"⚠️ GPT API服务器错误 (500): OpenAI服务器内部错误，请稍后重试")
+                elif status_code == 502:
+                    return self._create_fallback_assignment(user_text, f"⚠️ GPT API网关错误 (502): 服务暂时不可用，请稍后重试")
+                elif status_code == 503:
+                    return self._create_fallback_assignment(user_text, f"⚠️ GPT API服务不可用 (503): 服务暂时维护中，请稍后重试")
+                else:
+                    return self._create_fallback_assignment(user_text, f"❌ GPT API错误 ({status_code}): {error_msg}，这不是文本填充功能的问题")
+            
+            # 检查其他常见错误类型
+            elif "connection" in error_msg.lower() or "network" in error_msg.lower():
+                return self._create_fallback_assignment(user_text, f"⚠️ GPT API网络连接失败: 请检查网络连接或稍后重试")
+            elif "timeout" in error_msg.lower():
+                return self._create_fallback_assignment(user_text, f"⚠️ GPT API请求超时: 请稍后重试")
+            elif "authentication" in error_msg.lower() or "unauthorized" in error_msg.lower():
+                return self._create_fallback_assignment(user_text, f"❌ GPT API密钥认证失败: 请检查API密钥是否正确")
+            elif "quota" in error_msg.lower() or "limit" in error_msg.lower():
+                return self._create_fallback_assignment(user_text, f"❌ GPT API配额不足: 请检查账户余额或使用限制")
+            else:
+                return self._create_fallback_assignment(user_text, f"❌ GPT API调用失败: {error_msg}，这不是文本填充功能的问题")
+    
+    def _call_liai_api(self, system_prompt: str, user_text: str) -> str:
+        """调用Liai API"""
+        import requests
+        import json
+        
+        model_info = self.config.get_model_info()
+        base_url = model_info.get('base_url', '')
+        endpoint = model_info.get('chat_endpoint', '/chat-messages')
+        
+        url = base_url + endpoint
+        
+        # 构建Liai API请求格式
+        combined_query = f"{system_prompt}\n\n用户输入：{user_text}"
+        
+        payload = {
+            "inputs": {},
+            "query": combined_query,
+            "response_mode": "streaming",
+            "conversation_id": "",
+            "user": "ai-ppt-user",
+            "files": []
+        }
+        
+        headers = {
+            'Authorization': f'Bearer {self.api_key}',
+            'Content-Type': 'application/json',
+            'Connection': 'keep-alive'
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, json=payload, timeout=120, stream=True)
+            response.raise_for_status()
+            
+            # 处理streaming响应
+            content = ""
+            for line in response.iter_lines():
+                if line:
+                    try:
+                        line_text = line.decode('utf-8').strip()
+                        # 忽略keep-alive注释
+                        if line_text == ': keep-alive' or line_text == '':
+                            continue
+                        if line_text.startswith('data: '):
+                            json_str = line_text[6:]  # 去掉'data: '前缀
+                            if json_str.strip() == '[DONE]':
+                                break
+                            data = json.loads(json_str)
+                            if 'answer' in data:
+                                content += data['answer']
+                            elif 'data' in data and 'answer' in data['data']:
+                                content += data['data']['answer']
+                    except (json.JSONDecodeError, UnicodeDecodeError):
+                        continue
+            
+            return content.strip()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Liai API调用失败: {str(e)}")
+            raise e
+        except Exception as e:
+            print(f"Liai API处理失败: {str(e)}")
+            raise e
     
     def _create_ppt_description(self, ppt_structure: Dict[str, Any]) -> str:
         """创建PPT结构描述"""
@@ -1007,7 +1107,7 @@ class PPTProcessor:
         return result
     
     def _replace_placeholder_in_slide(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
-        """在特定的文本框中替换占位符"""
+        """在特定的文本框中替换占位符，保持原有格式（字体大小、颜色等）"""
         try:
             shape = placeholder_info['shape']
             placeholder_name = placeholder_info['placeholder']
@@ -1018,40 +1118,184 @@ class PPTProcessor:
             # 构建要替换的占位符模式
             placeholder_pattern = f"{{{placeholder_name}}}"
             
-            # 使用当前文本框内容进行替换
-            if placeholder_pattern in current_text:
-                # 对于多个占位符的情况，只替换第一次出现的
-                updated_text = current_text.replace(placeholder_pattern, new_content, 1)
-                
-                print(f"替换占位符: {placeholder_pattern}")
-                print(f"原文本: '{current_text}'")
-                print(f"新内容: '{new_content}'")
-                print(f"更新后: '{updated_text}'")
-                
-                # 更新文本框内容
-                if hasattr(shape, "text_frame") and shape.text_frame:
-                    tf = shape.text_frame
-                    tf.clear()
-                    
-                    # 添加新内容
-                    p = tf.paragraphs[0]
-                    p.text = updated_text
-                    
-                    # 保持字体大小
-                    if hasattr(p, 'font') and hasattr(p.font, 'size'):
-                        if not p.font.size:
-                            p.font.size = Pt(16)
-                else:
-                    # 直接设置text属性
-                    shape.text = updated_text
-                
-                return True
-            else:
+            if placeholder_pattern not in current_text:
                 print(f"占位符 {placeholder_pattern} 在文本 '{current_text}' 中未找到")
                 return False
+            
+            # 执行文本替换
+            updated_text = current_text.replace(placeholder_pattern, new_content, 1)
+            
+            print(f"替换占位符: {placeholder_pattern}")
+            print(f"原文本: '{current_text}'")
+            print(f"新内容: '{new_content}'")
+            print(f"更新后: '{updated_text}'")
+            
+            # 保持格式的文本替换
+            if hasattr(shape, "text_frame") and shape.text_frame:
+                # 提取原始格式信息
+                original_format = self._extract_text_format(shape)
+                
+                # 应用新文本并保持格式
+                return self._apply_text_with_format(shape, updated_text, original_format)
+            else:
+                # 直接设置text属性（备用方案）
+                shape.text = updated_text
+                return True
                 
         except Exception as e:
             print("替换占位符时出错: %s", str(e))
+            return False
+    
+    def _extract_text_format(self, shape) -> Dict[str, Any]:
+        """提取文本框的格式信息"""
+        format_info = {
+            'font_name': None,
+            'font_size': None,
+            'font_bold': False,
+            'font_italic': False,
+            'font_color': None,
+            'paragraph_alignment': None,
+            'vertical_anchor': None,
+            'margin_left': None,
+            'margin_right': None,
+            'margin_top': None,
+            'margin_bottom': None
+        }
+        
+        try:
+            if hasattr(shape, 'text_frame') and shape.text_frame:
+                text_frame = shape.text_frame
+                
+                # 提取文本框边距和垂直对齐
+                format_info['margin_left'] = text_frame.margin_left
+                format_info['margin_right'] = text_frame.margin_right  
+                format_info['margin_top'] = text_frame.margin_top
+                format_info['margin_bottom'] = text_frame.margin_bottom
+                format_info['vertical_anchor'] = text_frame.vertical_anchor
+                
+                # 从第一个段落提取格式
+                if text_frame.paragraphs:
+                    first_paragraph = text_frame.paragraphs[0]
+                    format_info['paragraph_alignment'] = first_paragraph.alignment
+                    
+                    # 从第一个运行提取字体格式
+                    if first_paragraph.runs:
+                        first_run = first_paragraph.runs[0]
+                        font = first_run.font
+                        
+                        format_info['font_name'] = font.name
+                        format_info['font_size'] = font.size
+                        format_info['font_bold'] = font.bold
+                        format_info['font_italic'] = font.italic
+                        
+                        # 提取字体颜色
+                        if font.color:
+                            try:
+                                if hasattr(font.color, 'rgb') and font.color.rgb:
+                                    format_info['font_color'] = font.color.rgb
+                                elif hasattr(font.color, 'theme_color'):
+                                    # 主题颜色，保持None让系统使用默认颜色
+                                    format_info['font_color'] = None
+                            except Exception:
+                                format_info['font_color'] = None
+                    else:
+                        # 如果没有runs，从段落字体获取
+                        font = first_paragraph.font
+                        format_info['font_name'] = font.name
+                        format_info['font_size'] = font.size
+                        format_info['font_bold'] = font.bold
+                        format_info['font_italic'] = font.italic
+                        if font.color:
+                            try:
+                                if hasattr(font.color, 'rgb') and font.color.rgb:
+                                    format_info['font_color'] = font.color.rgb
+                                elif hasattr(font.color, 'theme_color'):
+                                    # 主题颜色，保持None让系统使用默认颜色
+                                    format_info['font_color'] = None
+                            except Exception:
+                                format_info['font_color'] = None
+                            
+        except Exception as e:
+            print(f"提取文本格式时出错: {str(e)}")
+        
+        return format_info
+    
+    def _apply_text_with_format(self, shape, text: str, format_info: Dict[str, Any]) -> bool:
+        """应用文本并保持格式"""
+        try:
+            text_frame = shape.text_frame
+            
+            # 保持文本框边距设置
+            if format_info['margin_left'] is not None:
+                text_frame.margin_left = format_info['margin_left']
+            if format_info['margin_right'] is not None:
+                text_frame.margin_right = format_info['margin_right']
+            if format_info['margin_top'] is not None:
+                text_frame.margin_top = format_info['margin_top']
+            if format_info['margin_bottom'] is not None:
+                text_frame.margin_bottom = format_info['margin_bottom']
+            if format_info['vertical_anchor'] is not None:
+                text_frame.vertical_anchor = format_info['vertical_anchor']
+            
+            # 清除现有内容但保留格式框架
+            text_frame.clear()
+            
+            # 添加新的段落
+            paragraph = text_frame.paragraphs[0]
+            paragraph.text = text
+            
+            # 应用段落格式
+            if format_info['paragraph_alignment'] is not None:
+                paragraph.alignment = format_info['paragraph_alignment']
+            
+            # 应用字体格式到段落的font对象
+            font = paragraph.font
+            
+            if format_info['font_name']:
+                font.name = format_info['font_name']
+            
+            if format_info['font_size'] is not None:
+                font.size = format_info['font_size']
+            elif font.size is None:
+                # 如果原来没有大小设置，给个默认值
+                font.size = Pt(16)
+            
+            if format_info['font_bold'] is not None:
+                font.bold = format_info['font_bold']
+                
+            if format_info['font_italic'] is not None:
+                font.italic = format_info['font_italic']
+            
+            if format_info['font_color'] is not None:
+                try:
+                    font.color.rgb = format_info['font_color']
+                except Exception:
+                    # 如果设置颜色失败，忽略颜色设置
+                    pass
+            
+            # 确保run级别的格式也正确
+            if paragraph.runs:
+                for run in paragraph.runs:
+                    run_font = run.font
+                    if format_info['font_name']:
+                        run_font.name = format_info['font_name']
+                    if format_info['font_size'] is not None:
+                        run_font.size = format_info['font_size']
+                    if format_info['font_bold'] is not None:
+                        run_font.bold = format_info['font_bold']
+                    if format_info['font_italic'] is not None:
+                        run_font.italic = format_info['font_italic']
+                    if format_info['font_color'] is not None:
+                        try:
+                            run_font.color.rgb = format_info['font_color']
+                        except Exception:
+                            # 如果设置颜色失败，忽略颜色设置
+                            pass
+            
+            return True
+            
+        except Exception as e:
+            print(f"应用格式时出错: {str(e)}")
             return False
     
     def _update_slide_content(self, slide, content: str):

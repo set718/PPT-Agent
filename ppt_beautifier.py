@@ -80,7 +80,7 @@ class PPTBeautifier:
             'layout_change': None
         }
         
-        # 找到所有包含占位符的文本框
+        # 找到所有包含占位符的文本框 - 识别所有{}格式的占位符
         placeholder_shapes = []
         filled_shapes = []
         

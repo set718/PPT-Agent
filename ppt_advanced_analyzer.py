@@ -147,11 +147,12 @@ class PPTStructureAnalyzer:
             if hasattr(shape, 'text'):
                 content = shape.text.strip()
             
-            # 检测占位符
+            # 检测占位符 - 识别所有{}格式的占位符
             placeholder_name = None
+            placeholder_matches = []
             if content and re.search(r'\{([^}]+)\}', content):
-                matches = re.findall(r'\{([^}]+)\}', content)
-                placeholder_name = matches[0] if matches else None
+                placeholder_matches = re.findall(r'\{([^}]+)\}', content)
+                placeholder_name = placeholder_matches[0] if placeholder_matches else None
             
             # 分析元素类型
             element_type = self._detect_element_type(shape)
@@ -173,6 +174,7 @@ class PPTStructureAnalyzer:
                 position=position,
                 content=content,
                 placeholder_name=placeholder_name,
+                placeholder_matches=placeholder_matches,  # 添加所有占位符匹配信息
                 visual_weight=visual_weight,
                 is_title=is_title,
                 is_content=is_content,
@@ -243,11 +245,12 @@ class PPTStructureAnalyzer:
         if any(keyword in content.lower() for keyword in title_keywords):
             return True
         
-        # 占位符判断
+        # 占位符判断 - 智能识别标题类占位符
         placeholder_matches = re.findall(r'\{([^}]+)\}', content)
         if placeholder_matches:
             placeholder_name = placeholder_matches[0].lower()
-            if 'title' in placeholder_name:
+            title_keywords = ['title', 'heading', '主题', 'topic', '标题', 'header']
+            if any(keyword in placeholder_name for keyword in title_keywords):
                 return True
         
         return False
@@ -257,11 +260,11 @@ class PPTStructureAnalyzer:
         if not content:
             return False
         
-        # 占位符判断
+        # 占位符判断 - 智能识别内容类占位符
         placeholder_matches = re.findall(r'\{([^}]+)\}', content)
         if placeholder_matches:
             placeholder_name = placeholder_matches[0].lower()
-            content_keywords = ['content', 'bullet', 'description', 'text']
+            content_keywords = ['content', 'bullet', 'description', 'text', '介绍', '内容', '描述', 'detail', 'point', 'list', 'item', '要点', '列表', '项目']
             return any(keyword in placeholder_name for keyword in content_keywords)
         
         # 长度判断：内容通常较长
@@ -947,7 +950,7 @@ class SmartLayoutAdjuster:
         try:
             for shape in slide.shapes:
                 if hasattr(shape, 'text') and shape.text:
-                    # 检查是否包含目标占位符
+                    # 检查是否包含目标占位符 - 支持所有{}格式占位符
                     if f"{{{placeholder_name}}}" in shape.text:
                         if hasattr(shape, 'text_frame') and shape.text_frame:
                             # 计算建议的字体大小

@@ -408,10 +408,11 @@ class UserPPTGenerator:
                 filled_placeholders_in_slide = self.ppt_processor.filled_placeholders.get(slide_idx, set())
                 
                 for shape in slide.shapes:
+                    # 处理普通文本框
                     if hasattr(shape, 'text') and shape.text:
                         original_text = shape.text
                         
-                        # 找出文本中的所有占位符
+                        # 找出文本中的所有占位符 - 识别所有{}格式的占位符
                         import re
                         placeholder_matches = re.findall(r'\{([^}]+)\}', original_text)
                         
@@ -428,7 +429,7 @@ class UserPPTGenerator:
                                 for unfilled_placeholder in unfilled_placeholders:
                                     pattern = f"{{{unfilled_placeholder}}}"
                                     cleaned_text = cleaned_text.replace(pattern, "")
-                                    cleaned_placeholders.append(f"第{slide_idx+1}页: {{{unfilled_placeholder}}}")
+                                    cleaned_placeholders.append(f"第{slide_idx+1}页(文本框): {{{unfilled_placeholder}}}")
                                 
                                 # 清理多余的空白
                                 cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
@@ -436,12 +437,44 @@ class UserPPTGenerator:
                                 if cleaned_text != original_text:
                                     shape.text = cleaned_text
                                     cleanup_count += 1
+                    
+                    # 处理表格中的占位符
+                    elif hasattr(shape, 'shape_type') and shape.shape_type == 19:  # MSO_SHAPE_TYPE.TABLE = 19
+                        table = shape.table
+                        for row_idx, row in enumerate(table.rows):
+                            for col_idx, cell in enumerate(row.cells):
+                                original_cell_text = cell.text.strip()
+                                if original_cell_text:
+                                    # 找出表格单元格中的占位符
+                                    placeholder_matches = re.findall(r'\{([^}]+)\}', original_cell_text)
+                                    
+                                    if placeholder_matches:
+                                        # 检查哪些占位符未被填充
+                                        unfilled_placeholders = [
+                                            p for p in placeholder_matches 
+                                            if p not in filled_placeholders_in_slide
+                                        ]
+                                        
+                                        # 只移除未填充的占位符
+                                        if unfilled_placeholders:
+                                            cleaned_cell_text = original_cell_text
+                                            for unfilled_placeholder in unfilled_placeholders:
+                                                pattern = f"{{{unfilled_placeholder}}}"
+                                                cleaned_cell_text = cleaned_cell_text.replace(pattern, "")
+                                                cleaned_placeholders.append(f"第{slide_idx+1}页(表格{row_idx+1},{col_idx+1}): {{{unfilled_placeholder}}}")
+                                            
+                                            # 清理多余的空白
+                                            cleaned_cell_text = re.sub(r'\s+', ' ', cleaned_cell_text).strip()
+                                            
+                                            if cleaned_cell_text != original_cell_text:
+                                                cell.text = cleaned_cell_text
+                                                cleanup_count += 1
             
             return {
                 "success": True,
                 "cleaned_placeholders": cleanup_count,
                 "cleaned_placeholder_list": cleaned_placeholders,
-                "message": f"清理了{cleanup_count}个文本框中的未填充占位符"
+                "message": f"清理了{cleanup_count}个文本框和表格单元格中的未填充占位符"
             }
             
         except Exception as e:
@@ -1428,25 +1461,44 @@ def main():
                             slide_count = len(temp_presentation.slides)
                             st.metric("📑 幻灯片数量", slide_count)
                             
-                            # 分析占位符
+                            # 分析占位符 - 支持文本框和表格中的占位符
                             total_placeholders = 0
                             placeholder_info = []
                             
                             for i, slide in enumerate(temp_presentation.slides):
                                 slide_placeholders = []
+                                table_placeholders = []
+                                
                                 for shape in slide.shapes:
+                                    # 处理普通文本框中的占位符
                                     if hasattr(shape, 'text') and shape.text:
-                                        # 查找占位符模式 {xxx}
-                                        import re
+                                        import re  
                                         placeholders = re.findall(r'\{([^}]+)\}', shape.text)
                                         if placeholders:
                                             slide_placeholders.extend(placeholders)
                                             total_placeholders += len(placeholders)
+                                    
+                                    # 处理表格中的占位符
+                                    elif hasattr(shape, 'shape_type') and shape.shape_type == 19:  # MSO_SHAPE_TYPE.TABLE = 19
+                                        table = shape.table
+                                        for row_idx, row in enumerate(table.rows):
+                                            for col_idx, cell in enumerate(row.cells):
+                                                cell_text = cell.text.strip()
+                                                if cell_text:
+                                                    placeholders = re.findall(r'\{([^}]+)\}', cell_text)
+                                                    if placeholders:
+                                                        for placeholder in placeholders:
+                                                            table_placeholders.append(f"{placeholder}(表格{row_idx+1},{col_idx+1})")
+                                                            total_placeholders += 1
                                 
-                                if slide_placeholders:
+                                # 合并文本框和表格占位符
+                                all_slide_placeholders = slide_placeholders + table_placeholders
+                                if all_slide_placeholders:
                                     placeholder_info.append({
                                         'slide_num': i + 1,
-                                        'placeholders': slide_placeholders
+                                        'placeholders': slide_placeholders,
+                                        'table_placeholders': table_placeholders,
+                                        'total_count': len(all_slide_placeholders)
                                     })
                             
                             st.metric("🎯 发现占位符", total_placeholders)
@@ -1455,10 +1507,22 @@ def main():
                             if placeholder_info:
                                 with st.expander("🔍 模板结构分析", expanded=False):
                                     for info in placeholder_info[:5]:  # 只显示前5页
-                                        st.write(f"**第{info['slide_num']}页：** {', '.join([f'{{{p}}}' for p in info['placeholders']])}")
+                                        slide_num = info['slide_num']
+                                        text_placeholders = info['placeholders']
+                                        table_placeholders = info['table_placeholders']
+                                        
+                                        st.write(f"**第{slide_num}页（共{info['total_count']}个占位符）：**")
+                                        
+                                        if text_placeholders:
+                                            st.write(f"  📝 文本框：{', '.join([f'{{{p}}}' for p in text_placeholders])}")
+                                        
+                                        if table_placeholders:
+                                            st.write(f"  📊 表格：{', '.join([f'{{{p}}}' for p in table_placeholders])}")
                                     
                                     if len(placeholder_info) > 5:
-                                        st.write(f"... 还有 {len(placeholder_info)-5} 页包含占位符")
+                                        remaining_pages = len(placeholder_info) - 5
+                                        remaining_placeholders = sum(info['total_count'] for info in placeholder_info[5:])
+                                        st.write(f"... 还有 {remaining_pages} 页包含 {remaining_placeholders} 个占位符（包括表格占位符）")
                             else:
                                 st.warning("⚠️ 未检测到占位符模式 {xxx}，请确保模板中包含要填充的占位符")
                         
@@ -1484,7 +1548,7 @@ def main():
 
 我的自定义PPT测试
 
-这是使用自定义模板的测试内容。AI将分析您的文本结构，并智能地将内容分配到模板中的各个占位符位置。
+这是使用自定义模板的测试内容。AI将分析您的文本结构，并智能地将内容分配到模板中的各个占位符位置。AI能够理解所有{}格式的占位符含义。
 
 主要特点：
 - 支持自定义PPT模板上传
@@ -1493,7 +1557,7 @@ def main():
 - 独立于其他功能模块
 
 测试结果将展示AI如何理解您的内容并填充到模板的对应位置。""",
-                    help="AI将分析您的文本并智能分配到模板的占位符中",
+                    help="AI将分析您的文本并智能分配到模板的所有{}格式占位符中",
                     key="custom_template_text"
                 )
                 
@@ -1755,7 +1819,7 @@ def main():
                 - 支持多次测试和调整
                 """)
             
-            st.markdown('<div class="warning-box">💡 <strong>提示：</strong> 请确保您的PPT模板中包含形如 {标题}、{内容}、{要点} 等占位符，AI将根据这些占位符的名称智能分配相应的内容。</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">💡 <strong>提示：</strong> 请确保您的PPT模板中包含形如 {标题}、{内容}、{要点}、{作者}、{日期}、{描述} 等占位符。AI将根据占位符的名称自动理解其含义并智能分配相应的内容。支持所有{}格式的占位符，包括文本框和表格单元格中的占位符。</div>', unsafe_allow_html=True)
     
 
     

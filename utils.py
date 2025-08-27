@@ -44,12 +44,12 @@ class PPTAnalyzer:
                 "has_content": False
             }
             
-            # 分析幻灯片中的文本框和占位符
+            # 分析幻灯片中的文本框、表格和占位符
             for shape in slide.shapes:
                 if hasattr(shape, "text"):
                     current_text = shape.text.strip()
                     if current_text:
-                        # 检查是否包含占位符
+                        # 检查是否包含占位符 - 识别所有{}格式的占位符
                         placeholder_pattern = r'\{([^}]+)\}'
                         placeholders = re.findall(placeholder_pattern, current_text)
                         
@@ -80,6 +80,49 @@ class PPTAnalyzer:
                             "shape": shape,
                             "has_placeholder": bool(re.findall(r'\{([^}]+)\}', shape.text)) if shape.text else False
                         })
+                
+                # 处理表格中的占位符
+                elif shape.shape_type == 19:  # MSO_SHAPE_TYPE.TABLE = 19
+                    # 这是一个表格
+                    table = shape.table
+                    for row_idx, row in enumerate(table.rows):
+                        for col_idx, cell in enumerate(row.cells):
+                            cell_text = cell.text.strip()
+                            if cell_text:
+                                # 检查表格单元格中的占位符
+                                placeholder_pattern = r'\{([^}]+)\}'
+                                placeholders = re.findall(placeholder_pattern, cell_text)
+                                
+                                if placeholders:
+                                    # 表格单元格包含占位符
+                                    for placeholder in placeholders:
+                                        slide_info["placeholders"][placeholder] = {
+                                            "shape": shape,
+                                            "table": table,
+                                            "cell": cell,
+                                            "row_idx": row_idx,
+                                            "col_idx": col_idx,
+                                            "original_text": cell_text,
+                                            "placeholder": placeholder,
+                                            "all_placeholders": placeholders,
+                                            "type": "table_cell"  # 标识为表格单元格
+                                        }
+                                        
+                                # 记录表格单元格为文本形状（用于调试）
+                                slide_info["text_shapes"].append({
+                                    "shape_id": f"table_{row_idx}_{col_idx}",
+                                    "current_text": cell_text,
+                                    "shape": cell,  # 单元格对象
+                                    "table_info": {
+                                        "table": table,
+                                        "row_idx": row_idx,
+                                        "col_idx": col_idx
+                                    },
+                                    "has_placeholder": bool(placeholders),
+                                    "type": "table_cell"
+                                })
+                                
+                                slide_info["has_content"] = True
             
             slides_info.append(slide_info)
         
@@ -283,22 +326,16 @@ class AIProcessor:
         total_placeholders = sum(len(slide.get('placeholders', {})) for slide in ppt_structure['slides'])
         description += f"总占位符数量: {total_placeholders}个，需要智能分配用户文本\n"
         
-        # 分析各类占位符分布
-        placeholder_types = {'title': 0, 'subtitle': 0, 'content': 0, 'bullet': 0, 'description': 0, 'conclusion': 0}
+        # 分析各类占位符分布 - 智能识别所有类型
+        placeholder_types = {}
         for slide in ppt_structure['slides']:
             for placeholder_name in slide.get('placeholders', {}).keys():
-                if 'title' in placeholder_name.lower():
-                    placeholder_types['title'] += 1
-                elif 'subtitle' in placeholder_name.lower():
-                    placeholder_types['subtitle'] += 1
-                elif 'content' in placeholder_name.lower():
-                    placeholder_types['content'] += 1
-                elif 'bullet' in placeholder_name.lower():
-                    placeholder_types['bullet'] += 1
-                elif 'description' in placeholder_name.lower():
-                    placeholder_types['description'] += 1
-                elif 'conclusion' in placeholder_name.lower():
-                    placeholder_types['conclusion'] += 1
+                placeholder_type = self._analyze_placeholder_type(placeholder_name)
+                placeholder_key = placeholder_type.split('-')[0]  # 提取类型部分，如"标题类"
+                if placeholder_key in placeholder_types:
+                    placeholder_types[placeholder_key] += 1
+                else:
+                    placeholder_types[placeholder_key] = 1
         
         description += f"占位符类型分布: {dict(placeholder_types)}\n"
         
@@ -333,65 +370,171 @@ class AIProcessor:
         return description
     
     def _get_placeholder_priority(self, placeholder_name: str) -> int:
-        """获取占位符优先级（数字越小优先级越高）"""
+        """智能获取占位符优先级（数字越小优先级越高），支持复合占位符"""
         name_lower = placeholder_name.lower()
-        if 'title' in name_lower:
+        
+        # 分析复合占位符的所有组件
+        import re
+        components = re.split(r'[_\-\s]+', name_lower)
+        all_components = [name_lower] + components
+        
+        # 标题类：最高优先级
+        title_keywords = ['title', 'heading', '主题', 'topic', '标题', 'header']
+        if any(keyword in comp for comp in all_components for keyword in title_keywords if keyword in comp):
             return 1
-        elif 'subtitle' in name_lower:
+            
+        # 副标题类：高优先级
+        subtitle_keywords = ['subtitle', 'sub', '副标题', 'secondary']
+        if any(keyword in comp for comp in all_components for keyword in subtitle_keywords if keyword in comp):
             return 2
-        elif 'content' in name_lower and 'bullet' not in name_lower:
+            
+        # 人物和时间类：重要信息，优先填充
+        person_keywords = ['author', 'name', 'speaker', '演讲者', '作者', '姓名', 'presenter', 'who']
+        time_keywords = ['time', 'date', '年份', '日期', '时间', 'year', 'month', 'day', 'schedule', 'when']
+        if any(keyword in comp for comp in all_components for keyword in person_keywords + time_keywords if keyword in comp):
+            return 2
+            
+        # 主题/话题类：重要内容标识
+        topic_keywords = ['topic', 'subject', '主题', '话题', '议题']
+        if any(keyword in comp for comp in all_components for keyword in topic_keywords if keyword in comp):
             return 3
-        elif 'bullet' in name_lower:
+            
+        # 要点类：中等优先级（bullet类型通常很重要）
+        bullet_keywords = ['bullet', 'point', 'list', 'item', '要点', '列表', '项目']
+        if any(keyword in comp for comp in all_components for keyword in bullet_keywords if keyword in comp):
+            return 3
+            
+        # 内容类：中高优先级
+        content_keywords = ['content', 'text', 'description', '介绍', '内容', '描述', 'detail', 'info']
+        if any(keyword in comp for comp in all_components for keyword in content_keywords if keyword in comp):
             return 4
-        elif 'description' in name_lower:
-            return 5
-        elif 'conclusion' in name_lower:
-            return 6
-        else:
-            return 7
+            
+        # 数据类：中等优先级
+        data_keywords = ['number', 'data', 'percentage', 'statistic', '统计', '数字', '数据', '百分比', 'count']
+        if any(keyword in comp for comp in all_components for keyword in data_keywords if keyword in comp):
+            return 4
+            
+        # 结论类：较高优先级
+        conclusion_keywords = ['conclusion', 'summary', '结论', '总结', 'result', '结果']
+        if any(keyword in comp for comp in all_components for keyword in conclusion_keywords if keyword in comp):
+            return 3
+            
+        # 未知类型：较低优先级，但仍会处理
+        return 5
     
     def _analyze_placeholder_type(self, placeholder_name: str) -> str:
-        """分析占位符类型"""
+        """智能分析占位符类型，根据名称语义自动判断，支持复合命名格式"""
         name_lower = placeholder_name.lower()
-        if 'title' in name_lower:
-            return "标题类-高视觉权重"
-        elif 'subtitle' in name_lower:
-            return "副标题类-中高视觉权重"
-        elif 'content' in name_lower and 'bullet' not in name_lower:
-            return "内容类-框架构建"
-        elif 'bullet' in name_lower:
-            return "要点类-核心信息"
-        elif 'description' in name_lower:
-            return "描述类-详细说明"
-        elif 'conclusion' in name_lower:
-            return "结论类-总结升华"
-        else:
-            return "通用类-灵活使用"
+        
+        # 分析复合占位符的所有组件
+        # 使用下划线、连字符等分隔符分割占位符名称
+        import re
+        components = re.split(r'[_\-\s]+', name_lower)
+        all_components = [name_lower] + components  # 包含完整名称和所有组件
+        
+        # 计算各类型的匹配权重
+        type_scores = {}
+        
+        # 标题类占位符检测
+        title_keywords = ['title', 'heading', '主题', 'topic', '标题', 'header']
+        title_score = sum(1 for comp in all_components for keyword in title_keywords if keyword in comp)
+        if title_score > 0:
+            type_scores['标题类-高视觉权重'] = title_score
+        
+        # 副标题类占位符检测  
+        subtitle_keywords = ['subtitle', 'sub', '副标题', 'secondary']
+        subtitle_score = sum(1 for comp in all_components for keyword in subtitle_keywords if keyword in comp)
+        if subtitle_score > 0:
+            type_scores['副标题类-中高视觉权重'] = subtitle_score
+        
+        # 要点类占位符检测（优先于内容类检测）
+        bullet_keywords = ['bullet', 'point', 'list', 'item', '要点', '列表', '项目']
+        bullet_score = sum(1 for comp in all_components for keyword in bullet_keywords if keyword in comp)
+        if bullet_score > 0:
+            type_scores['要点类-核心信息'] = bullet_score + 1  # 给要点类额外权重
+        
+        # 时间类占位符检测（检测包含time等的复合词）
+        time_keywords = ['time', 'date', '年份', '日期', '时间', 'year', 'month', 'day', 'schedule', 'when']
+        time_score = sum(1 for comp in all_components for keyword in time_keywords if keyword in comp)
+        if time_score > 0:
+            type_scores['时间类-日期信息'] = time_score
+            
+        # 主题/话题类占位符检测（适合topic等）
+        topic_keywords = ['topic', 'subject', '主题', '话题', '议题']  
+        topic_score = sum(1 for comp in all_components for keyword in topic_keywords if keyword in comp)
+        if topic_score > 0:
+            type_scores['主题类-内容标识'] = topic_score
+        
+        # 人物类占位符检测
+        person_keywords = ['author', 'name', 'speaker', '演讲者', '作者', '姓名', 'presenter', 'who']
+        person_score = sum(1 for comp in all_components for keyword in person_keywords if keyword in comp)
+        if person_score > 0:
+            type_scores['人物类-身份信息'] = person_score
+        
+        # 内容类占位符检测
+        content_keywords = ['content', 'text', 'description', '介绍', '内容', '描述', 'detail', 'info']
+        content_score = sum(1 for comp in all_components for keyword in content_keywords if keyword in comp)
+        if content_score > 0:
+            type_scores['内容类-框架构建'] = content_score
+            
+        # 数据类占位符检测
+        data_keywords = ['number', 'data', 'percentage', 'statistic', '统计', '数字', '数据', '百分比', 'count']
+        data_score = sum(1 for comp in all_components for keyword in data_keywords if keyword in comp)
+        if data_score > 0:
+            type_scores['数据类-数值信息'] = data_score
+        
+        # 结论类占位符检测
+        conclusion_keywords = ['conclusion', 'summary', '结论', '总结', 'result', '结果']
+        conclusion_score = sum(1 for comp in all_components for keyword in conclusion_keywords if keyword in comp)
+        if conclusion_score > 0:
+            type_scores['结论类-总结升华'] = conclusion_score
+        
+        # 返回得分最高的类型
+        if type_scores:
+            best_type = max(type_scores.items(), key=lambda x: x[1])
+            return f"{best_type[0]}(复合:{'+'.join(components)})"
+        
+        # 如果都不匹配，返回通用类型，但提供组件分析
+        return f"通用类-复合占位符({'+'.join(components)})"
     
     def _analyze_slide_design_intent(self, slide: Dict[str, Any]) -> str:
-        """分析幻灯片设计意图"""
+        """智能分析幻灯片设计意图，根据占位符类型自动判断页面用途"""
         placeholders = slide.get('placeholders', {})
         if not placeholders:
             return "纯展示页面，无需填充"
         
-        placeholder_names = list(placeholders.keys())
+        placeholder_names = [name.lower() for name in placeholders.keys()]
         
-        # 分析设计意图
-        has_title = any('title' in name.lower() for name in placeholder_names)
-        has_bullets = any('bullet' in name.lower() for name in placeholder_names)
-        has_content = any('content' in name.lower() for name in placeholder_names)
-        has_description = any('description' in name.lower() for name in placeholder_names)
+        # 智能检测各类占位符
+        title_keywords = ['title', 'heading', '主题', 'topic', '标题', 'header']
+        content_keywords = ['content', 'text', 'description', '介绍', '内容', '描述', 'detail']
+        bullet_keywords = ['bullet', 'point', 'list', 'item', '要点', '列表', '项目']
+        person_keywords = ['author', 'name', 'speaker', '演讲者', '作者', '姓名', 'presenter']
+        time_keywords = ['date', 'time', '年份', '日期', '时间', 'year', 'month', 'day']
+        data_keywords = ['number', 'data', 'percentage', 'statistic', '统计', '数字', '数据', '百分比']
         
-        if has_title and has_bullets:
-            return "标题要点型页面，适合概要展示"
+        has_title = any(any(keyword in name for keyword in title_keywords) for name in placeholder_names)
+        has_content = any(any(keyword in name for keyword in content_keywords) for name in placeholder_names)
+        has_bullets = any(any(keyword in name for keyword in bullet_keywords) for name in placeholder_names)
+        has_person = any(any(keyword in name for keyword in person_keywords) for name in placeholder_names)
+        has_time = any(any(keyword in name for keyword in time_keywords) for name in placeholder_names)
+        has_data = any(any(keyword in name for keyword in data_keywords) for name in placeholder_names)
+        
+        # 根据占位符组合判断页面类型
+        if has_person and has_time:
+            return "封面型页面，适合标题展示和基本信息"
+        elif has_title and has_bullets:
+            return "标题要点型页面，适合概要展示和要点列举"
         elif has_content and has_bullets:
-            return "内容详解型页面，适合分点阐述"
-        elif has_description:
-            return "描述详解型页面，适合详细说明"
+            return "内容详解型页面，适合分点阐述和详细说明"
         elif has_title and has_content:
-            return "标题内容型页面，适合主题阐述"
+            return "标题内容型页面，适合主题阐述和内容展开"
+        elif has_data:
+            return "数据展示型页面，适合统计信息和数字展示"
+        elif len(placeholders) > 3:
+            return "复合型页面，包含多种信息类型，需要平衡布局"
         else:
-            return "复合型页面，需要灵活安排内容"
+            return f"灵活型页面，根据实际占位符({list(placeholders.keys())})智能安排内容"
     
     def _create_enhanced_ppt_description(self, enhanced_info: Dict[str, Any]) -> str:
         """创建增强的PPT结构描述"""
@@ -478,7 +621,7 @@ class AIProcessor:
 
 **你的PPT识别能力包括：**
 - **文本内容**：议程页 (Agenda with icons)、欢迎页 (Welcome 10:00 am)、团队介绍 (The team 11:00 am)、服务介绍 (Our services 12:00 pm)、愿景展示 (Vision 1:00 pm) 等
-- **结构信息**：每一页的标题、正文、占位符 (title、content、agenda list 等)  
+- **结构信息**：每一页的标题、正文、占位符（所有{}格式，AI需根据占位符名称理解其含义）  
 - **布局元素**：能读取每张幻灯片的布局类型 (标题+正文、两栏布局、带图标的议程、带图文的组合页等)
 - **样式信息**：字体名称、字号、是否加粗/斜体、颜色等
 - **对象元素**：图标、图片、形状、表格等 (能知道它们存在、类型、位置和大小参数)
@@ -499,8 +642,25 @@ class AIProcessor:
 3. **样式感知优化**：根据识别到的字体、颜色等样式信息，调整内容长度和表达方式
 4. **结构层次保持**：确保分配后的内容与原PPT的视觉层次和逻辑结构保持一致
 
+**占位符智能识别与处理原则：**
+🔍 **占位符识别规则**：识别并处理模板中所有{}格式的占位符，支持复合命名格式
+- 根据占位符名称的语义含义自动判断应填入的内容类型
+- **简单格式**：{title}、{标题}、{author}、{date}等单一含义占位符
+- **复合格式**：{bullet_2_time_1}、{content_1_topic}、{speaker_name_title}等多组件占位符
+- **智能解析**：自动分析复合占位符中的关键组件（如time、topic、bullet等）
+- **语义理解**：从占位符名称推断内容类型和优先级
+
+**复合占位符示例：**
+- {bullet_2_time_1} → 要点类+时间类，适合填充带时间信息的要点内容
+- {bullet_2_time_1_topic} → 要点类+时间类+主题类，适合填充主题相关的时间要点
+- {content_description_1} → 内容类+描述类，适合填充详细描述内容
+- {speaker_name_title} → 人物类+标题类，适合填充演讲者姓名和职位
+
+**重要**：模板包含文本框和表格两种占位符，表格占位符同样重要，必须识别填充。
+
 **操作原则：**
-- ✅ **可以做的**：从用户文本中提取合适的片段填入占位符
+- ✅ **可以做的**：从用户文本中提取合适的片段填入任意{}格式的占位符
+- ✅ **可以做的**：根据占位符名称的含义智能匹配对应类型的内容
 - ✅ **可以做的**：适当精简、重组文本使其更适合PPT展示
 - ✅ **可以做的**：调整语言表达，使其更简洁明了
 - ❌ **不能做的**：生成用户未提供的新信息
@@ -539,28 +699,38 @@ class AIProcessor:
    - **页面下方**：补充说明和总结性内容
    - **左右分布**：对比性或并列性内容的合理安排
 
-**占位符语义规则与视觉层次：**
-- `title` = 主标题或文档标题（简洁有力，建议8-15字）
-  * 视觉权重：★★★★★ 最高优先级，是视觉焦点
-  * 设计要求：突出核心主题，用词精炼有力，避免冗长表述
-- `subtitle` = 副标题（补充说明，建议15-25字）
-  * 视觉权重：★★★★ 高优先级，支撑主标题
-  * 设计要求：与主标题形成呼应，提供必要补充信息
-- `content_X` = 分类标题、章节标题、时间点等结构性内容（清晰明确，建议10-20字）
-  * 视觉权重：★★★★ 高优先级，构建内容框架
-  * 设计要求：逻辑清晰，层次分明，便于读者理解结构
-- `content_X_bullet_Y` = 属于特定content的具体要点（简洁扼要，建议20-40字）
-  * 视觉权重：★★★ 中高优先级，支撑章节内容
-  * 设计要求：要点明确，表述简洁，与对应content形成逻辑层次
-- `bullet_X` = 独立的要点列表（重点突出，建议15-35字）
-  * 视觉权重：★★★ 中高优先级，关键信息载体
-  * 设计要求：并列关系清晰，每个要点独立且完整
-- `description` = 描述性文字（详细但不冗长，建议30-80字）
-  * 视觉权重：★★ 中等优先级，提供详细说明
-  * 设计要求：信息丰富但不冗长，支撑主要内容
-- `conclusion` = 结论性内容（总结性强，建议20-50字）
-  * 视觉权重：★★★★ 高优先级，总结升华
-  * 设计要求：总结有力，呼应主题，给人深刻印象
+**占位符语义理解与自动推断原则：**
+AI需要根据占位符的名称自动理解其含义和用途，而不仅限于预定义的类型：
+
+**核心语义规则：**
+1. **标题类占位符**：包含title、heading、主题、topic等关键词
+   - 如: {title}、{main_title}、{chapter_title}、{主题}、{标题}
+   - 特征：简洁有力，建议8-20字，突出核心概念
+
+2. **内容类占位符**：包含content、text、description、介绍等关键词  
+   - 如: {content}、{main_content}、{description}、{介绍}、{内容}
+   - 特征：详细说明，建议20-100字，承载主要信息
+
+3. **要点类占位符**：包含bullet、point、list、要点等关键词
+   - 如: {bullet_1}、{point_1}、{要点1}、{item_1}
+   - 特征：简洁明了，建议15-40字，并列展示
+
+4. **人物类占位符**：包含author、name、speaker、演讲者等关键词
+   - 如: {author}、{speaker_name}、{演讲者}、{作者}
+   - 特征：人名或角色，通常较短
+
+5. **时间类占位符**：包含date、time、年份、日期等关键词
+   - 如: {date}、{time}、{年份}、{日期}
+   - 特征：时间表达，格式标准
+
+6. **数据类占位符**：包含number、data、统计、数字等关键词
+   - 如: {number}、{percentage}、{统计数据}、{数字}
+   - 特征：数值信息，简洁准确
+
+**智能推断原则：**
+- AI应该根据占位符名称的语义含义，自动判断应该填入什么类型的内容
+- 对于未知的占位符名称，根据上下文和模板结构进行合理推测
+- 优先填充语义明确、重要性高的占位符
 
 **美观性设计原则：**
 1. **视觉层次清晰**：
@@ -659,12 +829,12 @@ class AIProcessor:
 只返回JSON格式，包含assignments数组，每个元素包含：
 - slide_index: 幻灯片索引（从0开始）
 - action: "replace_placeholder"
-- placeholder: 占位符名称（必须存在于模板中）
-- content: 从用户文本提取的内容（经过适当优化）
-- reason: 选择此内容的理由
+- placeholder: 占位符名称（模板中的确切名称，支持任意{}格式，如title、标题、author、作者、date、日期、description等）
+- content: 从用户文本提取的内容（根据占位符语义含义进行适当优化）
+- reason: 基于占位符名称语义和内容匹配度的选择理由
 
 **示例：**
-如果用户文本是"人工智能发展历程包括三个阶段"，模板有title和content_1占位符，则：
+如果用户文本是"人工智能发展历程包括三个阶段"，模板有{title}和{content_1}占位符，则：
 ```json
 {
   "assignments": [
@@ -711,7 +881,7 @@ class AIProcessor:
                     "action": "replace_placeholder",
                     "placeholder": "content",
                     "content": user_text,
-                    "reason": "API调用失败或解析错误，默认填入content占位符。错误: " + str(error_msg)
+                    "reason": "API调用失败或解析错误，默认填入content占位符。支持所有{}格式占位符。错误: " + str(error_msg)
                 }
             ]
         }
@@ -880,6 +1050,12 @@ class PPTProcessor:
         assignments_list = assignments.get('assignments', [])
         results = []
         
+        # 清理旧缓存并提取最新的格式信息
+        print("🧹 清理旧格式缓存...")
+        self._clear_format_cache()
+        print("🔍 预先提取所有占位符格式信息...")
+        self._cache_all_placeholder_formats(assignments_list)
+        
         # 如果提供了用户原始文本，则为幻灯片添加备注
         if user_text.strip():
             notes_results = self._add_notes_to_slides(assignments_list, user_text)
@@ -898,8 +1074,11 @@ class PPTProcessor:
                     
                     # 检查该占位符是否存在
                     if placeholder in slide_info['placeholders']:
-                        success = self._replace_placeholder_in_slide(
-                            slide_info['placeholders'][placeholder], 
+                        # 使用预先缓存的格式信息进行替换
+                        placeholder_info = slide_info['placeholders'][placeholder]
+                        
+                        success = self._replace_placeholder_in_slide_with_cached_format(
+                            placeholder_info, 
                             content
                         )
                         if success:
@@ -928,6 +1107,43 @@ class PPTProcessor:
                 results.append(f"SUCCESS: 已新增幻灯片「{title}」: {assignment.get('reason', '')}")
         
         return results
+    
+    def _clear_format_cache(self):
+        """清理所有占位符的格式缓存，确保使用最新格式"""
+        cleared_count = 0
+        for slide_info in self.ppt_structure['slides']:
+            for placeholder_name, placeholder_info in slide_info.get('placeholders', {}).items():
+                if 'cached_format' in placeholder_info:
+                    del placeholder_info['cached_format']
+                    cleared_count += 1
+        
+        if cleared_count > 0:
+            print(f"   🗑️ 已清理{cleared_count}个占位符的旧格式缓存")
+        else:
+            print("   ✨ 无需清理，首次使用")
+    
+    def _cache_all_placeholder_formats(self, assignments_list: List[Dict]):
+        """预先提取所有占位符的格式信息，避免替换过程中格式丢失"""
+        cached_count = 0
+        for assignment in assignments_list:
+            if assignment.get('action') == 'replace_placeholder':
+                slide_index = assignment.get('slide_index', 0)
+                placeholder = assignment.get('placeholder', '')
+                
+                if 0 <= slide_index < len(self.presentation.slides):
+                    slide_info = self.ppt_structure['slides'][slide_index]
+                    
+                    if placeholder in slide_info['placeholders']:
+                        placeholder_info = slide_info['placeholders'][placeholder]
+                        
+                        # 只有在还没有缓存格式时才提取
+                        if 'cached_format' not in placeholder_info:
+                            format_info = self._extract_text_format(placeholder_info['shape'])
+                            placeholder_info['cached_format'] = format_info
+                            cached_count += 1
+                            print(f"   📋 缓存格式: 第{slide_index+1}页 {{{placeholder}}} - 字体:{format_info.get('font_name', 'None')}, 大小:{format_info.get('font_size', 'None')}")
+        
+        print(f"✅ 格式缓存完成，共缓存{cached_count}个占位符的格式信息")
     
     def _add_notes_to_slides(self, assignments_list: List[Dict], user_text: str) -> List[str]:
         """
@@ -1107,16 +1323,21 @@ class PPTProcessor:
         return result
     
     def _replace_placeholder_in_slide(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
-        """在特定的文本框中替换占位符，保持原有格式（字体大小、颜色等）"""
+        """在文本框或表格单元格中替换占位符，保持原有格式"""
         try:
-            shape = placeholder_info['shape']
             placeholder_name = placeholder_info['placeholder']
+            placeholder_pattern = f"{{{placeholder_name}}}"
+            
+            # 判断是表格单元格还是普通文本框
+            if placeholder_info.get('type') == 'table_cell':
+                # 处理表格单元格中的占位符
+                return self._replace_placeholder_in_table_cell(placeholder_info, new_content)
+            
+            # 处理普通文本框中的占位符
+            shape = placeholder_info['shape']
             
             # 检查当前文本框的实际内容
             current_text = shape.text if hasattr(shape, 'text') else ""
-            
-            # 构建要替换的占位符模式
-            placeholder_pattern = f"{{{placeholder_name}}}"
             
             if placeholder_pattern not in current_text:
                 print(f"占位符 {placeholder_pattern} 在文本 '{current_text}' 中未找到")
@@ -1146,6 +1367,176 @@ class PPTProcessor:
             print("替换占位符时出错: %s", str(e))
             return False
     
+    def _replace_placeholder_in_table_cell(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
+        """在表格单元格中替换占位符"""
+        try:
+            cell = placeholder_info['cell']
+            placeholder_name = placeholder_info['placeholder']
+            row_idx = placeholder_info['row_idx']
+            col_idx = placeholder_info['col_idx']
+            
+            # 获取单元格当前文本
+            current_text = cell.text
+            placeholder_pattern = f"{{{placeholder_name}}}"
+            
+            if placeholder_pattern not in current_text:
+                print(f"表格占位符 {placeholder_pattern} 在单元格[{row_idx},{col_idx}]文本 '{current_text}' 中未找到")
+                return False
+            
+            # 执行文本替换
+            updated_text = current_text.replace(placeholder_pattern, new_content, 1)
+            
+            print(f"替换表格占位符: {placeholder_pattern}")
+            print(f"位置: 行{row_idx+1}, 列{col_idx+1}")
+            print(f"原文本: '{current_text}'")
+            print(f"新内容: '{new_content}'")
+            print(f"更新后: '{updated_text}'")
+            
+            # 直接替换单元格文本
+            cell.text = updated_text
+            
+            return True
+                
+        except Exception as e:
+            print(f"替换表格占位符时出错: {str(e)}")
+            return False
+    
+    def _replace_placeholder_in_slide_with_cached_format(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
+        """使用预先缓存的格式信息替换占位符"""
+        try:
+            placeholder_name = placeholder_info['placeholder']
+            
+            # 判断是表格单元格还是普通文本框
+            if placeholder_info.get('type') == 'table_cell':
+                # 表格单元格暂时使用简单替换（可以后续扩展格式支持）
+                return self._replace_placeholder_in_table_cell(placeholder_info, new_content)
+            
+            shape = placeholder_info['shape']
+            cached_format = placeholder_info.get('cached_format', {})
+            
+            # 检查当前文本框的实际内容
+            current_text = shape.text if hasattr(shape, 'text') else ""
+            
+            # 构建要替换的占位符模式
+            placeholder_pattern = f"{{{placeholder_name}}}"
+            
+            if placeholder_pattern not in current_text:
+                print(f"占位符 {placeholder_pattern} 在文本 '{current_text}' 中未找到")
+                return False
+            
+            # 执行文本替换
+            updated_text = current_text.replace(placeholder_pattern, new_content, 1)
+            
+            print(f"替换占位符: {placeholder_pattern}")
+            print(f"原文本: '{current_text}'")
+            print(f"新内容: '{new_content}'")
+            print(f"更新后: '{updated_text}'")
+            
+            # 使用缓存的格式信息应用文本
+            if hasattr(shape, "text_frame") and shape.text_frame:
+                return self._apply_text_with_cached_format(shape, updated_text, cached_format)
+            else:
+                # 直接设置text属性（备用方案）
+                shape.text = updated_text
+                return True
+                
+        except Exception as e:
+            print("替换占位符时出错: %s", str(e))
+            return False
+    
+    def _apply_text_with_cached_format(self, shape, text: str, format_info: Dict[str, Any]) -> bool:
+        """使用缓存的格式信息应用文本"""
+        try:
+            text_frame = shape.text_frame
+            
+            # 保持文本框边距设置
+            if format_info.get('margin_left') is not None:
+                text_frame.margin_left = format_info['margin_left']
+            if format_info.get('margin_right') is not None:
+                text_frame.margin_right = format_info['margin_right']
+            if format_info.get('margin_top') is not None:
+                text_frame.margin_top = format_info['margin_top']
+            if format_info.get('margin_bottom') is not None:
+                text_frame.margin_bottom = format_info['margin_bottom']
+            if format_info.get('vertical_anchor') is not None:
+                text_frame.vertical_anchor = format_info['vertical_anchor']
+            
+            # 不清空整个text_frame，而是直接替换文本来更好地保持格式
+            if len(text_frame.paragraphs) > 0:
+                # 直接替换第一个段落的文本
+                paragraph = text_frame.paragraphs[0]
+                paragraph.text = text
+            else:
+                # 如果没有段落，则创建一个
+                text_frame.clear()
+                paragraph = text_frame.paragraphs[0]
+                paragraph.text = text
+            
+            # 应用段落格式
+            if format_info.get('paragraph_alignment') is not None:
+                paragraph.alignment = format_info['paragraph_alignment']
+            
+            # 应用字体格式到段落的font对象
+            font = paragraph.font
+            
+            print(f"   🎨 应用缓存格式 - 原有Runs: {format_info.get('has_runs', False)}, Runs数: {format_info.get('runs_count', 0)}")
+            
+            applied_changes = []
+            
+            if format_info.get('font_name'):
+                font.name = format_info['font_name']
+                applied_changes.append(f"字体:{format_info['font_name']}")
+            
+            if format_info.get('font_size') is not None:
+                font.size = format_info['font_size']
+                applied_changes.append(f"大小:{format_info['font_size']}")
+            elif font.size is None:
+                # 如果原来没有大小设置，给个默认值
+                font.size = Pt(16)
+                applied_changes.append("大小:默认16pt")
+            
+            if format_info.get('font_bold') is not None:
+                font.bold = format_info['font_bold']
+                applied_changes.append(f"粗体:{format_info['font_bold']}")
+                
+            if format_info.get('font_italic') is not None:
+                font.italic = format_info['font_italic']
+                applied_changes.append(f"斜体:{format_info['font_italic']}")
+            
+            if format_info.get('font_color') is not None:
+                try:
+                    font.color.rgb = format_info['font_color']
+                    applied_changes.append("颜色:已应用")
+                except Exception:
+                    applied_changes.append("颜色:应用失败")
+            
+            print(f"   ✅ 缓存格式应用完成 - {', '.join(applied_changes) if applied_changes else '无格式变更'}")
+            
+            # 确保run级别的格式也正确
+            if paragraph.runs:
+                for run in paragraph.runs:
+                    run_font = run.font
+                    if format_info.get('font_name'):
+                        run_font.name = format_info['font_name']
+                    if format_info.get('font_size') is not None:
+                        run_font.size = format_info['font_size']
+                    if format_info.get('font_bold') is not None:
+                        run_font.bold = format_info['font_bold']
+                    if format_info.get('font_italic') is not None:
+                        run_font.italic = format_info['font_italic']
+                    if format_info.get('font_color') is not None:
+                        try:
+                            run_font.color.rgb = format_info['font_color']
+                        except Exception:
+                            # 如果设置颜色失败，忽略颜色设置
+                            pass
+            
+            return True
+            
+        except Exception as e:
+            print(f"应用缓存格式时出错: {str(e)}")
+            return False
+    
     def _extract_text_format(self, shape) -> Dict[str, Any]:
         """提取文本框的格式信息"""
         format_info = {
@@ -1159,10 +1550,17 @@ class PPTProcessor:
             'margin_left': None,
             'margin_right': None,
             'margin_top': None,
-            'margin_bottom': None
+            'margin_bottom': None,
+            'shape_type': None,  # 新增：形状类型
+            'has_runs': False,   # 新增：是否有runs
+            'runs_count': 0      # 新增：runs数量
         }
         
         try:
+            # 记录形状类型用于调试
+            if hasattr(shape, 'shape_type'):
+                format_info['shape_type'] = str(shape.shape_type)
+            
             if hasattr(shape, 'text_frame') and shape.text_frame:
                 text_frame = shape.text_frame
                 
@@ -1173,13 +1571,33 @@ class PPTProcessor:
                 format_info['margin_bottom'] = text_frame.margin_bottom
                 format_info['vertical_anchor'] = text_frame.vertical_anchor
                 
+                # 调试信息：打印文本框的基本信息
+                print(f"🔍 文本框分析 - 形状类型: {format_info['shape_type']}, 段落数: {len(text_frame.paragraphs) if text_frame.paragraphs else 0}")
+                
                 # 从第一个段落提取格式
                 if text_frame.paragraphs:
                     first_paragraph = text_frame.paragraphs[0]
                     format_info['paragraph_alignment'] = first_paragraph.alignment
                     
+                    # 尝试获取段落字体信息作为备用
+                    try:
+                        paragraph_font = first_paragraph.font
+                        if not format_info['font_name'] and paragraph_font.name:
+                            format_info['font_name'] = paragraph_font.name
+                        if not format_info['font_size'] and paragraph_font.size:
+                            format_info['font_size'] = paragraph_font.size
+                        if format_info['font_bold'] is False and paragraph_font.bold is not None:
+                            format_info['font_bold'] = paragraph_font.bold
+                        if format_info['font_italic'] is False and paragraph_font.italic is not None:
+                            format_info['font_italic'] = paragraph_font.italic
+                    except Exception:
+                        pass
+                    
                     # 从第一个运行提取字体格式
                     if first_paragraph.runs:
+                        format_info['has_runs'] = True
+                        format_info['runs_count'] = len(first_paragraph.runs)
+                        
                         first_run = first_paragraph.runs[0]
                         font = first_run.font
                         
@@ -1187,6 +1605,16 @@ class PPTProcessor:
                         format_info['font_size'] = font.size
                         format_info['font_bold'] = font.bold
                         format_info['font_italic'] = font.italic
+                        
+                        print(f"   📝 Runs格式 - 字体: {font.name}, 大小: {font.size}, 粗体: {font.bold}, 斜体: {font.italic}")
+                        
+                        # 特殊处理：如果runs中没有字体信息，尝试从其他runs获取
+                        if not font.name or not font.size:
+                            for run in first_paragraph.runs[1:]:
+                                if not font.name and run.font.name:
+                                    format_info['font_name'] = run.font.name
+                                if not font.size and run.font.size:
+                                    format_info['font_size'] = run.font.size
                         
                         # 提取字体颜色
                         if font.color:
@@ -1200,11 +1628,17 @@ class PPTProcessor:
                                 format_info['font_color'] = None
                     else:
                         # 如果没有runs，从段落字体获取
+                        format_info['has_runs'] = False
+                        print(f"   ⚠️ 无Runs，使用段落格式")
+                        
                         font = first_paragraph.font
                         format_info['font_name'] = font.name
                         format_info['font_size'] = font.size
                         format_info['font_bold'] = font.bold
                         format_info['font_italic'] = font.italic
+                        
+                        print(f"   📄 段落格式 - 字体: {font.name}, 大小: {font.size}, 粗体: {font.bold}, 斜体: {font.italic}")
+                        
                         if font.color:
                             try:
                                 if hasattr(font.color, 'rgb') and font.color.rgb:
@@ -1237,12 +1671,16 @@ class PPTProcessor:
             if format_info['vertical_anchor'] is not None:
                 text_frame.vertical_anchor = format_info['vertical_anchor']
             
-            # 清除现有内容但保留格式框架
-            text_frame.clear()
-            
-            # 添加新的段落
-            paragraph = text_frame.paragraphs[0]
-            paragraph.text = text
+            # 不清空整个text_frame，而是直接替换文本来更好地保持格式
+            if len(text_frame.paragraphs) > 0:
+                # 直接替换第一个段落的文本
+                paragraph = text_frame.paragraphs[0]
+                paragraph.text = text
+            else:
+                # 如果没有段落，则创建一个
+                text_frame.clear()
+                paragraph = text_frame.paragraphs[0]
+                paragraph.text = text
             
             # 应用段落格式
             if format_info['paragraph_alignment'] is not None:
@@ -1251,27 +1689,38 @@ class PPTProcessor:
             # 应用字体格式到段落的font对象
             font = paragraph.font
             
+            print(f"   🎨 应用格式 - 原有Runs: {format_info['has_runs']}, Runs数: {format_info['runs_count']}")
+            
+            applied_changes = []
+            
             if format_info['font_name']:
                 font.name = format_info['font_name']
+                applied_changes.append(f"字体:{format_info['font_name']}")
             
             if format_info['font_size'] is not None:
                 font.size = format_info['font_size']
+                applied_changes.append(f"大小:{format_info['font_size']}")
             elif font.size is None:
                 # 如果原来没有大小设置，给个默认值
                 font.size = Pt(16)
+                applied_changes.append("大小:默认16pt")
             
             if format_info['font_bold'] is not None:
                 font.bold = format_info['font_bold']
+                applied_changes.append(f"粗体:{format_info['font_bold']}")
                 
             if format_info['font_italic'] is not None:
                 font.italic = format_info['font_italic']
+                applied_changes.append(f"斜体:{format_info['font_italic']}")
             
             if format_info['font_color'] is not None:
                 try:
                     font.color.rgb = format_info['font_color']
+                    applied_changes.append("颜色:已应用")
                 except Exception:
-                    # 如果设置颜色失败，忽略颜色设置
-                    pass
+                    applied_changes.append("颜色:应用失败")
+            
+            print(f"   ✅ 应用完成 - {', '.join(applied_changes) if applied_changes else '无格式变更'}")
             
             # 确保run级别的格式也正确
             if paragraph.runs:

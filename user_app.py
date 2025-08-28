@@ -734,16 +734,41 @@ def main():
         elif api_provider == "OpenRouter":
             placeholder_text = "sk-or-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             help_text = "通过OpenRouter访问AI模型，API密钥不会被保存"
+        elif api_provider == "Liai":
+            # Liai自动填充API密钥（从环境变量读取）
+            import random
+            import os
+            
+            liai_api_keys = []
+            for i in range(1, 6):  # 读取LIAI_API_KEY_1到LIAI_API_KEY_5
+                key = os.getenv(f"LIAI_API_KEY_{i}")
+                if key:
+                    liai_api_keys.append(key)
+            
+            if not liai_api_keys:
+                st.error("❌ 未找到Liai API密钥配置，请检查环境变量")
+                return
+            
+            # 随机选择一个API密钥
+            auto_api_key = random.choice(liai_api_keys)
+            placeholder_text = "app-xxxxxxxxxxxxxxxxxxxxxxxx（自动填充）"
+            help_text = "Liai API密钥已自动填充，无需手动输入"
+            
+            # 显示自动填充的信息
+            st.info("🔑 已自动配置Liai API密钥（无需手动输入）")
+            api_key = auto_api_key  # 直接使用自动选择的密钥
         else:  # 其他平台
             placeholder_text = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             help_text = f"通过{api_provider}平台访问AI模型，API密钥不会被保存"
-            
-        api_key = st.text_input(
-            f"请输入您的{api_provider} API密钥",
-            type="password",
-            placeholder=placeholder_text,
-            help=help_text
-        )
+        
+        # 只有非Liai平台才显示密钥输入框
+        if api_provider != "Liai":
+            api_key = st.text_input(
+                f"请输入您的{api_provider} API密钥",
+                type="password",
+                placeholder=placeholder_text,
+                help=help_text
+            )
     with col2:
         st.markdown("**获取API密钥**")
         st.markdown(f"[🔗 {api_provider}平台]({api_key_url})")
@@ -1066,104 +1091,254 @@ def main():
                 
                 # 检查是否启用分批处理（超过5页时自动启用）
                 if len(pages) > 5:
-                    st.info(f"📦 检测到{len(pages)}页内容，自动启用分批处理模式（每批5页）")
+                    # 检查当前API提供商
+                    current_model_info = st.session_state.get('selected_model_info', {})
+                    api_provider = current_model_info.get('api_provider', 'OpenAI')
                     
-                    # 使用分批处理
-                    try:
-                        dify_config = DifyAPIConfig()
-                        dify_config.batch_size = 5  # 每批5个
-                        
-                        page_results = []
-                        batch_index = 0
-                        
-                        # 准备需要调用API的页面（排除title和ending页）
-                        api_pages = []
-                        for i, page in enumerate(pages):
-                            page_content = page.get('original_text_segment', '')
-                            if not page_content:
-                                title = page.get('title', '')
-                                key_points = page.get('key_points', [])
-                                page_content = f"{title}\n\n" + "\n".join(key_points)
-                            
-                            page_type = page.get('page_type', 'content')
-                            page_number = page.get('page_number', i + 1)
-                            
-                            # 特殊页面处理
-                            if page_type == 'title' or page_number == 1:
-                                title_template_path = os.path.join("templates", "title_slides.pptx")
-                                page_results.append({
-                                    'page_number': page_number,
-                                    'content': page_content,
-                                    'template_number': 'title',
-                                    'template_path': title_template_path,
-                                    'template_filename': "title_slides.pptx",
-                                    'dify_response': '封面页使用固定标题模板',
-                                    'processing_time': 0,
-                                    'is_title_page': True
-                                })
-                                st.info(f"📋 第{page_number}页(封面页)：使用固定标题模板")
-                            elif page_type == 'table_of_contents':
-                                toc_template_path = page.get('template_path', os.path.join("templates", "table_of_contents_slides.pptx"))
-                                page_results.append({
-                                    'page_number': page_number,
-                                    'content': page_content,
-                                    'template_number': 'table_of_contents',
-                                    'template_path': toc_template_path,
-                                    'template_filename': "table_of_contents_slides.pptx",
-                                    'dify_response': '目录页使用提取的内容页标题动态生成',
-                                    'processing_time': 0,
-                                    'is_toc_page': True
-                                })
-                                st.info(f"📑 第{page_number}页(目录页)：使用提取的内容页标题")
-                            elif page_type == 'ending' or page.get('skip_dify_api', False):
-                                ending_template_path = page.get('template_path', os.path.join("templates", "ending_slides.pptx"))
-                                page_results.append({
-                                    'page_number': page_number,
-                                    'content': page_content,
-                                    'template_number': 'ending',
-                                    'template_path': ending_template_path,
-                                    'template_filename': "ending_slides.pptx",
-                                    'dify_response': '结尾页使用固定感谢模板',
-                                    'processing_time': 0,
-                                    'is_ending_page': True
-                                })
-                                st.info(f"🔚 第{page_number}页(结尾页)：使用固定结尾模板")
-                            elif page_content:
-                                # 需要调用API的页面
-                                api_pages.append({
-                                    'page_index': i,
-                                    'page_data': page,
-                                    'page_content': page_content,
-                                    'page_number': page_number
-                                })
-                        
-                        # 分批处理API调用
-                        if api_pages:
-                            st.info(f"🔄 开始分批处理{len(api_pages)}个页面，每批5个...")
-                            
-                            # 创建进度跟踪
-                            batch_progress = st.progress(0)
-                            batch_status = st.empty()
-                            
-                            total_batches = (len(api_pages) + 4) // 5  # 向上取整
-                            
-                            for batch_start in range(0, len(api_pages), 5):
-                                batch_end = min(batch_start + 5, len(api_pages))
-                                batch_pages = api_pages[batch_start:batch_end]
-                                batch_index += 1
+                    if api_provider == "Liai":
+                        st.info(f"📦 检测到{len(pages)}页内容，自动启用Liai分批处理模式（每批5页，负载均衡5个API密钥）")
+                        # 使用Liai分批处理
+                        try:
+                            # 准备Liai批处理的页面数据
+                            liai_pages_data = []
+                            for i, page in enumerate(pages):
+                                page_content = page.get('original_text_segment', '')
+                                if not page_content:
+                                    title = page.get('title', '')
+                                    key_points = page.get('key_points', [])
+                                    page_content = f"{title}\n\n" + "\n".join(key_points)
                                 
-                                batch_status.text(f"🔄 处理第{batch_index}/{total_batches}批（{len(batch_pages)}页）...")
+                                page_type = page.get('page_type', 'content')
+                                page_number = page.get('page_number', i + 1)
                                 
-                                # 处理当前批次
-                                for page_info in batch_pages:
-                                    bridge_result = sync_test_dify_template_bridge(page_info['page_content'])
+                                # 跳过特殊页面，只处理需要AI分析的内容页
+                                if page_type not in ['title', 'ending'] and page_number != 1 and len(pages) > 1:
+                                    liai_pages_data.append({
+                                        'page_number': page_number,
+                                        'content': page_content,
+                                        'ppt_structure': {'slides': [{'placeholders': {}}]},  # 简化的结构
+                                        'page_data': page
+                                    })
+                            
+                            # 如果有需要处理的页面，使用Liai批处理
+                            if liai_pages_data:
+                                st.info(f"🔄 开始Liai分批处理{len(liai_pages_data)}个内容页面，每批5个...")
+                                
+                                # 创建AI处理器并进行批处理
+                                ai_processor = AIProcessor(api_key.strip())
+                                batch_results = ai_processor.batch_analyze_pages_for_liai(liai_pages_data, 5)
+                                
+                                # 处理批处理结果
+                                page_results = []
+                                for result in batch_results:
+                                    if result.get('success'):
+                                        st.success(f"✅ 第{result['page_number']}页：Liai分析完成")
+                                        page_results.append({
+                                            'page_number': result['page_number'],
+                                            'content': result['content'],
+                                            'template_number': 'liai_analyzed',
+                                            'template_path': None,
+                                            'template_filename': 'Liai智能分析',
+                                            'dify_response': str(result.get('analysis_result', ''))[:200] + '...',
+                                            'processing_time': result.get('processing_time', 0),
+                                            'is_title_page': False
+                                        })
+                                    else:
+                                        st.error(f"❌ 第{result['page_number']}页失败: {result.get('error')}")
+                                        
+                                st.success(f"🎉 Liai分批处理完成！成功处理{len([r for r in batch_results if r.get('success')])}页")
+                                
+                        except Exception as e:
+                            st.error(f"Liai分批处理出错: {str(e)}")
+                            page_results = []
+                    else:
+                        st.info(f"📦 检测到{len(pages)}页内容，自动启用分批处理模式（每批5页）")
+                    
+                    # 使用Dify分批处理（仅当不是Liai时）
+                    if api_provider != "Liai":
+                        try:
+                            dify_config = DifyAPIConfig()
+                            dify_config.batch_size = 5  # 每批5个
+                            
+                            page_results = []
+                            batch_index = 0
+                            
+                            # 准备需要调用API的页面（排除title和ending页）
+                            api_pages = []
+                            for i, page in enumerate(pages):
+                                page_content = page.get('original_text_segment', '')
+                                if not page_content:
+                                    title = page.get('title', '')
+                                    key_points = page.get('key_points', [])
+                                    page_content = f"{title}\n\n" + "\n".join(key_points)
+                                
+                                page_type = page.get('page_type', 'content')
+                                page_number = page.get('page_number', i + 1)
+                            
+                                # 特殊页面处理
+                                if page_type == 'title' or page_number == 1:
+                                    title_template_path = os.path.join("templates", "title_slides.pptx")
+                                    page_results.append({
+                                        'page_number': page_number,
+                                        'content': page_content,
+                                        'template_number': 'title',
+                                        'template_path': title_template_path,
+                                        'template_filename': "title_slides.pptx",
+                                        'dify_response': '封面页使用固定标题模板',
+                                        'processing_time': 0,
+                                        'is_title_page': True
+                                    })
+                                    st.info(f"📋 第{page_number}页(封面页)：使用固定标题模板")
+                                elif page_type == 'table_of_contents':
+                                    toc_template_path = page.get('template_path', os.path.join("templates", "table_of_contents_slides.pptx"))
+                                    page_results.append({
+                                        'page_number': page_number,
+                                        'content': page_content,
+                                        'template_number': 'table_of_contents',
+                                        'template_path': toc_template_path,
+                                        'template_filename': "table_of_contents_slides.pptx",
+                                        'dify_response': '目录页使用提取的内容页标题动态生成',
+                                        'processing_time': 0,
+                                        'is_toc_page': True
+                                    })
+                                    st.info(f"📑 第{page_number}页(目录页)：使用提取的内容页标题")
+                                elif page_type == 'ending' or page.get('skip_dify_api', False):
+                                    ending_template_path = page.get('template_path', os.path.join("templates", "ending_slides.pptx"))
+                                    page_results.append({
+                                        'page_number': page_number,
+                                        'content': page_content,
+                                        'template_number': 'ending',
+                                        'template_path': ending_template_path,
+                                        'template_filename': "ending_slides.pptx",
+                                        'dify_response': '结尾页使用固定感谢模板',
+                                        'processing_time': 0,
+                                        'is_ending_page': True
+                                    })
+                                    st.info(f"🔚 第{page_number}页(结尾页)：使用固定结尾模板")
+                                elif page_content:
+                                    # 需要调用API的页面
+                                    api_pages.append({
+                                        'page_index': i,
+                                        'page_data': page,
+                                        'page_content': page_content,
+                                        'page_number': page_number
+                                    })
+                            
+                            # 分批处理API调用
+                            if api_pages:
+                                st.info(f"🔄 开始分批处理{len(api_pages)}个页面，每批5个...")
+                                
+                                # 创建进度跟踪
+                                batch_progress = st.progress(0)
+                                batch_status = st.empty()
+                                
+                                total_batches = (len(api_pages) + 4) // 5  # 向上取整
+                                
+                                for batch_start in range(0, len(api_pages), 5):
+                                    batch_end = min(batch_start + 5, len(api_pages))
+                                    batch_pages = api_pages[batch_start:batch_end]
+                                    batch_index += 1
                                     
+                                    batch_status.text(f"🔄 处理第{batch_index}/{total_batches}批（{len(batch_pages)}页）...")
+                                    
+                                    # 处理当前批次
+                                    for page_info in batch_pages:
+                                        bridge_result = sync_test_dify_template_bridge(page_info['page_content'])
+                                        
+                                        if bridge_result.get('success'):
+                                            dify_result = bridge_result["step_1_dify_api"]
+                                            template_result = bridge_result["step_2_template_lookup"]
+                                            page_results.append({
+                                                'page_number': page_info['page_number'],
+                                                'content': page_info['page_content'],
+                                                'template_number': dify_result.get('template_number'),
+                                                'template_path': template_result.get('file_path'),
+                                                'template_filename': template_result.get('filename'),
+                                                'dify_response': dify_result.get('response_text', ''),
+                                                'processing_time': bridge_result.get('processing_time', 0),
+                                                'is_title_page': False
+                                            })
+                                            st.success(f"✅ 第{page_info['page_number']}页：模板{dify_result.get('template_number')}")
+                                        else:
+                                            st.error(f"❌ 第{page_info['page_number']}页失败: {bridge_result.get('error')}")
+                                            page_results.append({
+                                                'page_number': page_info['page_number'],
+                                                'content': page_info['page_content'],
+                                                'template_number': None,
+                                                'template_path': None,
+                                                'template_filename': None,
+                                                'dify_response': f"错误: {bridge_result.get('error')}",
+                                                'processing_time': bridge_result.get('processing_time', 0),
+                                                'is_title_page': False,
+                                                'error': True
+                                            })
+                                    
+                                    # 更新进度
+                                    progress = batch_index / total_batches
+                                    batch_progress.progress(progress)
+                                    
+                                    # 批次间延迟
+                                    if batch_index < total_batches:
+                                        batch_status.text(f"⏳ 批次间等待{dify_config.batch_delay}秒...")
+                                        import time
+                                        time.sleep(dify_config.batch_delay)
+                                
+                                # 清理进度显示
+                                batch_progress.empty()
+                                batch_status.empty()
+                                
+                                st.success(f"✅ 分批处理完成！共处理{len(api_pages)}个API页面，分{total_batches}批")
+                        
+                        except Exception as e:
+                            st.error(f"❌ 分批处理异常: {str(e)}")
+                            st.info("🔄 降级到逐页处理模式...")
+                            # 降级到原来的逐页处理
+                            page_results = []
+                            for i, page in enumerate(pages):
+                                # 原来的逐页处理逻辑
+                                page_content = page.get('original_text_segment', '')
+                                if not page_content:
+                                    title = page.get('title', '')
+                                    key_points = page.get('key_points', [])
+                                    page_content = f"{title}\n\n" + "\n".join(key_points)
+                                
+                                page_type = page.get('page_type', 'content')
+                                page_number = page.get('page_number', i + 1)
+                                
+                                if page_type == 'title' or page_number == 1:
+                                    title_template_path = os.path.join("templates", "title_slides.pptx")
+                                    page_results.append({
+                                        'page_number': page_number,
+                                        'content': page_content,
+                                        'template_number': 'title',
+                                        'template_path': title_template_path,
+                                        'template_filename': "title_slides.pptx",
+                                        'dify_response': '封面页使用固定标题模板',
+                                        'processing_time': 0,
+                                        'is_title_page': True
+                                    })
+                                    st.info(f"📋 第{page_number}页(封面页)：使用固定标题模板")
+                                elif page_type == 'ending' or page.get('skip_dify_api', False):
+                                    ending_template_path = page.get('template_path', os.path.join("templates", "ending_slides.pptx"))
+                                    page_results.append({
+                                        'page_number': page_number,
+                                        'content': page_content,
+                                        'template_number': 'ending',
+                                        'template_path': ending_template_path,
+                                        'template_filename': "ending_slides.pptx",
+                                        'dify_response': '结尾页使用固定感谢模板',
+                                        'processing_time': 0,
+                                        'is_ending_page': True
+                                    })
+                                    st.info(f"🔚 第{page_number}页(结尾页)：使用固定结尾模板")
+                                elif page_content:
+                                    bridge_result = sync_test_dify_template_bridge(page_content)
                                     if bridge_result.get('success'):
                                         dify_result = bridge_result["step_1_dify_api"]
                                         template_result = bridge_result["step_2_template_lookup"]
                                         page_results.append({
-                                            'page_number': page_info['page_number'],
-                                            'content': page_info['page_content'],
+                                            'page_number': page_number,
+                                            'content': page_content,
                                             'template_number': dify_result.get('template_number'),
                                             'template_path': template_result.get('file_path'),
                                             'template_filename': template_result.get('filename'),
@@ -1171,98 +1346,10 @@ def main():
                                             'processing_time': bridge_result.get('processing_time', 0),
                                             'is_title_page': False
                                         })
-                                        st.success(f"✅ 第{page_info['page_number']}页：模板{dify_result.get('template_number')}")
                                     else:
-                                        st.error(f"❌ 第{page_info['page_number']}页失败: {bridge_result.get('error')}")
-                                        page_results.append({
-                                            'page_number': page_info['page_number'],
-                                            'content': page_info['page_content'],
-                                            'template_number': None,
-                                            'template_path': None,
-                                            'template_filename': None,
-                                            'dify_response': f"错误: {bridge_result.get('error')}",
-                                            'processing_time': bridge_result.get('processing_time', 0),
-                                            'is_title_page': False,
-                                            'error': True
-                                        })
-                                
-                                # 更新进度
-                                progress = batch_index / total_batches
-                                batch_progress.progress(progress)
-                                
-                                # 批次间延迟
-                                if batch_index < total_batches:
-                                    batch_status.text(f"⏳ 批次间等待{dify_config.batch_delay}秒...")
-                                    import time
-                                    time.sleep(dify_config.batch_delay)
-                            
-                            # 清理进度显示
-                            batch_progress.empty()
-                            batch_status.empty()
-                            
-                            st.success(f"✅ 分批处理完成！共处理{len(api_pages)}个API页面，分{total_batches}批")
-                    
-                    except Exception as e:
-                        st.error(f"❌ 分批处理异常: {str(e)}")
-                        st.info("🔄 降级到逐页处理模式...")
-                        # 降级到原来的逐页处理
-                        page_results = []
-                        for i, page in enumerate(pages):
-                            # 原来的逐页处理逻辑
-                            page_content = page.get('original_text_segment', '')
-                            if not page_content:
-                                title = page.get('title', '')
-                                key_points = page.get('key_points', [])
-                                page_content = f"{title}\n\n" + "\n".join(key_points)
-                            
-                            page_type = page.get('page_type', 'content')
-                            page_number = page.get('page_number', i + 1)
-                            
-                            if page_type == 'title' or page_number == 1:
-                                title_template_path = os.path.join("templates", "title_slides.pptx")
-                                page_results.append({
-                                    'page_number': page_number,
-                                    'content': page_content,
-                                    'template_number': 'title',
-                                    'template_path': title_template_path,
-                                    'template_filename': "title_slides.pptx",
-                                    'dify_response': '封面页使用固定标题模板',
-                                    'processing_time': 0,
-                                    'is_title_page': True
-                                })
-                                st.info(f"📋 第{page_number}页(封面页)：使用固定标题模板")
-                            elif page_type == 'ending' or page.get('skip_dify_api', False):
-                                ending_template_path = page.get('template_path', os.path.join("templates", "ending_slides.pptx"))
-                                page_results.append({
-                                    'page_number': page_number,
-                                    'content': page_content,
-                                    'template_number': 'ending',
-                                    'template_path': ending_template_path,
-                                    'template_filename': "ending_slides.pptx",
-                                    'dify_response': '结尾页使用固定感谢模板',
-                                    'processing_time': 0,
-                                    'is_ending_page': True
-                                })
-                                st.info(f"🔚 第{page_number}页(结尾页)：使用固定结尾模板")
-                            elif page_content:
-                                bridge_result = sync_test_dify_template_bridge(page_content)
-                                if bridge_result.get('success'):
-                                    dify_result = bridge_result["step_1_dify_api"]
-                                    template_result = bridge_result["step_2_template_lookup"]
-                                    page_results.append({
-                                        'page_number': page_number,
-                                        'content': page_content,
-                                        'template_number': dify_result.get('template_number'),
-                                        'template_path': template_result.get('file_path'),
-                                        'template_filename': template_result.get('filename'),
-                                        'dify_response': dify_result.get('response_text', ''),
-                                        'processing_time': bridge_result.get('processing_time', 0),
-                                        'is_title_page': False
-                                    })
-                                else:
-                                    st.error(f"❌ 第{page_number}页Dify API调用失败: {bridge_result.get('error')}")
-                                    st.error("🚫 无法继续处理，请检查Dify API配置或稍后重试")
-                                    return
+                                        st.error(f"❌ 第{page_number}页Dify API调用失败: {bridge_result.get('error')}")
+                                        st.error("🚫 无法继续处理，请检查Dify API配置或稍后重试")
+                                        return
                 else:
                     # 页面数少于等于5页，使用原来的逐页处理
                     st.info(f"📄 页面数较少（{len(pages)}页），使用标准处理模式")

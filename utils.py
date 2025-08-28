@@ -187,7 +187,7 @@ class AIProcessor:
         # 检查是否为Liai API
         model_info = self.config.get_model_info()
         if model_info.get('request_format') == 'dify_compatible':
-            # 使用Liai API格式
+            # 使用Liai API格式，单页的所有占位符用一次API调用处理
             content = self._call_liai_api(system_prompt, user_text)
         else:
             # 使用OpenAI格式
@@ -259,6 +259,21 @@ class AIProcessor:
         """调用Liai API"""
         import requests
         import json
+        import os
+        import random
+        
+        # 从环境变量获取API keys用于负载均衡
+        liai_api_keys = []
+        for i in range(1, 6):
+            key = os.getenv(f"LIAI_API_KEY_{i}")
+            if key:
+                liai_api_keys.append(key)
+        
+        # 如果有多个API key，随机选择一个
+        if liai_api_keys:
+            selected_key = random.choice(liai_api_keys)
+        else:
+            selected_key = self.api_key
         
         model_info = self.config.get_model_info()
         base_url = model_info.get('base_url', '')
@@ -279,7 +294,7 @@ class AIProcessor:
         }
         
         headers = {
-            'Authorization': f'Bearer {self.api_key}',
+            'Authorization': f'Bearer {selected_key}',
             'Content-Type': 'application/json',
             'Connection': 'keep-alive'
         }
@@ -317,6 +332,148 @@ class AIProcessor:
         except Exception as e:
             print(f"Liai API处理失败: {str(e)}")
             raise e
+    
+    def batch_process_liai_requests(self, requests_data: List[Dict], batch_size: int = 5) -> List[Dict]:
+        """
+        批处理 Liai API 请求，每批5个请求
+        
+        Args:
+            requests_data: 请求数据列表，每个元素包含 system_prompt 和 user_text
+            batch_size: 每批处理的请求数量，默认5个
+            
+        Returns:
+            List[Dict]: 处理结果列表
+        """
+        import time
+        
+        results = []
+        total_requests = len(requests_data)
+        
+        # 分批处理
+        for i in range(0, total_requests, batch_size):
+            batch_end = min(i + batch_size, total_requests)
+            batch_requests = requests_data[i:batch_end]
+            
+            print(f"Processing batch {i//batch_size + 1}/{(total_requests + batch_size - 1)//batch_size}: {len(batch_requests)} requests")
+            
+            batch_results = []
+            for j, request_data in enumerate(batch_requests):
+                try:
+                    print(f"  Processing request {j+1}/{len(batch_requests)}")
+                    
+                    system_prompt = request_data.get('system_prompt', '')
+                    user_text = request_data.get('user_text', '')
+                    
+                    # 调用 Liai API
+                    response = self._call_liai_api(system_prompt, user_text)
+                    
+                    batch_results.append({
+                        'success': True,
+                        'response': response,
+                        'request_index': i + j,
+                        'request_data': request_data
+                    })
+                    
+                    # 请求间延迟，避免频率过高
+                    if j < len(batch_requests) - 1:
+                        time.sleep(0.5)
+                        
+                except Exception as e:
+                    print(f"  Request {j+1} failed: {str(e)}")
+                    batch_results.append({
+                        'success': False,
+                        'error': str(e),
+                        'request_index': i + j,
+                        'request_data': request_data
+                    })
+            
+            results.extend(batch_results)
+            
+            # 批次间延迟，避免API频率限制
+            if batch_end < total_requests:
+                print(f"  Batch completed. Waiting 2 seconds before next batch...")
+                time.sleep(2.0)
+        
+        print(f"All batches completed. Processed {total_requests} requests.")
+        return results
+    
+    def batch_analyze_pages_for_liai(self, pages_data: List[Dict], batch_size: int = 5) -> List[Dict]:
+        """
+        为Liai API批处理多页内容分析，每批5页
+        
+        Args:
+            pages_data: 页面数据列表，每个元素包含页面内容和结构信息
+            batch_size: 每批处理的页面数量，默认5页
+            
+        Returns:
+            List[Dict]: 每页的分析结果
+        """
+        import time
+        
+        results = []
+        total_pages = len(pages_data)
+        
+        print(f"开始Liai批处理分析 {total_pages} 页内容，每批 {batch_size} 页")
+        
+        # 分批处理
+        for batch_idx in range(0, total_pages, batch_size):
+            batch_end = min(batch_idx + batch_size, total_pages)
+            batch_pages = pages_data[batch_idx:batch_end]
+            batch_num = (batch_idx // batch_size) + 1
+            total_batches = (total_pages + batch_size - 1) // batch_size
+            
+            print(f"处理第 {batch_num}/{total_batches} 批，包含 {len(batch_pages)} 页")
+            
+            batch_results = []
+            
+            # 处理当前批次的每一页
+            for page_idx, page_data in enumerate(batch_pages):
+                try:
+                    page_number = page_data.get('page_number', batch_idx + page_idx + 1)
+                    user_text = page_data.get('content', '')
+                    ppt_structure = page_data.get('ppt_structure', {})
+                    
+                    print(f"  分析第{page_number}页...")
+                    
+                    # 调用Liai API进行分析
+                    analysis_result = self.analyze_text_for_ppt(user_text, ppt_structure)
+                    
+                    batch_results.append({
+                        'page_number': page_number,
+                        'content': user_text,
+                        'analysis_result': analysis_result,
+                        'success': True,
+                        'processing_time': 0,  # 实际会在分析中计算
+                        'batch_index': batch_num
+                    })
+                    
+                    print(f"  第{page_number}页分析完成")
+                    
+                    # 页面间延迟
+                    if page_idx < len(batch_pages) - 1:
+                        time.sleep(0.5)
+                        
+                except Exception as e:
+                    print(f"  第{page_number}页分析失败: {str(e)}")
+                    batch_results.append({
+                        'page_number': page_number,
+                        'content': user_text,
+                        'analysis_result': None,
+                        'success': False,
+                        'error': str(e),
+                        'processing_time': 0,
+                        'batch_index': batch_num
+                    })
+            
+            results.extend(batch_results)
+            
+            # 批次间延迟
+            if batch_end < total_pages:
+                print(f"  第{batch_num}批完成，等待2秒后处理下一批...")
+                time.sleep(2.0)
+        
+        print(f"Liai批处理完成，共处理 {total_pages} 页")
+        return results
     
     def _create_ppt_description(self, ppt_structure: Dict[str, Any]) -> str:
         """创建PPT结构描述"""
@@ -663,18 +820,79 @@ class AIProcessor:
 只返回JSON，不要其他文字。"""
     
     def _extract_json_from_response(self, content: str, user_text: str) -> Dict[str, Any]:
-        """从AI响应中提取JSON"""
-        # 提取JSON内容（如果有代码块包围）
+        """从AI响应中提取JSON（支持GPT和Liai，处理截断问题）"""
+        if not content or not content.strip():
+            print("AI返回空内容")
+            return self._create_fallback_assignment(user_text, "AI返回空内容")
+        
+        original_content = content
+        content = content.strip()
+        
+        # 方法1: 提取代码块中的JSON数组
+        json_match = re.search(r'```(?:json)?\s*(\[.*?\])\s*```', content, re.DOTALL)
+        if json_match:
+            # 直接返回数组格式
+            try:
+                assignments_array = json.loads(json_match.group(1))
+                return {"assignments": assignments_array}
+            except json.JSONDecodeError:
+                pass
+        
+        # 方法2: 提取代码块中的JSON对象
         json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
         if json_match:
             content = json_match.group(1)
+        else:
+            # 方法3: 查找JSON数组（处理截断的情况）
+            array_match = re.search(r'\[\s*\{.*', content, re.DOTALL)
+            if array_match:
+                json_content = array_match.group(0)
+                # 尝试修复截断的JSON
+                json_content = self._fix_truncated_json(json_content)
+                try:
+                    assignments_array = json.loads(json_content)
+                    print(f"成功修复并解析截断的JSON，共{len(assignments_array)}个assignments")
+                    return {"assignments": assignments_array}
+                except json.JSONDecodeError:
+                    pass
         
+        # 尝试解析JSON
         try:
-            return json.loads(content)
+            result = json.loads(content)
+            if isinstance(result, list):
+                return {"assignments": result}
+            elif isinstance(result, dict) and "assignments" in result:
+                return result
+            else:
+                raise ValueError("JSON结构不正确")
+                
         except json.JSONDecodeError as e:
-            print("AI返回的JSON格式有误，错误：%s", str(e))
-            print("返回内容：%s", content)
+            print(f"AI返回的JSON格式有误，错误：{str(e)}")
+            print(f"原始内容长度: {len(original_content)}")
+            print(f"处理后内容: {content[:200]}...")
             return self._create_fallback_assignment(user_text, f"JSON解析失败: {str(e)}")
+    
+    def _fix_truncated_json(self, json_str: str) -> str:
+        """尝试修复截断的JSON"""
+        # 统计大括号数量
+        open_braces = json_str.count('{')
+        close_braces = json_str.count('}')
+        
+        # 如果缺少结束括号，尝试补全
+        if open_braces > close_braces:
+            # 找到最后一个不完整的对象
+            last_brace_pos = json_str.rfind('{')
+            if last_brace_pos != -1:
+                # 截断到最后一个完整的对象
+                truncated = json_str[:last_brace_pos].rstrip(',').rstrip()
+                if truncated.endswith('}'):
+                    return truncated + ']'
+        
+        # 如果只是缺少结束的方括号
+        if not json_str.rstrip().endswith(']') and json_str.strip().startswith('['):
+            return json_str.rstrip() + ']'
+            
+        return json_str
     
     def _create_fallback_assignment(self, user_text: str, error_msg: str) -> Dict[str, Any]:
         """创建备用分配方案"""

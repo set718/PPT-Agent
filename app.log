@@ -531,3 +531,16 @@
 2025-08-28 11:16:25 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content']
 2025-08-28 11:16:25 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
 2025-08-28 11:16:25 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-28 11:28:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-28 11:28:18 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-28 11:28:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-28 11:28:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-28 11:28:18 - ppt_generator - INFO - 开始提取位置信息
+2025-08-28 11:28:18 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpsvvmbwvf.pptx
+2025-08-28 11:28:18 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-08-28 11:28:18 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-28 11:28:45 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 24
+2025-08-28 11:28:46 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-28 11:28:46 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-28 11:28:46 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-28 11:28:46 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据

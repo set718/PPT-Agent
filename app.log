@@ -356,3 +356,178 @@
 2025-08-27 16:13:12 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpoxwo8ldc.pptx
 2025-08-27 16:13:12 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
 2025-08-27 16:13:12 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1317字符
+2025-08-27 16:13:38 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 24
+2025-08-27 16:13:38 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 16:13:38 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-27 16:13:38 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-27 16:13:38 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-27 17:33:16 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 17:33:16 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 17:33:16 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:33:16 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:33:16 - ppt_generator - ERROR - 提取元素信息时出错: ElementInfo.__init__() got an unexpected keyword argument 'placeholder_matches'
+2025-08-27 17:33:16 - ppt_generator - ERROR - 提取元素信息时出错: ElementInfo.__init__() got an unexpected keyword argument 'placeholder_matches'
+2025-08-27 17:33:16 - ppt_generator - ERROR - 提取元素信息时出错: ElementInfo.__init__() got an unexpected keyword argument 'placeholder_matches'
+2025-08-27 17:33:16 - ppt_generator - ERROR - 提取元素信息时出错: ElementInfo.__init__() got an unexpected keyword argument 'placeholder_matches'
+2025-08-27 17:33:16 - ppt_generator - ERROR - 提取元素信息时出错: ElementInfo.__init__() got an unexpected keyword argument 'placeholder_matches'
+2025-08-27 17:33:16 - ppt_generator - ERROR - 提取元素信息时出错: ElementInfo.__init__() got an unexpected keyword argument 'placeholder_matches'
+2025-08-27 17:33:16 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:33:16 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpxm3wkyrk.pptx
+2025-08-27 17:33:16 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.09s
+2025-08-27 17:33:16 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-27 17:33:49 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 24
+2025-08-27 17:33:49 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 17:33:49 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-27 17:33:49 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-27 17:33:49 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-27 17:35:35 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 17:35:35 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 17:35:35 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:35:35 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:35:35 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:35:35 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpt1e913lk.pptx
+2025-08-27 17:35:35 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-08-27 17:35:35 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-27 17:35:58 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 24
+2025-08-27 17:35:59 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 17:35:59 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-27 17:35:59 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary']
+2025-08-27 17:35:59 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-27 17:35:59 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-27 17:36:47 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 17:36:47 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 17:36:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:36:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:36:47 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:36:47 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpi9z238ag.pptx
+2025-08-27 17:36:47 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-08-27 17:36:47 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-27 17:37:13 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-27 17:37:13 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 17:37:13 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-27 17:37:13 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content']
+2025-08-27 17:37:13 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-27 17:37:13 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-27 17:37:41 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 17:37:41 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 17:37:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:37:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:37:41 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:37:41 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpuq128bow.pptx
+2025-08-27 17:37:41 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-08-27 17:37:41 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-27 17:38:09 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-27 17:38:09 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 17:38:09 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-27 17:38:09 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content']
+2025-08-27 17:38:09 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-27 17:38:09 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-27 17:41:00 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:41:00 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:41:00 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:42:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:42:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:42:12 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:47:36 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:47:36 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:47:36 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:51:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:51:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:51:05 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:53:46 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 17:53:46 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 17:53:46 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:53:46 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:53:46 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:53:46 - ppt_generator - INFO - 文件操作成功: load_ppt_user - test_placeholder_template.pptx
+2025-08-27 17:53:46 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.04s
+2025-08-27 17:53:46 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 7
+2025-08-27 17:56:05 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 17:56:05 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 17:56:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 17:56:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 17:56:05 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 17:56:05 - ppt_generator - INFO - 文件操作成功: load_ppt_user - test_placeholder_template.pptx
+2025-08-27 17:56:05 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.03s
+2025-08-27 17:56:05 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 7
+2025-08-27 18:03:31 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 18:03:31 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 18:03:31 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 18:03:31 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 18:03:31 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 18:03:31 - ppt_generator - INFO - 文件操作成功: load_ppt_user - test_placeholder_template.pptx
+2025-08-27 18:03:31 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.03s
+2025-08-27 18:03:31 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 7
+2025-08-27 18:03:31 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 2
+2025-08-27 18:09:58 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 18:09:58 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 18:09:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 18:09:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 18:09:58 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 18:09:58 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpnx5c5drl.pptx
+2025-08-27 18:09:58 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-08-27 18:09:58 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-27 18:10:22 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 24
+2025-08-27 18:10:22 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 18:10:22 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-27 18:10:22 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-27 18:10:22 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-27 18:13:06 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 18:13:06 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 18:13:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 18:13:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 18:13:06 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 18:13:06 - ppt_generator - INFO - 文件操作成功: load_ppt_user - multi_placeholder_count_test.pptx
+2025-08-27 18:13:06 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.03s
+2025-08-27 18:13:06 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 2
+2025-08-27 18:13:06 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 18:13:48 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 18:13:48 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 18:13:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 18:13:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 18:13:48 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 18:13:48 - ppt_generator - INFO - 文件操作成功: load_ppt_user - multi_placeholder_count_test.pptx
+2025-08-27 18:13:48 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.03s
+2025-08-27 18:13:48 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 2
+2025-08-27 18:13:48 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 18:15:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-27 18:15:28 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-27 18:15:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-27 18:15:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-27 18:15:28 - ppt_generator - INFO - 开始提取位置信息
+2025-08-27 18:15:28 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpxxaesq12.pptx
+2025-08-27 18:15:28 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-27 18:15:28 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-27 18:15:53 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 26
+2025-08-27 18:15:53 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-27 18:15:53 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-27 18:15:53 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content']
+2025-08-27 18:15:53 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-27 18:15:53 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-28 10:51:39 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-28 10:51:39 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-28 10:51:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-28 10:51:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-28 10:51:39 - ppt_generator - INFO - 开始提取位置信息
+2025-08-28 10:51:39 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmptl94z0v8.pptx
+2025-08-28 10:51:39 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.04s
+2025-08-28 10:51:39 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-28 10:52:06 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 23
+2025-08-28 10:52:06 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-28 10:52:06 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-28 10:52:06 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-28 10:52:06 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-28 11:15:58 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-28 11:15:58 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-28 11:15:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-28 11:15:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-28 11:15:58 - ppt_generator - INFO - 开始提取位置信息
+2025-08-28 11:15:58 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpa5k4d_3h.pptx
+2025-08-28 11:15:58 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-28 11:15:58 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-28 11:16:24 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 26
+2025-08-28 11:16:24 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-28 11:16:24 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-28 11:16:25 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content']
+2025-08-28 11:16:25 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-28 11:16:25 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据

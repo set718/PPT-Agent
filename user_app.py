@@ -470,11 +470,14 @@ class UserPPTGenerator:
                                                 cell.text = cleaned_cell_text
                                                 cleanup_count += 1
             
+            # 使用实际清理的占位符数量，而不是修改的文本框数量
+            actual_cleaned_count = len(cleaned_placeholders)
+            
             return {
                 "success": True,
-                "cleaned_placeholders": cleanup_count,
+                "cleaned_placeholders": actual_cleaned_count,
                 "cleaned_placeholder_list": cleaned_placeholders,
-                "message": f"清理了{cleanup_count}个文本框和表格单元格中的未填充占位符"
+                "message": f"清理了{actual_cleaned_count}个占位符，涉及{cleanup_count}个文本框和表格单元格"
             }
             
         except Exception as e:

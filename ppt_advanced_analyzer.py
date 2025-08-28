@@ -9,7 +9,7 @@ PPT高级分析器模块
 import os
 import re
 from typing import Dict, List, Any, Optional, Tuple, TYPE_CHECKING
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pptx.util import Inches, Pt
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.text import PP_ALIGN
@@ -52,6 +52,7 @@ class ElementInfo:
     is_decorative: bool
     font_size: Optional[float]
     shape_obj: Any  # 原始shape对象
+    placeholder_matches: List[str] = field(default_factory=list)  # 添加所有占位符匹配信息
 
 @dataclass
 class SlideLayout:

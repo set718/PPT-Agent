@@ -637,224 +637,28 @@ class AIProcessor:
 %s""" % ppt_description + """
 
 **核心任务（基于深度识别）：**
-1. **全面内容分析**：理解用户提供的文本结构、主要信息点、逻辑层次
-2. **智能布局匹配**：根据识别到的布局类型和元素位置，将内容分配到最合适的占位符
-3. **样式感知优化**：根据识别到的字体、颜色等样式信息，调整内容长度和表达方式
-4. **结构层次保持**：确保分配后的内容与原PPT的视觉层次和逻辑结构保持一致
+**占位符处理规则：**
+- 识别并处理所有{}格式占位符，支持文本框和表格
+- 根据占位符名称语义匹配内容类型（title/content/bullet/author/date等）
+- 支持复合命名格式（如{bullet_2_time_1}）
 
-**占位符智能识别与处理原则：**
-🔍 **占位符识别规则**：识别并处理模板中所有{}格式的占位符，支持复合命名格式
-- 根据占位符名称的语义含义自动判断应填入的内容类型
-- **简单格式**：{title}、{标题}、{author}、{date}等单一含义占位符
-- **复合格式**：{bullet_2_time_1}、{content_1_topic}、{speaker_name_title}等多组件占位符
-- **智能解析**：自动分析复合占位符中的关键组件（如time、topic、bullet等）
-- **语义理解**：从占位符名称推断内容类型和优先级
+**约束条件：**
+- 只使用用户提供的信息，不生成新内容
+- 保持原文核心含义不变
+- 优先填充重要占位符
 
-**复合占位符示例：**
-- {bullet_2_time_1} → 要点类+时间类，适合填充带时间信息的要点内容
-- {bullet_2_time_1_topic} → 要点类+时间类+主题类，适合填充主题相关的时间要点
-- {content_description_1} → 内容类+描述类，适合填充详细描述内容
-- {speaker_name_title} → 人物类+标题类，适合填充演讲者姓名和职位
-
-**重要**：模板包含文本框和表格两种占位符，表格占位符同样重要，必须识别填充。
-
-**操作原则：**
-- ✅ **可以做的**：从用户文本中提取合适的片段填入任意{}格式的占位符
-- ✅ **可以做的**：根据占位符名称的含义智能匹配对应类型的内容
-- ✅ **可以做的**：适当精简、重组文本使其更适合PPT展示
-- ✅ **可以做的**：调整语言表达，使其更简洁明了
-- ❌ **不能做的**：生成用户未提供的新信息
-- ❌ **不能做的**：强行填满所有占位符
-- ❌ **不能做的**：改变用户文本的核心含义
-
-**基于深度识别的高级分析指南：**
-1. **页面类型智能识别**：
-   - 议程页 (Agenda)：优先填充时间、主题、活动等结构化信息
-   - 欢迎页 (Welcome)：提取开场白、问候语、会议主题等
-   - 团队介绍页 (Team)：匹配人员信息、职责、联系方式等
-   - 服务页 (Services)：对应产品功能、服务项目、特色说明等
-   - 愿景页 (Vision)：适配目标、理念、未来规划等内容
-
-2. **布局元素深度理解**：
-   - **标题+正文布局**：标题简洁有力，正文详细支撑
-   - **两栏布局**：内容对比或并列关系，左右内容平衡
-   - **带图标的议程**：结构化信息，时间序列或步骤流程
-   - **图文组合页**：图片说明与文字描述的紧密配合
-
-3. **样式感知内容适配**：
-   - **大字体区域**：安排重要标题和核心概念
-   - **小字体区域**：放置详细描述和补充信息
-   - **加粗文本**：突出关键词汇和重点信息
-   - **彩色文本**：注意与原有色彩主题的协调
-
-4. **对象元素协调考量**：
-   - **图标存在的区域**：文字内容应与图标主题呼应
-   - **图片位置附近**：文字要为图片提供解释或补充
-   - **表格布局**：数据性内容优先填入，保持格式整齐
-   - **形状装饰区域**：内容风格要与设计元素协调
-
-5. **空间位置优化策略**：
-   - **页面上方**：标题性、概括性内容
-   - **页面中央**：核心内容和重要信息
-   - **页面下方**：补充说明和总结性内容
-   - **左右分布**：对比性或并列性内容的合理安排
-
-**占位符语义理解与自动推断原则：**
-AI需要根据占位符的名称自动理解其含义和用途，而不仅限于预定义的类型：
-
-**核心语义规则：**
-1. **标题类占位符**：包含title、heading、主题、topic等关键词
-   - 如: {title}、{main_title}、{chapter_title}、{主题}、{标题}
-   - 特征：简洁有力，建议8-20字，突出核心概念
-
-2. **内容类占位符**：包含content、text、description、介绍等关键词  
-   - 如: {content}、{main_content}、{description}、{介绍}、{内容}
-   - 特征：详细说明，建议20-100字，承载主要信息
-
-3. **要点类占位符**：包含bullet、point、list、要点等关键词
-   - 如: {bullet_1}、{point_1}、{要点1}、{item_1}
-   - 特征：简洁明了，建议15-40字，并列展示
-
-4. **人物类占位符**：包含author、name、speaker、演讲者等关键词
-   - 如: {author}、{speaker_name}、{演讲者}、{作者}
-   - 特征：人名或角色，通常较短
-
-5. **时间类占位符**：包含date、time、年份、日期等关键词
-   - 如: {date}、{time}、{年份}、{日期}
-   - 特征：时间表达，格式标准
-
-6. **数据类占位符**：包含number、data、统计、数字等关键词
-   - 如: {number}、{percentage}、{统计数据}、{数字}
-   - 特征：数值信息，简洁准确
-
-**智能推断原则：**
-- AI应该根据占位符名称的语义含义，自动判断应该填入什么类型的内容
-- 对于未知的占位符名称，根据上下文和模板结构进行合理推测
-- 优先填充语义明确、重要性高的占位符
-
-**美观性设计原则：**
-1. **视觉层次清晰**：
-   - 标题类（title, subtitle）：用词精炼，突出核心概念
-   - 内容类（content_X）：条理清晰，逻辑分明
-   - 要点类（bullet_X）：简洁有力，易于快速理解
-
-2. **文本长度控制与格式约束**：
-   - 标题类占位符：
-     * title: 8-15字为佳，最多不超过20字
-     * subtitle: 15-25字为佳，避免超过30字
-     * 要求：简洁有力，避免冗长描述
-   - 内容类占位符：
-     * content_X: 10-20字为佳，构建清晰框架
-     * content_X_bullet_Y: 20-40字为佳，保持单行显示
-     * 要求：逻辑清晰，层次分明
-   - 要点类占位符：
-     * bullet_X: 15-35字为佳，确保单行完整显示
-     * 要求：并列关系明确，避免换行影响美观
-   - 描述类占位符：
-     * description: 30-80字为佳，提供适度详细说明
-     * conclusion: 20-50字为佳，总结有力
-     * 要求：信息丰富但不冗长，保持可读性
-
-3. **语言风格统一与表达优化**：
-   - 保持同一张PPT内语言风格的一致性
-   - 使用简洁明了的表达方式
-   - 避免冗长的句子和复杂的语法结构
-   - 专业术语适度使用，确保可读性
-   - 使用主动语态，增强表达力
-   - 避免重复用词，保持语言丰富性
-
-4. **内容平衡分布与版式协调**：
-   - 合理分配内容到各个占位符，避免内容集中在少数占位符
-   - 确保同一张幻灯片内容量相对均衡，避免头重脚轻
-   - 标题与内容比例协调，标题简洁，内容充实但不冗长
-   - 并列要点长度相近，保持视觉整齐美观
-   - 考虑占位符的空间位置，重要内容优先填充显眼位置
-
-5. **可读性优化与信息层次**：
-   - 使用易于理解的词汇和表达
-   - 避免过于专业的术语堆砌
-   - 确保关键信息突出显示
-   - 重要概念优先分配到高权重占位符
-   - 支撑信息合理分配到中低权重占位符
-   - 避免信息重复，每个占位符承担独特功能
-
-6. **版式设计原则**：
-   - **对比原则**：标题与内容、主要与次要信息形成明显对比
-   - **对齐原则**：保持内容逻辑对齐，增强整体感
-   - **重复原则**：在多张幻灯片中保持风格一致性
-   - **接近原则**：相关内容放置在相近位置，形成视觉关联
-   - **留白原则**：避免信息过密，适当留白增强可读性
-
-请按照以下JSON格式返回：
-{{
-  "assignments": [
-    {{
-      "slide_index": 0,
-      "action": "replace_placeholder",
-      "placeholder": "title",
-      "content": "优化后的标题内容",
-      "reason": "提炼核心概念，适配标题占位符，符合美观性要求"
-    }}
-  ]
-}}
-
-**具体格式要求：**
-1. **标点符号规范**：
-   - 标题类占位符：避免使用句号，可使用感叹号或问号增强表达力
-   - 要点类占位符：使用句号结尾，保持格式一致
-   - 描述类占位符：使用标准标点，增强可读性
-
-2. **数字和符号处理**：
-   - 优先使用阿拉伯数字，简洁明了
-   - 适当使用符号（如：→、●、★）增强视觉效果
-   - 避免过多特殊符号，保持整洁
-
-3. **换行和分段**：
-   - 单个占位符内容避免内部换行
-   - 长内容优先通过精简语言控制长度
-   - 必要时可使用分号分隔多个要点
-
-**深度分析要求（基于GPT-5识别能力）：**
-1. **全景理解**：先整体识别PPT的主题类型（会议议程、产品介绍、项目汇报等）
-2. **页面解构**：深度分析每页的布局特征、元素分布、设计意图
-3. **内容匹配**：
-   - 识别用户文本的信息类型（时间、人员、活动、数据、观点等）
-   - 将不同类型的信息精准匹配到对应功能的占位符
-   - 考虑页面上下文和整体逻辑流程
-4. **样式协调**：根据识别到的字体大小、颜色、位置调整内容长度和重要性
-5. **元素呼应**：让文字内容与页面中的图标、图片、装饰元素形成有机整体
-6. **结构优化**：保持用户原文逻辑，同时适配PPT的视觉展示需求
+**处理原则：**
+- 根据占位符名称的语义含义智能匹配内容类型
+- 控制内容长度，标题简洁、要点明确、描述适中
+- 保持语言风格一致，避免重复和冗长
 
 **输出格式：**
-只返回JSON格式，包含assignments数组，每个元素包含：
+只返回JSON，包含assignments数组：
 - slide_index: 幻灯片索引（从0开始）
 - action: "replace_placeholder"
-- placeholder: 占位符名称（模板中的确切名称，支持任意{}格式，如title、标题、author、作者、date、日期、description等）
-- content: 从用户文本提取的内容（根据占位符语义含义进行适当优化）
-- reason: 基于占位符名称语义和内容匹配度的选择理由
-
-**示例：**
-如果用户文本是"人工智能发展历程包括三个阶段"，模板有{title}和{content_1}占位符，则：
-```json
-{
-  "assignments": [
-    {
-      "slide_index": 0,
-      "action": "replace_placeholder",
-      "placeholder": "title",
-      "content": "人工智能发展历程",
-      "reason": "提取主题作为标题"
-    },
-    {
-      "slide_index": 0,
-      "action": "replace_placeholder", 
-      "placeholder": "content_1",
-      "content": "包括三个重要发展阶段",
-      "reason": "提取核心内容并简化表达"
-    }
-  ]
-}
-```
+- placeholder: 占位符名称
+- content: 优化后的填充内容
+- reason: 选择理由
 
 只返回JSON，不要其他文字。"""
     
@@ -1051,9 +855,9 @@ class PPTProcessor:
         results = []
         
         # 清理旧缓存并提取最新的格式信息
-        print("🧹 清理旧格式缓存...")
+        print("清理旧格式缓存...")
         self._clear_format_cache()
-        print("🔍 预先提取所有占位符格式信息...")
+        print("预先提取所有占位符格式信息...")
         self._cache_all_placeholder_formats(assignments_list)
         
         # 如果提供了用户原始文本，则为幻灯片添加备注
@@ -1061,6 +865,11 @@ class PPTProcessor:
             notes_results = self._add_notes_to_slides(assignments_list, user_text)
             results.extend(notes_results)
         
+        # 按文本框分组处理分配，避免多次刷新同一文本框
+        shape_assignments = {}  # {shape_id: [assignments]}
+        other_assignments = []  # 非占位符替换的其他操作
+        
+        # 先将分配按文本框分组
         for assignment in assignments_list:
             action = assignment.get('action')
             content = assignment.get('content', '')
@@ -1069,33 +878,54 @@ class PPTProcessor:
             if action == 'replace_placeholder':
                 placeholder = assignment.get('placeholder', '')
                 if 0 <= slide_index < len(self.presentation.slides):
-                    slide = self.presentation.slides[slide_index]
                     slide_info = self.ppt_structure['slides'][slide_index]
-                    
-                    # 检查该占位符是否存在
                     if placeholder in slide_info['placeholders']:
-                        # 使用预先缓存的格式信息进行替换
                         placeholder_info = slide_info['placeholders'][placeholder]
+                        shape = placeholder_info['shape']
+                        shape_type = placeholder_info.get('type', 'text_box')
                         
-                        success = self._replace_placeholder_in_slide_with_cached_format(
-                            placeholder_info, 
-                            content
-                        )
-                        if success:
-                            # 记录已填充的占位符
-                            if slide_index not in self.filled_placeholders:
-                                self.filled_placeholders[slide_index] = set()
-                            self.filled_placeholders[slide_index].add(placeholder)
-                            
-                            results.append(f"SUCCESS: 已替换第{slide_index+1}页的 {{{placeholder}}} 占位符: {assignment.get('reason', '')}")
+                        # 创建唯一的shape标识
+                        if shape_type == 'table_cell':
+                            shape_id = f"slide_{slide_index}_table_{id(shape)}_cell_{placeholder_info['row_idx']}_{placeholder_info['col_idx']}"
                         else:
-                            results.append(f"ERROR: 替换第{slide_index+1}页的 {{{placeholder}}} 占位符失败")
+                            shape_id = f"slide_{slide_index}_shape_{id(shape)}"
+                        
+                        if shape_id not in shape_assignments:
+                            shape_assignments[shape_id] = []
+                        shape_assignments[shape_id].append(assignment)
                     else:
                         results.append(f"ERROR: 第{slide_index+1}页不存在 {{{placeholder}}} 占位符")
                 else:
                     results.append(f"ERROR: 幻灯片索引 {slide_index+1} 超出范围")
+            else:
+                other_assignments.append(assignment)
+        
+        # 批量处理每个文本框的所有占位符
+        for shape_id, assignments in shape_assignments.items():
+            batch_success = self._replace_placeholders_in_shape_batch(assignments)
             
-            elif action == 'update':
+            # 记录结果
+            for assignment in assignments:
+                slide_index = assignment.get('slide_index', 0)
+                placeholder = assignment.get('placeholder', '')
+                
+                # 记录为已处理
+                if slide_index not in self.filled_placeholders:
+                    self.filled_placeholders[slide_index] = set()
+                self.filled_placeholders[slide_index].add(placeholder)
+                
+                if batch_success:
+                    results.append(f"SUCCESS: 已替换第{slide_index+1}页的 {{{placeholder}}} 占位符: {assignment.get('reason', '')}")
+                else:
+                    results.append(f"WARNING: 第{slide_index+1}页的 {{{placeholder}}} 占位符替换失败，但已标记为已处理")
+        
+        # 处理其他类型的操作
+        for assignment in other_assignments:
+            action = assignment.get('action')
+            content = assignment.get('content', '')
+            slide_index = assignment.get('slide_index', 0)
+            
+            if action == 'update':
                 if 0 <= slide_index < len(self.presentation.slides):
                     slide = self.presentation.slides[slide_index]
                     self._update_slide_content(slide, content)
@@ -1108,6 +938,69 @@ class PPTProcessor:
         
         return results
     
+    def _replace_placeholders_in_shape_batch(self, assignments: List[Dict]) -> bool:
+        """批量处理同一个文本框/表格单元格中的多个占位符，避免重复刷新"""
+        if not assignments:
+            return False
+            
+        try:
+            # 获取第一个分配来确定处理类型
+            first_assignment = assignments[0]
+            slide_index = first_assignment.get('slide_index', 0)
+            placeholder = first_assignment.get('placeholder', '')
+            
+            # 获取占位符信息
+            slide_info = self.ppt_structure['slides'][slide_index]
+            placeholder_info = slide_info['placeholders'][placeholder]
+            shape_type = placeholder_info.get('type', 'text_box')
+            
+            if shape_type == 'table_cell':
+                # 处理表格单元格（通常每个单元格只有一个占位符）
+                for assignment in assignments:
+                    placeholder = assignment.get('placeholder', '')
+                    content = assignment.get('content', '')
+                    placeholder_info = slide_info['placeholders'][placeholder]
+                    success = self._replace_placeholder_in_table_cell(placeholder_info, content)
+                    if not success:
+                        return False
+                return True
+            else:
+                # 处理文本框 - 批量替换所有占位符
+                shape = placeholder_info['shape']
+                current_text = shape.text if hasattr(shape, 'text') else ""
+                
+                print(f"批量替换文本框中的{len(assignments)}个占位符")
+                print(f"原文本: '{current_text}'")
+                
+                # 创建替换映射
+                replacements = {}
+                for assignment in assignments:
+                    placeholder_name = assignment.get('placeholder', '')
+                    content = assignment.get('content', '')
+                    replacements[f"{{{placeholder_name}}}"] = content
+                    print(f"  {{{placeholder_name}}} -> '{content}'")
+                
+                # 执行批量替换
+                updated_text = current_text
+                for placeholder_pattern, new_content in replacements.items():
+                    if placeholder_pattern in updated_text:
+                        updated_text = updated_text.replace(placeholder_pattern, new_content)
+                    else:
+                        print(f"警告: 占位符 {placeholder_pattern} 在文本中未找到")
+                
+                print(f"更新后: '{updated_text}'")
+                
+                # 一次性更新文本框内容
+                if updated_text != current_text:
+                    shape.text = updated_text
+                    return True
+                else:
+                    return False
+                    
+        except Exception as e:
+            print(f"批量替换占位符时出错: {e}")
+            return False
+    
     def _clear_format_cache(self):
         """清理所有占位符的格式缓存，确保使用最新格式"""
         cleared_count = 0
@@ -1118,9 +1011,9 @@ class PPTProcessor:
                     cleared_count += 1
         
         if cleared_count > 0:
-            print(f"   🗑️ 已清理{cleared_count}个占位符的旧格式缓存")
+            print(f"   已清理{cleared_count}个占位符的旧格式缓存")
         else:
-            print("   ✨ 无需清理，首次使用")
+            print("   无需清理，首次使用")
     
     def _cache_all_placeholder_formats(self, assignments_list: List[Dict]):
         """预先提取所有占位符的格式信息，避免替换过程中格式丢失"""
@@ -1141,9 +1034,9 @@ class PPTProcessor:
                             format_info = self._extract_text_format(placeholder_info['shape'])
                             placeholder_info['cached_format'] = format_info
                             cached_count += 1
-                            print(f"   📋 缓存格式: 第{slide_index+1}页 {{{placeholder}}} - 字体:{format_info.get('font_name', 'None')}, 大小:{format_info.get('font_size', 'None')}")
+                            print(f"   缓存格式: 第{slide_index+1}页 {{{placeholder}}} - 字体:{format_info.get('font_name', 'None')}, 大小:{format_info.get('font_size', 'None')}")
         
-        print(f"✅ 格式缓存完成，共缓存{cached_count}个占位符的格式信息")
+        print(f"格式缓存完成，共缓存{cached_count}个占位符的格式信息")
     
     def _add_notes_to_slides(self, assignments_list: List[Dict], user_text: str) -> List[str]:
         """
@@ -1510,7 +1403,7 @@ class PPTProcessor:
                 except Exception:
                     applied_changes.append("颜色:应用失败")
             
-            print(f"   ✅ 缓存格式应用完成 - {', '.join(applied_changes) if applied_changes else '无格式变更'}")
+            print(f"   缓存格式应用完成 - {', '.join(applied_changes) if applied_changes else '无格式变更'}")
             
             # 确保run级别的格式也正确
             if paragraph.runs:
@@ -1572,7 +1465,7 @@ class PPTProcessor:
                 format_info['vertical_anchor'] = text_frame.vertical_anchor
                 
                 # 调试信息：打印文本框的基本信息
-                print(f"🔍 文本框分析 - 形状类型: {format_info['shape_type']}, 段落数: {len(text_frame.paragraphs) if text_frame.paragraphs else 0}")
+                print(f"文本框分析 - 形状类型: {format_info['shape_type']}, 段落数: {len(text_frame.paragraphs) if text_frame.paragraphs else 0}")
                 
                 # 从第一个段落提取格式
                 if text_frame.paragraphs:
@@ -1720,7 +1613,7 @@ class PPTProcessor:
                 except Exception:
                     applied_changes.append("颜色:应用失败")
             
-            print(f"   ✅ 应用完成 - {', '.join(applied_changes) if applied_changes else '无格式变更'}")
+            print(f"   应用完成 - {', '.join(applied_changes) if applied_changes else '无格式变更'}")
             
             # 确保run级别的格式也正确
             if paragraph.runs:

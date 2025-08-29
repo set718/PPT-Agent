@@ -23,39 +23,83 @@ class AIPageSplitter:
         # 根据当前选择的模型获取对应的配置
         model_info = config.get_model_info()
         
-        # 自动获取对应的API密钥
-        if api_key is None:
-            api_key_env = model_info.get('api_key_env')
-            if api_key_env:
-                # 从环境变量获取对应的API密钥
-                import os
-                self.api_key = os.getenv(api_key_env) or config.openai_api_key or ""
-            else:
-                self.api_key = config.openai_api_key or ""
-        else:
-            self.api_key = api_key
-            
-        if not self.api_key:
-            raise ValueError("请设置API密钥")
+        # 初始化多密钥管理
+        self._initialize_api_keys(model_info, config, api_key)
         
         self.base_url = model_info.get('base_url', config.openai_base_url)
-        
-        # 设置API超时时间
-        timeout = 30.0
-        
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url=self.base_url,
-            timeout=timeout
-        )
         self.config = config
         
         # 创建持久化session用于HTTP连接复用
         self.session = requests.Session()
-
         
         # 简单的内存缓存
         self._cache = {}
+        
+        # 密钥轮询索引
+        self._current_key_index = 0
+        
+    
+    def _initialize_api_keys(self, model_info, config, api_key):
+        """初始化API密钥列表"""
+        import os
+        
+        if api_key:
+            self.api_keys = [api_key]
+            return
+        
+        if model_info.get('api_provider') == 'OpenRouter':
+            # 从环境变量获取OpenRouter密钥（用户自定义）
+            self.api_keys = []
+            for i in range(1, 6):  # 支持1-5个密钥
+                key_name = f'OPENROUTER_API_KEY_{i}'
+                key_value = os.getenv(key_name)
+                if key_value:
+                    self.api_keys.append(key_value)
+            
+            # 如果没有找到编号密钥，尝试单个密钥
+            if not self.api_keys:
+                single_key = os.getenv('OPENROUTER_API_KEY')
+                if single_key:
+                    self.api_keys = [single_key]
+        elif model_info.get('api_provider') == 'Volces' and model_info.get('use_multiple_keys'):
+            # 从环境变量获取火山引擎密钥（多密钥负载均衡）
+            self.api_keys = []
+            for i in range(1, 6):  # 支持1-5个密钥
+                key_name = f'ARK_API_KEY_{i}'
+                key_value = os.getenv(key_name)
+                if key_value:
+                    self.api_keys.append(key_value)
+            
+            # 如果没有找到编号密钥，尝试单个密钥
+            if not self.api_keys:
+                single_key = os.getenv('ARK_API_KEY')
+                if single_key:
+                    self.api_keys = [single_key]
+        else:
+            # 其他API使用单密钥
+            api_key_env = model_info.get('api_key_env')
+            if api_key_env:
+                key_value = os.getenv(api_key_env) or config.openai_api_key or ""
+                if key_value:
+                    self.api_keys = [key_value]
+                else:
+                    self.api_keys = []
+            else:
+                self.api_keys = [config.openai_api_key] if config.openai_api_key else []
+        
+        if not self.api_keys:
+            raise ValueError("请设置API密钥")
+        
+        print(f"初始化完成，可用API密钥数量: {len(self.api_keys)}")
+    
+    def _get_next_api_key(self):
+        """获取下一个API密钥（轮询）"""
+        if not self.api_keys:
+            raise ValueError("没有可用的API密钥")
+        
+        key = self.api_keys[self._current_key_index]
+        self._current_key_index = (self._current_key_index + 1) % len(self.api_keys)
+        return key
     
     def split_text_to_pages(self, user_text: str, target_pages: Optional[int] = None) -> Dict[str, Any]:
         """
@@ -74,20 +118,18 @@ class AIPageSplitter:
             # 构建AI提示
             system_prompt = self._build_system_prompt(target_pages)
             
-            # 检查是否为Liai API
+            # 检查API类型，决定调用方式
             model_info = self.config.get_model_info()
             if model_info.get('request_format') == 'dify_compatible':
                 # 使用Liai API格式
                 content = self._call_liai_api(system_prompt, user_text)
+            elif model_info.get('request_format') == 'streaming_compatible':
+                # 使用OpenRouter API格式（类似Liai的分批处理）
+                content = self._call_openrouter_api(system_prompt, user_text)
             else:
-                # 针对不同API提供商优化请求参数
+                # 标准OpenAI API格式
                 request_timeout = 60
-                
-                # 获取实际使用的模型名称
                 actual_model = model_info.get('actual_model', self.config.ai_model)
-                
-                # 统一使用流式输出（所有OpenAI兼容的API）
-                stream_options = {}
                 
                 response = self.client.chat.completions.create(
                     model=actual_model,
@@ -98,7 +140,6 @@ class AIPageSplitter:
                     temperature=0.3,
                     max_tokens=4000,
                     stream=True,
-                    stream_options=stream_options,
                     timeout=request_timeout
                 )
                 
@@ -115,7 +156,7 @@ class AIPageSplitter:
             
         except Exception as e:
             print(f"AI分页分析失败: {e}")
-            return self._create_fallback_split(user_text)
+            raise e
     
     def _call_liai_api(self, system_prompt: str, user_text: str) -> str:
         """调用Liai API"""
@@ -183,6 +224,69 @@ class AIPageSplitter:
             print(f"Liai API调用失败: {e}")
             raise e
     
+    def _call_openrouter_api(self, system_prompt: str, user_text: str) -> str:
+        """调用OpenRouter API（带故障转移的多密钥负载均衡）"""
+        model_info = self.config.get_model_info()
+        
+        # 获取实际模型名称和额外头部
+        actual_model = model_info.get('actual_model', 'openai/gpt-5')
+        extra_headers = model_info.get('extra_headers', {})
+        
+        # 尝试所有可用密钥
+        last_exception = None
+        for attempt in range(len(self.api_keys)):
+            current_api_key = self._get_next_api_key()
+            
+            try:
+                # 为当前密钥创建临时客户端
+                temp_client = OpenAI(
+                    api_key=current_api_key,
+                    base_url=self.base_url,
+                    timeout=120
+                )
+                
+                print(f"尝试使用API密钥 {attempt + 1}/{len(self.api_keys)} (末尾: ...{current_api_key[-8:]})")
+                
+                # 使用持久化会话复用连接，类似Liai的处理方式
+                response = temp_client.chat.completions.create(
+                    model=actual_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_text}
+                    ],
+                    temperature=0.3,
+                    max_tokens=4000,
+                    stream=True,  # 使用流式响应，类似Liai
+                    extra_headers=extra_headers,
+                    extra_body={},  # OpenRouter兼容
+                    timeout=120  # 与Liai相同的超时时间
+                )
+                
+                # 处理streaming响应，类似Liai的逐行处理
+                content = ""
+                for chunk in response:
+                    if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
+                        chunk_content = chunk.choices[0].delta.content
+                        if chunk_content:
+                            content += chunk_content
+                
+                result_content = content.strip() if content else ""
+                print(f"✅ API调用成功，使用密钥: ...{current_api_key[-8:]}")
+                return result_content
+                
+            except Exception as e:
+                last_exception = e
+                print(f"❌ API密钥 ...{current_api_key[-8:]} 调用失败: {e}")
+                
+                # 如果还有其他密钥可以尝试，继续下一个
+                if attempt < len(self.api_keys) - 1:
+                    print(f"⏳ 尝试下一个API密钥...")
+                    continue
+        
+        # 所有密钥都失败了
+        print(f"❌ 所有{len(self.api_keys)}个OpenRouter API密钥都失败了")
+        raise last_exception or Exception("所有OpenRouter API密钥调用失败")
+    
     def _build_system_prompt(self, target_pages: Optional[int] = None) -> str:
         """构建AI系统提示"""
         target_instruction = ""
@@ -192,10 +296,11 @@ class AIPageSplitter:
         return f"""你是一个专业的PPT内容分析专家。你的任务是将用户提供的文本内容智能分割为适合PPT展示的多个页面。
 
 **核心原则：**
-1. **逻辑清晰**：确保每页内容有明确的主题和逻辑关系
+1. **逻辑优先**：按照内容的逻辑结构和主题划分页面，同一主题的内容优先安排在同一页
 2. **信息完整**：不遗漏原文的重要信息
 3. **层次分明**：按照重要性和逻辑顺序安排页面
-4. **适量分配**：每页内容量适中，避免过于拥挤或空洞
+4. **内容充实**：每页内容量适中，宁可内容稍多也不要过于稀少
+5. **保守分页**：倾向于合并相关内容到同一页，避免过度细分
 
 **分页策略：**
 - **标题页（第1页）**：仅提取文档标题和日期信息，其他所有文本内容都延后到第三页开始处理
@@ -211,19 +316,34 @@ class AIPageSplitter:
 - 标题页的original_text_segment只包含提取的标题部分
 
 **页面内容要求：**
-- 每页应该有清晰的**主题**
-- 每页包含2-4个**要点**
-- 每个要点20-50字为宜
+- 每页应该有清晰的**主题**（通过title字段体现）
+- **优先按逻辑分配**：属于同一个主题、概念或章节的内容应该放在同一页
+- **重点保留原文**：original_text_segment字段必须包含该页对应的完整原文片段
+- **内容量优先级**：适中 >> 过多 >> 过少（宁可内容多一些，也不要让页面显得空洞）
 - 保持内容的**连贯性**和**完整性**
 
-**分页建议：**
-- 短文本（<800字）：3-6页内容
-- 中长文本（800-2000字）：6-12页内容  
-- 长文本（2000-5000字）：12-20页内容
-- 超长文本（>5000字）：20-25页内容
+**分页建议（保守策略）：**
+- 短文本（<800字）：2-4页内容（倾向于合并到较少页面）
+- 中长文本（800-2000字）：4-8页内容（避免过度细分）
+- 长文本（2000-5000字）：8-15页内容（优先合并相关主题）
+- 超长文本（>5000字）：15-20页内容（控制在合理范围）
 - **重要限制：总页数≤25页，生成页数≤23页**
+- **分页原则：宁可内容多一些，也不要页面过多**
 
-{target_instruction}请分析用户文本的结构和内容，智能分割为合适的页面数量。
+**逻辑分配指导（减少分页）：**
+- **主题完整性第一**：同一个概念、步骤、案例的内容不要拆分到不同页面
+- **合并相关内容**：相关的子主题尽量合并到同一页，避免过度细分
+- **逻辑连贯性第二**：相关的主题按逻辑顺序安排，确保阅读流畅
+- **内容充实性第三**：每页内容要有足够的信息量，避免页面过于简单
+- **减少页面数量**：优先考虑将多个小主题合并，而不是拆分成独立页面
+
+{target_instruction}请分析用户文本的结构和内容，按逻辑主题智能分割为合适的页面数量。
+
+**重要提醒：**
+- 如果用户文本可以合理地分为5页，不要分成8页
+- 优先考虑内容的逻辑关联性，将相关内容合并到同一页
+- 每页内容宁可丰富一些，也不要为了展示而人为增加页面数
+- 分页数量应当接近人工判断的合理页数
 
 **输出格式要求：**
 请严格按照以下JSON格式返回：
@@ -237,34 +357,20 @@ class AIPageSplitter:
     "reasoning": "文本描述了技术发展的多个阶段，适合按时间线分页展示"
   }}}},
   "pages": [
-         {{{{
-       "page_number": 1,
-       "page_type": "title",
-       "title": "人工智能发展历程",
-       "subtitle": "",
-       "date": "2024年7月",
-       "content_summary": "文档标题页，仅从文本开头提取标题和日期，其他内容延后处理",
-       "key_points": [
-         "文档标题：人工智能发展历程",
-         "日期：2024年7月"
-       ],
-       "original_text_segment": "人工智能发展历程"
-     }}}},
-   {{{{
+    {{{{
+      "page_number": 1,
+      "page_type": "title",
+      "title": "人工智能发展历程",
+      "date": "2024年7月",
+      "original_text_segment": "人工智能发展历程"
+    }}}},
+    {{{{
       "page_number": 3,
       "page_type": "content", 
       "title": "AI发展概述",
-      "subtitle": "技术演进的主要阶段",
-      "content_summary": "从第三页开始处理所有实际内容，介绍AI发展的各个阶段",
-      "key_points": [
-        "1950年代符号主义起始",
-        "1980年代专家系统兴起", 
-        "2010年代深度学习突破",
-        "当前大语言模型时代"
-      ],
-      "original_text_segment": "人工智能技术发展经历了多个重要阶段。从1950年代的符号主义开始..."
-   }}}}
- ]
+      "original_text_segment": "人工智能技术发展经历了多个重要阶段。从1950年代的符号主义开始，到1980年代专家系统的兴起，再到2010年代深度学习的突破，以及当前大语言模型时代的到来..."
+    }}}}
+  ]
 }}}}
 ```
 
@@ -274,7 +380,11 @@ class AIPageSplitter:
 - `content`: 内容页，具体的要点和详细内容（分页重点）
 
 **关键注意事项：**
-- 每个内容页的title字段必须准确概括内容（用于生成目录）
+- **title字段**：必须准确概括该页内容（用于生成目录）
+- **original_text_segment字段最重要**：必须包含该页对应的完整原文片段，不能遗漏或截断
+- **标题页original_text_segment**：只包含提取的标题部分
+- **内容页original_text_segment**：包含该页面对应的所有原文内容，确保完整性
+- 不要生成subtitle、content_summary、key_points等字段
 - 不要生成结尾页，系统将使用预设的固定结尾页模板
 
 只返回JSON格式，不要其他文字。"""
@@ -282,36 +392,57 @@ class AIPageSplitter:
     def _parse_ai_response(self, content: str, user_text: str) -> Dict[str, Any]:
         """解析AI响应结果"""
         try:
+            # 检查返回内容是否为空
+            if not content or not content.strip():
+                error_detail = f"AI返回内容为空。原始内容: '{content}'"
+                print(f"❌ {error_detail}")
+                raise ValueError(error_detail)
+            
+            
             # 提取JSON内容
             json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
             if json_match:
                 json_str = json_match.group(1)
             else:
                 # 如果没有代码块，尝试直接解析
-                json_str = content
+                json_str = content.strip()
+            
+            if not json_str or not json_str.strip():
+                error_detail = "提取的JSON字符串为空"
+                print(f"❌ {error_detail}")
+                raise ValueError(error_detail)
             
             # 解析JSON
             result = json.loads(json_str)
             
             # 验证结果格式
-            if self._validate_split_result(result):
-                result['success'] = True
-                result['original_text'] = user_text
-                
-                # 添加固定的结尾页
-                self._add_ending_page(result)
-                
-                return result
-            else:
-                print("AI返回结果格式验证失败")
-                return self._create_fallback_split(user_text)
+            if not self._validate_split_result(result):
+                error_detail = "AI返回的JSON格式不符合要求"
+                print(f"❌ {error_detail}")
+                raise ValueError(error_detail)
+            
+            result['success'] = True
+            result['original_text'] = user_text
+            
+            # 添加固定的结尾页
+            self._add_ending_page(result)
+            
+            return result
                 
         except json.JSONDecodeError as e:
-            print(f"JSON解析失败: {e}")
-            return self._create_fallback_split(user_text)
+            json_str_safe = json_str[:500] if 'json_str' in locals() else '未获取到'
+            error_msg = f"JSON解析失败: {e}\n尝试解析的内容: {json_str_safe}"
+            print(f"❌ {error_msg}")
+            
+            
+            raise ValueError(error_msg)
         except Exception as e:
-            print(f"结果解析失败: {e}")
-            return self._create_fallback_split(user_text)
+            content_safe = content[:500] if content else 'N/A'
+            error_msg = f"AI分页解析失败: {e}\n原始AI返回内容: {content_safe}..."
+            print(f"❌ {error_msg}")
+            
+            
+            raise e
     
     def _validate_split_result(self, result: Dict[str, Any]) -> bool:
         """验证分页结果的格式"""
@@ -334,14 +465,14 @@ class AIPageSplitter:
                 return False
             
             # 检查每个页面的字段
-            required_page_fields = ['page_number', 'page_type', 'title', 'key_points']
+            required_page_fields = ['page_number', 'page_type', 'title', 'original_text_segment']
             for page in pages:
                 for field in required_page_fields:
                     if field not in page:
                         return False
                 
-                # 检查key_points是数组
-                if not isinstance(page['key_points'], list):
+                # 检查original_text_segment是字符串
+                if not isinstance(page['original_text_segment'], str):
                     return False
             
             return True
@@ -371,10 +502,7 @@ class AIPageSplitter:
             "page_number": 1,
             "page_type": "title", 
             "title": title,
-            "subtitle": "",
             "date": current_date,
-            "content_summary": "文档标题页，仅从文本开头提取标题和日期，其他内容延后处理",
-            "key_points": [f"文档标题：{title}", f"日期：{current_date}"],
             "original_text_segment": title  # 只包含标题部分
         })
         
@@ -403,9 +531,6 @@ class AIPageSplitter:
                     "page_number": page_num,
                     "page_type": "content",
                     "title": f"内容 {page_num - 2}",
-                    "subtitle": "",
-                    "content_summary": f"第{page_num - 2}部分内容（从第3页开始处理实际内容）",
-                    "key_points": [paragraph[:50] + "..." if len(paragraph) > 50 else paragraph],
                     "original_text_segment": paragraph
                 })
                 page_num += 1
@@ -415,9 +540,6 @@ class AIPageSplitter:
                 "page_number": 3,
                 "page_type": "content",
                 "title": "内容页",
-                "subtitle": "",
-                "content_summary": "从第3页开始处理实际内容，但当前文本只包含标题",
-                "key_points": ["内容待补充"],
                 "original_text_segment": "无额外内容"
             })
         
@@ -480,13 +602,11 @@ class AIPageSplitter:
             "page_number": 2,
             "page_type": "table_of_contents",
             "title": "目录",
-            "subtitle": "Contents",
-            "content_summary": f"根据内容页标题动态生成的目录，包含{len(content_titles)}个主要章节",
-            "key_points": content_titles,
             "original_text_segment": "",
             "template_path": os.path.join("templates", "table_of_contents_slides.pptx"),
             "is_toc_page": True,  # 标记为目录页
-            "skip_dify_api": True  # 不需要调用Dify API，但内容已动态提取
+            "skip_dify_api": True,  # 不需要调用Dify API，但内容已动态提取
+            "toc_items": content_titles  # 将目录项单独存储
         }
         
         # 将目录页插入到第2位
@@ -512,12 +632,6 @@ class AIPageSplitter:
             "page_number": ending_page_number,
             "page_type": "ending",
             "title": "谢谢观看",
-            "subtitle": "感谢您的聆听",
-            "content_summary": "固定结尾页模板，表达感谢",
-            "key_points": [
-                "感谢观看",
-                "欢迎交流讨论"
-            ],
             "original_text_segment": "",
             "template_path": os.path.join("templates", "ending_slides.pptx"),
             "is_fixed_template": True,
@@ -554,16 +668,16 @@ class PageContentFormatter:
             if page.get('date'):
                 preview += f"**日期：** {page.get('date')}\n"
             preview += f"**说明：** 标题页使用固定模板，其他内容（作者、机构等）将自动填充\n\n"
-        else:
-            if page.get('subtitle'):
-                preview += f"**副标题：** {page.get('subtitle')}\n"
-            preview += f"**内容摘要：** {page.get('content_summary', '无摘要')}\n\n"
         
-        key_points = page.get('key_points', [])
-        if key_points:
-            preview += "**主要要点：**\n"
-            for i, point in enumerate(key_points, 1):
-                preview += f"{i}. {point}\n"
+        # 显示原文片段
+        original_text = page.get('original_text_segment', '')
+        if original_text and original_text.strip():
+            preview += "**原文内容：**\n"
+            # 如果原文太长，显示前200字符
+            if len(original_text) > 200:
+                preview += f"{original_text[:200]}...\n"
+            else:
+                preview += f"{original_text}\n"
         
         return preview
     

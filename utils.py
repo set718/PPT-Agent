@@ -137,12 +137,36 @@ class AIProcessor:
     def __init__(self, api_key: str = None):
         """初始化AI处理器"""
         config = get_config()
-        self.api_key = api_key or config.openai_api_key
+        model_info = config.get_model_info()
+        
+        # 处理API密钥设置
+        if api_key:
+            self.api_key = api_key
+        else:
+            # 检查模型配置中的环境变量设置
+            api_key_env = model_info.get('api_key_env')
+            if api_key_env:
+                import os
+                # 如果是火山引擎且支持多密钥，优先使用第一个密钥
+                if model_info.get('api_provider') == 'Volces' and model_info.get('use_multiple_keys'):
+                    # 尝试获取多个密钥，使用第一个可用的
+                    for i in range(1, 6):
+                        key = os.getenv(f'{api_key_env}_{i}')
+                        if key:
+                            self.api_key = key
+                            break
+                    else:
+                        # 如果没找到编号密钥，尝试单个密钥
+                        self.api_key = os.getenv(api_key_env) or config.openai_api_key or ""
+                else:
+                    self.api_key = os.getenv(api_key_env) or config.openai_api_key or ""
+            else:
+                self.api_key = config.openai_api_key
+        
         if not self.api_key:
             raise ValueError("请设置API密钥")
         
         # 根据当前选择的模型获取对应的base_url
-        model_info = config.get_model_info()
         self.base_url = model_info.get('base_url', config.openai_base_url)
         
         # 延迟初始化client，避免在创建时就验证API密钥
@@ -192,8 +216,10 @@ class AIProcessor:
         else:
             # 使用OpenAI格式
             try:
+                # 使用actual_model而不是ai_model配置名
+                actual_model = model_info.get('actual_model', self.config.ai_model)
                 response = self.client.chat.completions.create(
-                    model=self.config.ai_model,
+                    model=actual_model,
                     messages=[
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_text}
@@ -206,10 +232,11 @@ class AIProcessor:
                 # 收集流式响应内容
                 content = ""
                 for chunk in response:
-                    if chunk.choices and chunk.choices[0].delta.content:
+                    if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
                         content += chunk.choices[0].delta.content
                 
                 content = content.strip() if content else ""
+                
             except Exception as e:
                 raise e
         
@@ -796,8 +823,17 @@ class AIProcessor:
 **核心任务（基于深度识别）：**
 **占位符处理规则：**
 - 识别并处理所有{}格式占位符，支持文本框和表格
-- 根据占位符名称语义匹配内容类型（title/content/bullet/author/date等）
-- 支持复合命名格式（如{bullet_2_time_1}）
+- **占位符命名语义规则**：找到语义词汇确定内容类型，忽略技术参数词汇
+  * `{bullet_2}` - 重点是bullet（要点内容），数字2表示第2个要点
+  * `{bullet_2_time_1}` - 重点是time（时间段），表示第2个要点下的第1个时间段
+  * `{title_max_token_50}` - 重点是title（标题），max_token_50是技术参数，忽略
+  * `{section_3_title}` - 重点是title（标题），表示第3个部分的标题
+- **内容类型匹配**：根据语义词汇确定填充内容类型，忽略数字和技术参数
+  * **time**: 填入时间段或时间点（如"9:45-10:00"、"上午9点"）
+  * **title**: 填入标题性内容
+  * **bullet/content**: 填入具体要点或详细内容
+  * **author**: 填入人名或机构名
+  * **date**: 填入日期信息
 
 **约束条件：**
 - 只使用用户提供的信息，不生成新内容
@@ -820,79 +856,17 @@ class AIProcessor:
 只返回JSON，不要其他文字。"""
     
     def _extract_json_from_response(self, content: str, user_text: str) -> Dict[str, Any]:
-        """从AI响应中提取JSON（支持GPT和Liai，处理截断问题）"""
-        if not content or not content.strip():
-            print("AI返回空内容")
-            return self._create_fallback_assignment(user_text, "AI返回空内容")
-        
-        original_content = content
-        content = content.strip()
-        
-        # 方法1: 提取代码块中的JSON数组
-        json_match = re.search(r'```(?:json)?\s*(\[.*?\])\s*```', content, re.DOTALL)
-        if json_match:
-            # 直接返回数组格式
-            try:
-                assignments_array = json.loads(json_match.group(1))
-                return {"assignments": assignments_array}
-            except json.JSONDecodeError:
-                pass
-        
-        # 方法2: 提取代码块中的JSON对象
+        """从AI响应中提取JSON"""
+        # 提取JSON内容（如果有代码块包围）
         json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
         if json_match:
             content = json_match.group(1)
-        else:
-            # 方法3: 查找JSON数组（处理截断的情况）
-            array_match = re.search(r'\[\s*\{.*', content, re.DOTALL)
-            if array_match:
-                json_content = array_match.group(0)
-                # 尝试修复截断的JSON
-                json_content = self._fix_truncated_json(json_content)
-                try:
-                    assignments_array = json.loads(json_content)
-                    print(f"成功修复并解析截断的JSON，共{len(assignments_array)}个assignments")
-                    return {"assignments": assignments_array}
-                except json.JSONDecodeError:
-                    pass
         
-        # 尝试解析JSON
         try:
-            result = json.loads(content)
-            if isinstance(result, list):
-                return {"assignments": result}
-            elif isinstance(result, dict) and "assignments" in result:
-                return result
-            else:
-                raise ValueError("JSON结构不正确")
-                
+            return json.loads(content)
         except json.JSONDecodeError as e:
             print(f"AI返回的JSON格式有误，错误：{str(e)}")
-            print(f"原始内容长度: {len(original_content)}")
-            print(f"处理后内容: {content[:200]}...")
             return self._create_fallback_assignment(user_text, f"JSON解析失败: {str(e)}")
-    
-    def _fix_truncated_json(self, json_str: str) -> str:
-        """尝试修复截断的JSON"""
-        # 统计大括号数量
-        open_braces = json_str.count('{')
-        close_braces = json_str.count('}')
-        
-        # 如果缺少结束括号，尝试补全
-        if open_braces > close_braces:
-            # 找到最后一个不完整的对象
-            last_brace_pos = json_str.rfind('{')
-            if last_brace_pos != -1:
-                # 截断到最后一个完整的对象
-                truncated = json_str[:last_brace_pos].rstrip(',').rstrip()
-                if truncated.endswith('}'):
-                    return truncated + ']'
-        
-        # 如果只是缺少结束的方括号
-        if not json_str.rstrip().endswith(']') and json_str.strip().startswith('['):
-            return json_str.rstrip() + ']'
-            
-        return json_str
     
     def _create_fallback_assignment(self, user_text: str, error_msg: str) -> Dict[str, Any]:
         """创建备用分配方案"""
@@ -1196,7 +1170,6 @@ class PPTProcessor:
                     placeholder_name = assignment.get('placeholder', '')
                     content = assignment.get('content', '')
                     replacements[f"{{{placeholder_name}}}"] = content
-                    print(f"  {{{placeholder_name}}} -> '{content}'")
                 
                 # 执行批量替换
                 updated_text = current_text
@@ -1459,7 +1432,6 @@ class PPTProcessor:
             
             print(f"替换占位符: {placeholder_pattern}")
             print(f"原文本: '{current_text}'")
-            print(f"新内容: '{new_content}'")
             print(f"更新后: '{updated_text}'")
             
             # 保持格式的文本替换
@@ -1500,7 +1472,6 @@ class PPTProcessor:
             print(f"替换表格占位符: {placeholder_pattern}")
             print(f"位置: 行{row_idx+1}, 列{col_idx+1}")
             print(f"原文本: '{current_text}'")
-            print(f"新内容: '{new_content}'")
             print(f"更新后: '{updated_text}'")
             
             # 直接替换单元格文本
@@ -1540,7 +1511,6 @@ class PPTProcessor:
             
             print(f"替换占位符: {placeholder_pattern}")
             print(f"原文本: '{current_text}'")
-            print(f"新内容: '{new_content}'")
             print(f"更新后: '{updated_text}'")
             
             # 使用缓存的格式信息应用文本

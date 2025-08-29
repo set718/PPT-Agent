@@ -346,6 +346,7 @@ class UserPPTGenerator:
     def __init__(self, api_key):
         """初始化生成器"""
         self.api_key = api_key
+        # 直接传递给AIProcessor，让它处理内置密钥标识符
         self.ai_processor = AIProcessor(api_key)
         self.presentation = None
         self.ppt_processor = None
@@ -687,8 +688,6 @@ def main():
             display_name = f"{model_info['name']} ({model_info['cost']}成本)"
         else:
             display_name = model_info['name']
-        if not model_info['supports_vision']:
-            display_name += " - ⚠️ 无视觉分析"
         model_options[display_name] = model_key
     
     model_col1, model_col2 = st.columns([2, 1])
@@ -711,8 +710,8 @@ def main():
         st.markdown("**模型对比**")
         if selected_model == "liai-chat":
             st.info("🏢 调用公司融合云AgentOps私有化模型\n🔒 数据安全保障\n✅ 支持视觉分析")
-        else:  # GPT-4.1
-            st.success("✅ 支持视觉分析\n✅ 效果更佳\n🌐 OpenAI官方模型")
+        else:  # DeepSeek V3
+            st.success("🚀 火山引擎DeepSeek V3模型\n⚡ 性能优异\n🌐 支持中英文对话")
     
 
     
@@ -728,14 +727,8 @@ def main():
     
     col1, col2 = st.columns([2, 1])
     with col1:
-        if api_provider == "OpenAI":
-            placeholder_text = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-            help_text = "OpenAI官方API密钥，API密钥不会被保存"
-        elif api_provider == "OpenRouter":
-            placeholder_text = "sk-or-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-            help_text = "通过OpenRouter访问AI模型，API密钥不会被保存"
-        elif api_provider == "Liai":
-            # Liai自动填充API密钥（从环境变量读取）
+        if api_provider == "Liai":
+            # Liai自动填充API密钥（从环境变量读取，无需显示任何提示）
             import random
             import os
             
@@ -751,18 +744,27 @@ def main():
             
             # 随机选择一个API密钥
             auto_api_key = random.choice(liai_api_keys)
-            placeholder_text = "app-xxxxxxxxxxxxxxxxxxxxxxxx（自动填充）"
-            help_text = "Liai API密钥已自动填充，无需手动输入"
-            
-            # 显示自动填充的信息
-            st.info("🔑 已自动配置Liai API密钥（无需手动输入）")
             api_key = auto_api_key  # 直接使用自动选择的密钥
-        else:  # 其他平台
+        elif api_provider == "Volces":
+            # 火山引擎从环境变量读取（无需显示任何提示）
+            import os
+            ark_keys = [os.getenv(f"ARK_API_KEY_{i}") for i in range(1, 6)]
+            valid_keys = [key for key in ark_keys if key]
+            
+            if not valid_keys:
+                st.error("❌ 未找到火山引擎API密钥配置，请检查环境变量ARK_API_KEY_1到ARK_API_KEY_5")
+                return
+            
+            # 使用第一个可用密钥（实际轮询由ai_page_splitter处理）
+            api_key = valid_keys[0]
+        else:  # 其他平台需要用户输入
             placeholder_text = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             help_text = f"通过{api_provider}平台访问AI模型，API密钥不会被保存"
         
-        # 只有非Liai平台才显示密钥输入框
-        if api_provider != "Liai":
+        # 只有需要用户输入密钥的情况才显示密钥输入框
+        needs_user_input = api_provider not in ["Liai", "Volces"]
+        
+        if needs_user_input:
             api_key = st.text_input(
                 f"请输入您的{api_provider} API密钥",
                 type="password",
@@ -770,11 +772,13 @@ def main():
                 help=help_text
             )
     with col2:
-        st.markdown("**获取API密钥**")
-        st.markdown(f"[🔗 {api_provider}平台]({api_key_url})")
+        # 只有需要用户输入密钥的情况才显示获取密钥链接
+        if needs_user_input:
+            st.markdown("**获取API密钥**")
+            st.markdown(f"[🔗 {api_provider}平台]({api_key_url})")
         
-        # API密钥测试按钮
-        if api_key and api_key.strip():
+        # API密钥测试按钮（只有需要用户输入时才显示）
+        if needs_user_input and api_key and api_key.strip():
             if st.button("🔍 测试API密钥", help="快速验证密钥是否有效"):
                 with st.spinner("正在验证API密钥..."):
                     try:
@@ -817,7 +821,7 @@ def main():
         with col1:
             st.markdown("""
             **第一步：选择模型** 🤖
-            - GPT-4.1：OpenAI先进模型，非保密场景推荐
+            - DeepSeek V3：火山引擎先进模型，非保密场景推荐
             - Liai Chat：保密信息专用模型，安全可靠
             """)
         
@@ -904,13 +908,10 @@ def main():
         return
     
     # 验证API密钥格式（根据选择的API提供商）
-    if api_provider == "OpenAI":
+    # 只对需要用户输入的API提供商进行格式验证
+    if needs_user_input and api_key:
         if not api_key.startswith('sk-'):
-            st.markdown('<div class="warning-box">⚠️ OpenAI API密钥格式可能不正确，通常以"sk-"开头</div>', unsafe_allow_html=True)
-            return
-    elif api_provider == "OpenRouter":
-        if not (api_key.startswith('sk-or-') or api_key.startswith('sk-')):
-            st.markdown('<div class="warning-box">⚠️ OpenRouter API密钥格式可能不正确，通常以"sk-or-"开头</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">⚠️ API密钥格式可能不正确，通常以"sk-"开头</div>', unsafe_allow_html=True)
             return
     # elif api_provider == "Liai":
     #     # Liai API密钥格式检查已移除，直接通过格式验证
@@ -978,7 +979,7 @@ def main():
             show_results_section(pages, page_results)
         else:
             # 显示输入界面
-            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能使用AI智能分页与模板匹配：<br>1. 用户输入长文本<br>2. AI模型智能分页（GPT-4.1/Liai Chat）<br>3. 每页内容调用AI模型获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
+            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能使用AI智能分页与模板匹配：<br>1. 用户输入长文本<br>2. AI模型智能分页（DeepSeek V3/Liai Chat）<br>3. 每页内容调用AI模型获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
     
         # 文本输入
         st.markdown("#### 📝 输入您的内容")
@@ -1667,7 +1668,6 @@ def main():
                         )
                     else:
                         enable_custom_visual = False
-                        st.info("⚠️ 当前模型不支持视觉优化")
                 
                 with col2:
                     if test_text:

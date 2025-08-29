@@ -32,14 +32,39 @@ class PPTVisualAnalyzer:
         """初始化视觉分析器"""
         self.config = get_config()
         self.logger = get_logger()
-        self.api_key = api_key or self.config.openai_api_key
+        
+        # 处理API密钥配置
+        model_info = self.config.get_model_info()
+        if api_key:
+            self.api_key = api_key
+        else:
+            # 根据模型配置从环境变量读取API密钥
+            api_key_env = model_info.get('api_key_env')
+            if api_key_env:
+                import os
+                # 如果是火山引擎且支持多密钥，使用第一个可用密钥
+                if model_info.get('api_provider') == 'Volces' and model_info.get('use_multiple_keys'):
+                    for i in range(1, 6):
+                        key = os.getenv(f'{api_key_env}_{i}')
+                        if key:
+                            self.api_key = key
+                            break
+                    else:
+                        self.api_key = os.getenv(api_key_env) or self.config.openai_api_key or ""
+                else:
+                    self.api_key = os.getenv(api_key_env) or self.config.openai_api_key or ""
+            else:
+                self.api_key = self.config.openai_api_key
+
+        # 获取模型对应的base_url        
+        base_url = model_info.get('base_url', self.config.openai_base_url)
         
         if not self.api_key:
-            raise ValueError("请设置OpenAI API密钥")
+            raise ValueError("请设置API密钥")
             
         self.client = OpenAI(
             api_key=self.api_key,
-            base_url=self.config.openai_base_url
+            base_url=base_url
         )
         
         # 视觉评估标准
@@ -207,9 +232,11 @@ class PPTVisualAnalyzer:
             # 构建分析提示
             prompt = self._build_visual_analysis_prompt(slide_context)
             
-            # 调用GPT-4.1分析（使用流式输出）
+            # 调用AI模型分析（使用流式输出）
+            model_info = self.config.get_model_info()
+            actual_model = model_info.get('actual_model', self.config.ai_model)
             response = self.client.chat.completions.create(
-                model=self.config.ai_model,
+                model=actual_model,
                 messages=[
                     {
                         "role": "user",

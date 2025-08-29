@@ -25,20 +25,23 @@ class Config:
     temp_output_dir: str = "temp_output"
     
     # AI配置
-    ai_model: str = "gpt-4.1"
+    ai_model: str = "deepseek-v3"
     ai_temperature: float = 0.3
-    ai_max_tokens: int = 2000
+    ai_max_tokens: int = 6000
     
     # 模型选择配置
     available_models: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
-        "gpt-4.1": {
-            "name": "GPT-4.1（非保密场景请选择此模型）",
-            "description": "OpenAI GPT-4.1模型，支持视觉分析功能",
-            "supports_vision": True,
+        "deepseek-v3": {
+            "name": "DeepSeek V3（非保密场景请选择此模型）",
+            "description": "火山引擎提供的DeepSeek V3模型，支持中英文对话，性能优异，支持多密钥负载均衡",
+            "supports_vision": False,
             "cost": "",
-            "base_url": "https://api.openai.com/v1",
-            "api_provider": "OpenAI",
-            "api_key_url": "https://platform.openai.com/api-keys"
+            "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+            "api_provider": "Volces",
+            "api_key_env": "ARK_API_KEY",
+            "actual_model": "deepseek-v3-250324",
+            "request_format": "streaming_compatible",
+            "use_multiple_keys": True
         },
         "liai-chat": {
             "name": "Liai Chat（保密信息请选择此模型）",

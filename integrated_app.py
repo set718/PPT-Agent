@@ -8,6 +8,13 @@ AI智能分页与Dify-模板桥接集成应用
 import streamlit as st
 import os
 from datetime import datetime
+
+# 加载.env文件中的环境变量
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 from typing import Dict, List, Any, Optional
 import asyncio
 from config import get_config

@@ -76,6 +76,20 @@ def check_system_requirements():
     
     return True
 
+def check_dify_api_keys():
+    """检查Dify API密钥配置，返回(是否有效, 有效密钥数量, 错误消息)"""
+    import os
+    
+    dify_keys = [os.getenv(f"DIFY_API_KEY_{i}") for i in range(1, 6)]
+    valid_dify_keys = [key for key in dify_keys if key]
+    
+    if len(valid_dify_keys) == 0:
+        return False, 0, "⚠️ **Dify API密钥未配置**\n\n请配置环境变量 `DIFY_API_KEY_1` 到 `DIFY_API_KEY_5`。\n\n**配置方法：**\n1. 复制 `.env.example` 为 `.env`\n2. 填入实际的API密钥\n3. 重启应用\n\n详细说明请查看 `ENVIRONMENT_SETUP.md`"
+    elif len(valid_dify_keys) < 5:
+        return True, len(valid_dify_keys), f"⚠️ 当前配置了 {len(valid_dify_keys)}/5 个Dify API密钥，建议配置全部5个以获得最佳性能"
+    else:
+        return True, len(valid_dify_keys), None
+
 def initialize_system():
     """轻量级系统初始化"""
     # 只做基础检查，不执行耗时操作
@@ -649,33 +663,12 @@ def main():
     st.markdown('<div class="main-header">🎨 AI PPT助手</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">智能将您的文本内容转换为精美的PPT演示文稿</div>', unsafe_allow_html=True)
     
-    # 检查Dify API密钥环境变量
-    import os
-    # 尝试手动加载.env文件
+    # 加载环境变量
     try:
         from dotenv import load_dotenv
         load_dotenv()
     except ImportError:
         pass
-    
-    dify_keys = [os.getenv(f"DIFY_API_KEY_{i}") for i in range(1, 6)]
-    valid_dify_keys = [key for key in dify_keys if key]
-    
-    if len(valid_dify_keys) == 0:
-        st.error("⚠️ **Dify API密钥未配置**")
-        st.markdown("""
-        请配置环境变量 `DIFY_API_KEY_1` 到 `DIFY_API_KEY_5`。
-        
-        **配置方法：**
-        1. 复制 `.env.example` 为 `.env`
-        2. 填入实际的API密钥
-        3. 重启应用
-        
-        详细说明请查看 `ENVIRONMENT_SETUP.md`
-        """)
-        return
-    elif len(valid_dify_keys) < 5:
-        st.warning(f"⚠️ 当前配置了 {len(valid_dify_keys)}/5 个Dify API密钥，建议配置全部5个以获得最佳性能")
     
     # 模型选择区域
     st.markdown("### 🤖 选择AI模型")
@@ -732,9 +725,49 @@ def main():
             import random
             import os
             
+            # 强制重新加载环境变量以确保读取到最新的.env文件
+            try:
+                from dotenv import load_dotenv
+                import os
+                
+                # 尝试多个可能的路径
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                current_work_dir = os.getcwd()
+                
+                possible_paths = [
+                    os.path.join(script_dir, '.env'),
+                    os.path.join(current_work_dir, '.env'),
+                    '.env'
+                ]
+                
+                
+                found_env = False
+                for env_path in possible_paths:
+                    
+                    if os.path.exists(env_path):
+                        try:
+                            with open(env_path, 'r', encoding='utf-8') as f:
+                                content = f.read()
+                                liai_lines = [line for line in content.split('\n') if 'LIAI_API_KEY' in line and not line.strip().startswith('#')]
+                                
+                                if len(liai_lines) > 0:
+                                    
+                                    load_dotenv(dotenv_path=env_path, override=True, encoding='utf-8')
+                                    found_env = True
+                                    break
+                                    
+                        except Exception as e:
+                            pass
+                
+            except ImportError as e:
+                pass
+            except Exception as e:
+                pass
+            
             liai_api_keys = []
             for i in range(1, 6):  # 读取LIAI_API_KEY_1到LIAI_API_KEY_5
-                key = os.getenv(f"LIAI_API_KEY_{i}")
+                key_name = f"LIAI_API_KEY_{i}"
+                key = os.getenv(key_name)
                 if key:
                     liai_api_keys.append(key)
             
@@ -1087,6 +1120,14 @@ def main():
                 status_text.text("🔗 正在为每页内容调用AI模型获取对应模板...")
                 progress_bar.progress(40)
                 
+                # 检查Dify API密钥配置
+                dify_valid, dify_count, dify_message = check_dify_api_keys()
+                if not dify_valid:
+                    st.error(dify_message)
+                    return
+                elif dify_message:  # 有警告消息
+                    st.warning(dify_message)
+                
                 from dify_template_bridge import sync_test_dify_template_bridge
                 from dify_api_client import BatchProcessor, DifyAPIConfig
                 
@@ -1434,12 +1475,74 @@ def main():
                                 st.error("🚫 无法继续处理，请检查Dify API配置或稍后重试")
                                 return  # 直接退出，不继续处理
                 
-                # 步骤3：整合PPT页面
-                status_text.text("🔗 正在整合模板页面生成PPT...")
+                # 步骤3：文本填充（新增）
+                status_text.text("📝 正在对每个模板进行智能文本填充...")
+                progress_bar.progress(70)
+                
+                filled_page_results = []
+                from pptx import Presentation
+                
+                # 导入PPT处理器（AIProcessor已在文件顶部导入）
+                from utils import PPTProcessor
+                
+                for i, page_result in enumerate(page_results):
+                    try:
+                        template_path = page_result.get('template_path')
+                        page_content = page_result.get('content', '')
+                        page_number = page_result.get('page_number', i+1)
+                        
+                        if template_path and os.path.exists(template_path):
+                            # 加载模板
+                            template_prs = Presentation(template_path)
+                            
+                            # 检查是否为特殊页面（目录页、标题页、结尾页）
+                            if (page_result.get('is_toc_page') or 
+                                page_result.get('is_title_page') or 
+                                page_result.get('is_ending_page') or
+                                page_result.get('page_type') == 'table_of_contents'):
+                                # 特殊页面直接使用模板，不进行AI文本填充
+                                fill_results = []
+                            else:
+                                # 创建PPT处理器并进行文本填充
+                                processor = PPTProcessor(template_prs)
+                                
+                                # 使用完整的文本填充流程（会自动使用当前选择的AI模型）
+                                # 1. 创建AI处理器来分析文本并生成分配方案
+                                ai_processor = AIProcessor(config)
+                                
+                                # 2. 分析PPT结构
+                                ppt_structure = processor.analyze_ppt_structure()
+                                
+                                # 3. 生成文本分配方案
+                                assignments = ai_processor.analyze_text_for_ppt(page_content, ppt_structure)
+                                
+                                # 4. 应用分配方案
+                                fill_results = processor.apply_assignments(assignments, page_content)
+                            
+                            # 更新结果信息（在内存中处理，合并时再保存临时文件）
+                            filled_result = page_result.copy()
+                            filled_result['filled_presentation'] = template_prs  # 填充后的presentation对象
+                            filled_result['fill_results'] = fill_results
+                            # 保持原template_path，合并器会处理presentation对象
+                            filled_page_results.append(filled_result)
+                            
+                            st.success(f"✅ 第{page_number}页：文本填充完成")
+                        else:
+                            # 没有模板的页面直接传递
+                            filled_page_results.append(page_result)
+                            st.info(f"ℹ️ 第{page_number}页：无需填充")
+                            
+                    except Exception as e:
+                        st.error(f"❌ 第{page_result.get('page_number', i+1)}页文本填充失败: {e}")
+                        # 失败时使用原始模板
+                        filled_page_results.append(page_result)
+                
+                # 步骤4：整合PPT页面
+                status_text.text("🔗 正在整合填充后的PPT页面...")
                 progress_bar.progress(80)
                 
-                # 保存页面结果到session state
-                st.session_state.current_page_results = page_results
+                # 保存填充后的页面结果到session state
+                st.session_state.current_page_results = filled_page_results
                 st.session_state.current_pages = pages
                 
                 # 自动执行PPT整合
@@ -1448,7 +1551,7 @@ def main():
                     from ppt_merger import merge_dify_templates_to_ppt_enhanced
                     status_text.text("🔗 正在整合PPT页面(增强格式保留)...")
                     progress_bar.progress(90)
-                    merge_result = merge_dify_templates_to_ppt_enhanced(page_results)
+                    merge_result = merge_dify_templates_to_ppt_enhanced(filled_page_results)
                     
                     # 整合PPT结果处理保持不变
                     

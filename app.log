@@ -879,3 +879,511 @@
 2025-08-29 09:56:24 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
 2025-08-29 09:56:24 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
 2025-08-29 09:56:26 - ppt_generator - ERROR - 自定义模板测试错误: Error code: 404 - {'error': {'code': 'InvalidEndpointOrModel.NotFound', 'message': 'The model or endpoint deepseek-v3 does not exist or you do not have access to it. Request id: 02175643258681264d058e651d4e36992a0815355aa97da2a37f7', 'param': '', 'type': 'NotFound'}}
+2025-08-29 10:01:09 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 10:01:09 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 10:01:09 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 10:01:09 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 10:01:09 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 10:01:09 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpcrqpgei7.pptx
+2025-08-29 10:01:09 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.04s
+2025-08-29 10:01:09 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 10:01:44 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 10:01:44 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 10:01:44 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 10:01:44 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 10:01:44 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 10:15:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 10:15:18 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 10:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 10:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 10:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 10:15:18 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp5f9x0793.pptx
+2025-08-29 10:15:18 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-29 10:15:18 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 10:15:43 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 10:15:43 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 10:15:43 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 10:15:43 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 10:15:43 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 10:42:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 10:42:18 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 10:42:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 10:42:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 10:42:18 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 10:42:18 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpafs_7orz.pptx
+2025-08-29 10:42:18 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-29 10:42:18 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 10:43:05 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 10:43:05 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 10:43:05 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 10:43:05 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 10:43:05 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 10:50:58 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 10:50:58 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 10:50:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 10:50:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 10:50:58 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 10:50:58 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpnotpjh5_.pptx
+2025-08-29 10:50:58 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-08-29 10:50:58 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 10:51:39 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 10:51:39 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 10:51:39 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 10:51:39 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 10:51:39 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 10:57:46 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 10:57:46 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 10:57:46 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 10:57:46 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 10:57:46 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 10:57:46 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpg7o4ubfr.pptx
+2025-08-29 10:57:46 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.09s
+2025-08-29 10:57:46 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 10:58:30 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 10:58:30 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 10:58:30 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 10:58:30 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary', 'bullet_1_content']
+2025-08-29 10:58:30 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 10:58:30 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 11:05:49 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 11:05:49 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 11:05:49 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 11:05:49 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 11:05:49 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 11:05:49 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpushw_5an.pptx
+2025-08-29 11:05:49 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-08-29 11:05:49 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 11:06:26 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 11:06:26 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 11:06:26 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 11:06:26 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content']
+2025-08-29 11:06:26 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 11:06:26 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 16:00:50 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 16:00:50 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 16:00:50 - ppt_generator - ERROR - 文件操作失败: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp0kuy8kzn.pptx 错误: type object 'PPTAnalyzer' has no attribute 'analyze_ppt_structure'
+2025-08-29 16:00:50 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.04s
+2025-08-29 16:03:21 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 16:03:21 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 16:03:21 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 16:03:21 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 16:03:21 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 16:03:21 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpd0u05lk8.pptx
+2025-08-29 16:03:21 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-08-29 16:03:21 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 16:03:50 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 16:03:50 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 16:03:50 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 16:03:50 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 16:03:50 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 21:17:54 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 21:17:54 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 21:17:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 21:17:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 21:17:55 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 21:17:55 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp8_kgbfp2.pptx
+2025-08-29 21:17:55 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-08-29 21:17:55 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 21:18:31 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 21:18:31 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 21:18:31 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 21:18:31 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 21:18:31 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 21:26:03 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 21:26:03 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 21:26:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 21:26:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 21:26:04 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 21:26:04 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp7l_no89l.pptx
+2025-08-29 21:26:04 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-29 21:26:04 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 21:26:36 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 21:26:36 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 21:26:36 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 21:26:36 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_summary', 'bullet_1_content', 'bullet_1_summary', 'bullet_1_content']
+2025-08-29 21:26:36 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 21:26:36 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 21:35:17 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 21:35:17 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 21:35:17 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 21:35:17 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 21:35:17 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 21:35:17 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpj9axnpkw.pptx
+2025-08-29 21:35:17 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-08-29 21:35:17 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 21:35:52 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 21:35:52 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 21:35:52 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 21:35:52 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 21:35:52 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 21:49:29 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 21:49:29 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 21:49:29 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 21:49:29 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 21:49:29 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 21:49:29 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpo9v9595n.pptx
+2025-08-29 21:49:29 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-29 21:49:29 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 21:50:02 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 21:50:02 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 21:50:02 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 21:50:02 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 21:50:02 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 21:57:39 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 21:57:39 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 21:57:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 21:57:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 21:57:39 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 21:57:39 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpbpzo7xkd.pptx
+2025-08-29 21:57:39 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-08-29 21:57:39 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 21:58:12 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 21:58:12 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 21:58:12 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 21:58:12 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 21:58:12 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 22:01:35 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 22:01:35 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 22:01:35 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 22:01:35 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 22:01:35 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 22:01:35 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp8u7j04qx.pptx
+2025-08-29 22:01:35 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-29 22:01:35 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 22:02:12 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 22:02:12 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 22:02:12 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 22:02:12 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 22:02:12 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 22:09:39 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 22:09:39 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 22:09:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 22:09:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 22:09:39 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 22:09:39 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmps0iflfkf.pptx
+2025-08-29 22:09:39 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-29 22:09:39 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 22:10:12 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 22:10:13 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 22:10:13 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 22:10:13 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 22:10:13 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 22:15:02 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 22:15:02 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 22:15:02 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 22:15:02 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 22:15:02 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 22:15:02 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpbxqepbni.pptx
+2025-08-29 22:15:02 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-08-29 22:15:02 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 22:15:39 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 22:15:39 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 22:15:39 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 22:15:39 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 22:15:39 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 22:22:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 22:22:26 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 22:22:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 22:22:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 22:22:26 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 22:22:26 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpb8hc9y0q.pptx
+2025-08-29 22:22:26 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-08-29 22:22:26 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 22:23:02 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 22:23:02 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 22:23:02 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 22:23:02 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 22:23:02 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-29 22:33:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-29 22:33:26 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-29 22:33:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-29 22:33:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-29 22:33:26 - ppt_generator - INFO - 开始提取位置信息
+2025-08-29 22:33:26 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpfh0_6yyj.pptx
+2025-08-29 22:33:26 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-08-29 22:33:26 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-29 22:33:58 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-29 22:33:58 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-29 22:33:58 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-29 22:33:58 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-29 22:33:58 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 20:34:25 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 1030
+2025-08-30 20:34:58 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 20:34:58 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 20:34:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 20:34:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 20:34:58 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 20:34:58 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmps4rjmv9x.pptx
+2025-08-30 20:34:58 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.13s
+2025-08-30 20:34:58 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 20:35:37 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 20:35:37 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 20:35:37 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 20:35:37 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 20:35:37 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 20:41:32 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 20:41:32 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 20:41:32 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 20:41:32 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 20:41:32 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 20:41:32 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp94v5vjgs.pptx
+2025-08-30 20:41:32 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-30 20:41:32 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 20:42:04 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 20:42:04 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 20:42:04 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 20:42:04 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 20:42:04 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 20:47:06 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 20:47:06 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 20:47:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 20:47:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 20:47:06 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 20:47:06 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpood2suyf.pptx
+2025-08-30 20:47:06 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-08-30 20:47:06 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 20:47:40 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 20:47:40 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 20:47:40 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 20:47:40 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 20:47:40 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 21:02:02 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 21:02:02 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 21:02:02 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 21:04:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 21:04:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 21:04:22 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 21:05:33 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 21:05:33 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 21:05:33 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 21:05:33 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 21:05:33 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 21:05:33 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpw3lw9ve0.pptx
+2025-08-30 21:05:33 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-30 21:05:33 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 21:06:07 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 21:06:07 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 21:06:07 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 21:06:07 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 21:06:07 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 21:10:00 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 21:10:00 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 21:10:00 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 21:10:00 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 21:10:00 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 21:10:00 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpskv6v6ru.pptx
+2025-08-30 21:10:00 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.11s
+2025-08-30 21:10:00 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 21:10:42 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 21:10:42 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 21:10:42 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 21:10:42 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 21:10:42 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 21:17:23 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 21:17:23 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 21:17:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 21:17:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 21:17:23 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 21:17:23 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp42lkytrb.pptx
+2025-08-30 21:17:23 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-30 21:17:23 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 21:18:00 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 21:18:00 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 21:18:00 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 21:18:00 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 21:18:00 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 21:28:00 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 21:28:00 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 21:28:00 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 21:28:00 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 21:28:00 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 21:28:00 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp788drddl.pptx
+2025-08-30 21:28:00 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-08-30 21:28:00 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 21:28:37 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 21:28:37 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 21:28:37 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 21:28:37 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 21:28:37 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 21:35:41 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 21:35:41 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 21:35:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 21:35:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 21:35:41 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 21:35:41 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmprxsh62_x.pptx
+2025-08-30 21:35:41 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-30 21:35:41 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 21:36:18 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 21:36:18 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 21:36:18 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 21:36:18 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 21:36:18 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 21:43:09 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 21:43:09 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 21:43:09 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 21:43:09 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 21:43:09 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 21:43:09 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp53rxag6s.pptx
+2025-08-30 21:43:09 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-08-30 21:43:09 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 21:43:49 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 21:43:49 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 21:43:49 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 21:43:49 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 21:43:49 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 22:22:12 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 22:22:12 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 22:22:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 22:22:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 22:22:12 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 22:22:12 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpbvy_ekdu.pptx
+2025-08-30 22:22:12 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.04s
+2025-08-30 22:22:12 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 22:22:48 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 22:22:48 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 22:22:48 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 22:22:48 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 22:22:48 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 22:28:29 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 22:28:29 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 22:28:29 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 22:28:29 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 22:28:29 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 22:28:29 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpuq5wm3t5.pptx
+2025-08-30 22:28:29 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-08-30 22:28:29 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 22:29:07 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 22:29:07 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 22:29:07 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 22:29:07 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_content']
+2025-08-30 22:29:07 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 22:29:07 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 22:34:11 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 22:34:11 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 22:34:11 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 22:34:11 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 22:34:11 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 22:34:11 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmptffcbssf.pptx
+2025-08-30 22:34:11 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.09s
+2025-08-30 22:34:11 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 22:34:47 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 22:34:47 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 22:34:47 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 22:34:47 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['bullet_1_content']
+2025-08-30 22:34:47 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 22:34:47 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 22:37:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 22:37:26 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 22:37:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 22:37:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 22:37:26 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 22:37:26 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp1_fujok9.pptx
+2025-08-30 22:37:26 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-08-30 22:37:26 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 22:38:01 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 22:38:02 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 22:38:02 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 22:38:02 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 22:38:02 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 23:08:36 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 118
+2025-08-30 23:08:45 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-30 23:08:45 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-30 23:08:45 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-30 23:08:45 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 45字符
+2025-08-30 23:08:45 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:08:45 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-30 23:08:45 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-30 23:09:04 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 18.79s)
+2025-08-30 23:09:04 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-30 23:09:04 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-30 23:09:04 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-30 23:09:04 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 18.81秒
+2025-08-30 23:09:04 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:09:04 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.79s, 健康分数0.73
+2025-08-30 23:09:04 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 33字符
+2025-08-30 23:09:04 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:09:04 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-30 23:09:16 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 11.89s)
+2025-08-30 23:09:16 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-30 23:09:16 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-30 23:09:16 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-30 23:09:16 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 11.92秒
+2025-08-30 23:09:16 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:09:16 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.79s, 健康分数0.73
+2025-08-30 23:09:16 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间11.89s, 健康分数0.73
+2025-08-30 23:09:16 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 29字符
+2025-08-30 23:09:16 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:09:16 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-30 23:09:30 - ppt_generator - INFO - 成功获取模板编号: 8 (响应时间: 13.82s)
+2025-08-30 23:09:30 - ppt_generator - INFO - Dify API返回模板编号: 8
+2025-08-30 23:09:30 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_8.pptx
+2025-08-30 23:09:30 - ppt_generator - INFO - 成功获取模板文件: split_presentations_8.pptx (920.9KB)
+2025-08-30 23:09:30 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 13.87秒
+2025-08-30 23:09:30 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:09:30 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.79s, 健康分数0.73
+2025-08-30 23:09:30 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间11.89s, 健康分数0.73
+2025-08-30 23:09:30 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间13.82s, 健康分数0.73
+2025-08-30 23:21:52 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 118
+2025-08-30 23:22:00 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-30 23:22:00 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-30 23:22:00 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-30 23:22:00 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 45字符
+2025-08-30 23:22:00 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:22:00 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-30 23:22:00 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-30 23:22:15 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 14.17s)
+2025-08-30 23:22:15 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-30 23:22:15 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-30 23:22:15 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-30 23:22:15 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.19秒
+2025-08-30 23:22:15 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:22:15 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.17s, 健康分数0.73
+2025-08-30 23:22:15 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 33字符
+2025-08-30 23:22:15 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:22:15 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-30 23:22:27 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 12.61s)
+2025-08-30 23:22:27 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-30 23:22:27 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-30 23:22:27 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-30 23:22:27 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.63秒
+2025-08-30 23:22:27 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:22:27 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.17s, 健康分数0.73
+2025-08-30 23:22:27 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间12.61s, 健康分数0.73
+2025-08-30 23:22:27 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 29字符
+2025-08-30 23:22:27 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:22:27 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-30 23:22:40 - ppt_generator - INFO - 成功获取模板编号: 8 (响应时间: 12.75s)
+2025-08-30 23:22:40 - ppt_generator - INFO - Dify API返回模板编号: 8
+2025-08-30 23:22:40 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_8.pptx
+2025-08-30 23:22:40 - ppt_generator - INFO - 成功获取模板文件: split_presentations_8.pptx (920.9KB)
+2025-08-30 23:22:40 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.77秒
+2025-08-30 23:22:40 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:22:40 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.17s, 健康分数0.73
+2025-08-30 23:22:40 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间12.61s, 健康分数0.73
+2025-08-30 23:22:40 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间12.75s, 健康分数0.73
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:22:40 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:22:42 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(5页)智能选择合并器
+2025-08-30 23:22:42 - ppt_generator - INFO - 页面数量5页(≤10页)，使用Spire.Presentation合并器
+2025-08-30 23:22:42 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并5个模板页面
+2025-08-30 23:22:44 - ppt_generator - INFO - 使用第一个模板作为基础: title_slides_filled_1.pptx
+2025-08-30 23:22:44 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10_filled_3.pptx
+2025-08-30 23:22:44 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10_filled_4.pptx
+2025-08-30 23:22:44 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_8_filled_5.pptx
+2025-08-30 23:22:45 - ppt_generator - INFO - 使用AppendBySlide合并: ending_slides_filled_5.pptx
+2025-08-30 23:22:45 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250830_232245.pptx
+2025-08-30 23:22:45 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 0页
+2025-08-30 23:22:45 - ppt_generator - INFO - Spire合并成功

@@ -1,5 +1,6 @@
 # 环境变量文件
 .env
+.env.example
 .env.local
 .env.*.local
 

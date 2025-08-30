@@ -62,7 +62,9 @@ class PPTAnalyzer:
                                     "shape": shape,
                                     "original_text": current_text,
                                     "placeholder": placeholder,
-                                    "all_placeholders": placeholders  # 记录同一文本框中的所有占位符
+                                    "all_placeholders": placeholders,  # 记录同一文本框中的所有占位符
+                                    "type": "text_shape",  # 标识为文本框
+                                    "text": current_text  # 添加文本内容用于调试
                                 }
                         
                         # 如果是简短文本且没有占位符，可能是标题
@@ -1131,65 +1133,34 @@ class PPTProcessor:
         return results
     
     def _replace_placeholders_in_shape_batch(self, assignments: List[Dict]) -> bool:
-        """批量处理同一个文本框/表格单元格中的多个占位符，避免重复刷新"""
+        """逐个处理占位符，每个占位符单独替换并应用格式"""
         if not assignments:
             return False
             
         try:
-            # 获取第一个分配来确定处理类型
-            first_assignment = assignments[0]
-            slide_index = first_assignment.get('slide_index', 0)
-            placeholder = first_assignment.get('placeholder', '')
-            
-            # 获取占位符信息
-            slide_info = self.ppt_structure['slides'][slide_index]
-            placeholder_info = slide_info['placeholders'][placeholder]
-            shape_type = placeholder_info.get('type', 'text_box')
-            
-            if shape_type == 'table_cell':
-                # 处理表格单元格（通常每个单元格只有一个占位符）
-                for assignment in assignments:
-                    placeholder = assignment.get('placeholder', '')
-                    content = assignment.get('content', '')
-                    placeholder_info = slide_info['placeholders'][placeholder]
-                    success = self._replace_placeholder_in_table_cell(placeholder_info, content)
-                    if not success:
-                        return False
-                return True
-            else:
-                # 处理文本框 - 批量替换所有占位符
-                shape = placeholder_info['shape']
-                current_text = shape.text if hasattr(shape, 'text') else ""
+            # 逐个处理每个占位符
+            for assignment in assignments:
+                slide_index = assignment.get('slide_index', 0)
+                placeholder = assignment.get('placeholder', '')
+                content = assignment.get('content', '')
                 
-                print(f"批量替换文本框中的{len(assignments)}个占位符")
-                print(f"原文本: '{current_text}'")
+                # 获取占位符信息
+                slide_info = self.ppt_structure['slides'][slide_index]
+                if placeholder not in slide_info['placeholders']:
+                    continue
+                    
+                placeholder_info = slide_info['placeholders'][placeholder]
                 
-                # 创建替换映射
-                replacements = {}
-                for assignment in assignments:
-                    placeholder_name = assignment.get('placeholder', '')
-                    content = assignment.get('content', '')
-                    replacements[f"{{{placeholder_name}}}"] = content
-                
-                # 执行批量替换
-                updated_text = current_text
-                for placeholder_pattern, new_content in replacements.items():
-                    if placeholder_pattern in updated_text:
-                        updated_text = updated_text.replace(placeholder_pattern, new_content)
-                    else:
-                        print(f"警告: 占位符 {placeholder_pattern} 在文本中未找到")
-                
-                print(f"更新后: '{updated_text}'")
-                
-                # 一次性更新文本框内容
-                if updated_text != current_text:
-                    shape.text = updated_text
-                    return True
-                else:
+                # 使用统一的占位符替换方法（已经支持表格和文本框）
+                success = self._replace_placeholder_in_slide_with_cached_format(placeholder_info, content)
+                if not success:
+                    print(f"占位符{placeholder}替换失败")
                     return False
                     
+            return True
+                
         except Exception as e:
-            print(f"批量替换占位符时出错: {e}")
+            print(f"逐个替换占位符时出错: {e}")
             return False
     
     def _clear_format_cache(self):
@@ -1222,10 +1193,16 @@ class PPTProcessor:
                         
                         # 只有在还没有缓存格式时才提取
                         if 'cached_format' not in placeholder_info:
-                            format_info = self._extract_text_format(placeholder_info['shape'])
+                            # 根据占位符类型选择正确的容器
+                            container = placeholder_info.get('cell') if placeholder_info.get('type') == 'table_cell' else placeholder_info.get('shape')
+                            format_info = self._extract_placeholder_format(container, placeholder)
                             placeholder_info['cached_format'] = format_info
                             cached_count += 1
-                            print(f"   缓存格式: 第{slide_index+1}页 {{{placeholder}}} - 字体:{format_info.get('font_name', 'None')}, 大小:{format_info.get('font_size', 'None')}")
+                            font_size = format_info.get('font_size')
+                            if font_size is not None:
+                                font_size = float(font_size.pt) if hasattr(font_size, 'pt') else font_size
+                            font_color = format_info.get('font_color', 'None')
+                            print(f"   缓存格式: 第{slide_index+1}页 {{{placeholder}}} - 字体:{format_info.get('font_name', 'None')}, 大小:{font_size}, 颜色:{font_color}")
         
         print(f"格式缓存完成，共缓存{cached_count}个占位符的格式信息")
     
@@ -1430,9 +1407,7 @@ class PPTProcessor:
             # 执行文本替换
             updated_text = current_text.replace(placeholder_pattern, new_content, 1)
             
-            print(f"替换占位符: {placeholder_pattern}")
-            print(f"原文本: '{current_text}'")
-            print(f"更新后: '{updated_text}'")
+            print(f"替换占位符: {placeholder_pattern} -> '{new_content}'")
             
             # 保持格式的文本替换
             if hasattr(shape, "text_frame") and shape.text_frame:
@@ -1469,10 +1444,7 @@ class PPTProcessor:
             # 执行文本替换
             updated_text = current_text.replace(placeholder_pattern, new_content, 1)
             
-            print(f"替换表格占位符: {placeholder_pattern}")
-            print(f"位置: 行{row_idx+1}, 列{col_idx+1}")
-            print(f"原文本: '{current_text}'")
-            print(f"更新后: '{updated_text}'")
+            print(f"替换占位符: {placeholder_pattern} -> '{new_content}'")
             
             # 直接替换单元格文本
             cell.text = updated_text
@@ -1484,46 +1456,282 @@ class PPTProcessor:
             return False
     
     def _replace_placeholder_in_slide_with_cached_format(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
-        """使用预先缓存的格式信息替换占位符"""
+        """使用预先缓存的格式信息替换占位符 - 统一使用shape级别处理"""
         try:
             placeholder_name = placeholder_info['placeholder']
             
-            # 判断是表格单元格还是普通文本框
+            # 统一使用shape级别处理所有占位符类型
+            # 根据用户反馈：正确填充的级别都是shape，不正确的都是run
             if placeholder_info.get('type') == 'table_cell':
-                # 表格单元格暂时使用简单替换（可以后续扩展格式支持）
-                return self._replace_placeholder_in_table_cell(placeholder_info, new_content)
-            
-            shape = placeholder_info['shape']
-            cached_format = placeholder_info.get('cached_format', {})
-            
-            # 检查当前文本框的实际内容
-            current_text = shape.text if hasattr(shape, 'text') else ""
-            
-            # 构建要替换的占位符模式
-            placeholder_pattern = f"{{{placeholder_name}}}"
-            
-            if placeholder_pattern not in current_text:
-                print(f"占位符 {placeholder_pattern} 在文本 '{current_text}' 中未找到")
-                return False
-            
-            # 执行文本替换
-            updated_text = current_text.replace(placeholder_pattern, new_content, 1)
-            
-            print(f"替换占位符: {placeholder_pattern}")
-            print(f"原文本: '{current_text}'")
-            print(f"更新后: '{updated_text}'")
-            
-            # 使用缓存的格式信息应用文本
-            if hasattr(shape, "text_frame") and shape.text_frame:
-                return self._apply_text_with_cached_format(shape, updated_text, cached_format)
+                # 表格单元格也使用shape级别的处理逻辑
+                return self._replace_single_placeholder_in_table_cell(placeholder_info, new_content)
             else:
-                # 直接设置text属性（备用方案）
-                shape.text = updated_text
-                return True
+                # 文本框占位符统一使用shape级别处理
+                return self._replace_single_placeholder_in_shape(placeholder_info, new_content)
                 
         except Exception as e:
             print("替换占位符时出错: %s", str(e))
             return False
+    
+    def _replace_single_placeholder_in_table_cell(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
+        """在表格单元格中替换单个占位符，应用缓存的格式"""
+        try:
+            cell = placeholder_info['cell']
+            placeholder_pattern = f"{{{placeholder_info['placeholder']}}}"
+            cached_format = placeholder_info.get('cached_format', {})
+            
+            # 直接在单元格文本中替换
+            current_text = cell.text
+            if placeholder_pattern not in current_text:
+                return False
+            
+            updated_text = current_text.replace(placeholder_pattern, new_content, 1)
+            cell.text = updated_text
+            
+            # 应用格式到单元格的文本框
+            if cached_format and hasattr(cell, 'text_frame') and cell.text_frame:
+                self._apply_format_to_cell(cell, cached_format)
+                # 输出替换和格式应用信息
+                font_size = cached_format.get('font_size', 'None')
+                font_color = cached_format.get('font_color', 'None')
+                print(f"替换占位符: {placeholder_pattern} -> '{new_content}' - 字体:{cached_format.get('font_name', 'None')}, 大小:{font_size}, 颜色:{font_color}")
+            else:
+                print(f"替换占位符: {placeholder_pattern} -> '{new_content}'")
+            
+            return True
+            
+        except Exception as e:
+            print(f"表格占位符替换失败: {e}")
+            return False
+    
+    def _replace_single_placeholder_in_run(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
+        """在run中替换单个占位符，保持run的格式"""
+        try:
+            run = placeholder_info['run']
+            placeholder_pattern = f"{{{placeholder_info['placeholder']}}}"
+            cached_format = placeholder_info.get('cached_format', {})
+            
+            # 在run文本中替换
+            if placeholder_pattern not in run.text:
+                return False
+            
+            run.text = run.text.replace(placeholder_pattern, new_content, 1)
+            
+            # 应用格式到run
+            if cached_format:
+                self._apply_format_to_run(run, cached_format)
+            
+            return True
+            
+        except Exception as e:
+            print(f"Run级占位符替换失败: {e}")
+            return False
+    
+    def _replace_single_placeholder_in_shape(self, placeholder_info: Dict[str, Any], new_content: str) -> bool:
+        """在文本框形状中替换单个占位符，保持其他占位符不变"""
+        print(f"DEBUG: 进入_replace_single_placeholder_in_shape方法")
+        try:
+            shape = placeholder_info['shape']
+            placeholder_pattern = f"{{{placeholder_info['placeholder']}}}"
+            cached_format = placeholder_info.get('cached_format', {})
+            
+            # 在runs级别进行替换，保持格式
+            if hasattr(shape, 'text_frame') and shape.text_frame:
+                for paragraph in shape.text_frame.paragraphs:
+                    for run in paragraph.runs:
+                        if placeholder_pattern in run.text:
+                            # 保存原始格式，然后替换文本
+                            original_font = run.font
+                            original_name = original_font.name
+                            original_size = original_font.size
+                            original_bold = original_font.bold
+                            original_italic = original_font.italic
+                            original_color = original_font.color
+                            
+                            # 在包含占位符的run中替换文本
+                            run.text = run.text.replace(placeholder_pattern, new_content, 1)
+                            
+                            # 立即重新应用该占位符的缓存格式
+                            if cached_format:
+                                self._apply_format_to_run(run, cached_format)
+                                # 验证格式是否真的被应用  
+                                print(f"    格式已应用到run")
+                                
+                            # 输出替换和格式应用信息
+                            font_size = cached_format.get('font_size', 'None') if cached_format else 'None'
+                            font_color = cached_format.get('font_color', 'None') if cached_format else 'None'
+                            font_name = cached_format.get('font_name', 'None') if cached_format else 'None'
+                            print(f"替换占位符: {placeholder_pattern} -> '{new_content}' - 字体:{font_name}, 大小:{font_size}, 颜色:{font_color}")
+                            
+                            return True
+            
+            # 如果runs级别替换失败，使用shape级别替换作为备用
+            current_text = shape.text if hasattr(shape, 'text') else ""
+            if placeholder_pattern in current_text:
+                updated_text = current_text.replace(placeholder_pattern, new_content, 1)
+                shape.text = updated_text
+                
+                # 对整个文本框应用格式
+                if cached_format and hasattr(shape, 'text_frame') and shape.text_frame:
+                    self._apply_format_to_shape_text(shape, cached_format, new_content)
+                    # 输出替换和格式应用信息
+                    font_size = cached_format.get('font_size', 'None')
+                    font_color = cached_format.get('font_color', 'None')
+                    print(f"替换占位符: {placeholder_pattern} -> '{new_content}' - 字体:{cached_format.get('font_name', 'None')}, 大小:{font_size}, 颜色:{font_color}")
+                else:
+                    print(f"替换占位符: {placeholder_pattern} -> '{new_content}'")
+                
+                return True
+            
+            return False
+            
+        except Exception as e:
+            print(f"Shape级占位符替换失败: {e}")
+            return False
+    
+    def _apply_format_to_cell(self, cell, format_info: Dict[str, Any]):
+        """应用格式到表格单元格"""
+        try:
+            from pptx.util import Pt
+            from pptx.dml.color import RGBColor
+            if hasattr(cell, 'text_frame') and cell.text_frame:
+                for paragraph in cell.text_frame.paragraphs:
+                    font = paragraph.font
+                    if format_info.get('font_name'):
+                        font.name = format_info['font_name']
+                    if format_info.get('font_size'):
+                        font.size = Pt(format_info['font_size'])
+                    if format_info.get('font_bold') is not None:
+                        font.bold = format_info['font_bold']
+                    if format_info.get('font_italic') is not None:
+                        font.italic = format_info['font_italic']
+                    if format_info.get('font_color'):
+                        try:
+                            color_str = format_info['font_color']
+                            if color_str.startswith('theme_'):
+                                theme_color_id = int(color_str.replace('theme_', ''))
+                                font.color.theme_color = theme_color_id
+                            elif color_str and len(color_str) == 6 and all(c in '0123456789ABCDEFabcdef' for c in color_str):
+                                # 应用十六进制颜色
+                                r = int(color_str[0:2], 16)
+                                g = int(color_str[2:4], 16)
+                                b = int(color_str[4:6], 16)
+                                font.color.rgb = RGBColor(r, g, b)
+                            elif 'RGB(' in color_str:
+                                rgb_values = color_str.replace('RGB(', '').replace(')', '').split(', ')
+                                if len(rgb_values) == 3:
+                                    r, g, b = map(int, rgb_values)
+                                    font.color.rgb = RGBColor(r, g, b)
+                        except Exception:
+                            pass
+        except Exception as e:
+            print(f"应用单元格格式失败: {e}")
+    
+    def _apply_format_to_run(self, run, format_info: Dict[str, Any]):
+        """应用格式到run"""
+        try:
+            from pptx.util import Pt
+            from pptx.dml.color import RGBColor
+            font = run.font
+            print(f"      应用格式 - 字体:{format_info.get('font_name')}, 大小:{format_info.get('font_size')}, 颜色:{format_info.get('font_color')}")
+            
+            if format_info.get('font_name'):
+                font.name = format_info['font_name']
+                print(f"      设置字体名称: {format_info['font_name']}")
+            if format_info.get('font_size'):
+                font.size = Pt(format_info['font_size'])
+                print(f"      设置字体大小: {format_info['font_size']}pt")
+            if format_info.get('font_bold') is not None:
+                font.bold = format_info['font_bold']
+            if format_info.get('font_italic') is not None:
+                font.italic = format_info['font_italic']
+            if format_info.get('font_color'):
+                try:
+                    color_str = format_info['font_color']
+                    print(f"      尝试应用颜色: {color_str}")
+                    if color_str.startswith('theme_'):
+                        # 应用主题颜色
+                        theme_color_id = int(color_str.replace('theme_', ''))
+                        font.color.theme_color = theme_color_id
+                        print(f"      应用主题颜色: {theme_color_id}")
+                    elif color_str and len(color_str) == 6 and all(c in '0123456789ABCDEFabcdef' for c in color_str):
+                        # 应用十六进制颜色
+                        r = int(color_str[0:2], 16)
+                        g = int(color_str[2:4], 16)
+                        b = int(color_str[4:6], 16)
+                        font.color.rgb = RGBColor(r, g, b)
+                        print(f"      应用十六进制颜色: #{color_str} = RGB({r},{g},{b})")
+                    elif 'RGB(' in color_str:
+                        # 应用RGB颜色
+                        rgb_values = color_str.replace('RGB(', '').replace(')', '').split(', ')
+                        if len(rgb_values) == 3:
+                            r, g, b = map(int, rgb_values)
+                            font.color.rgb = RGBColor(r, g, b)
+                            print(f"      应用RGB颜色: RGB({r},{g},{b})")
+                except Exception as e:
+                    print(f"      颜色应用失败: {e}")
+        except Exception as e:
+            print(f"应用run格式失败: {e}")
+    
+    def _apply_format_to_shape_text(self, shape, format_info: Dict[str, Any], new_content: str):
+        """应用格式到文本框中替换的内容"""
+        try:
+            from pptx.util import Pt
+            from pptx.dml.color import RGBColor
+            if hasattr(shape, 'text_frame') and shape.text_frame:
+                # 直接对整个文本框的所有runs应用格式（因为shape.text替换会重建runs结构）
+                for paragraph in shape.text_frame.paragraphs:
+                    for run in paragraph.runs:
+                        # 对所有runs应用格式，确保替换后的内容有正确格式
+                        font = run.font
+                        if format_info.get('font_name'):
+                            font.name = format_info['font_name']
+                        if format_info.get('font_size'):
+                            font.size = Pt(format_info['font_size'])
+                        if format_info.get('font_bold') is not None:
+                            font.bold = format_info['font_bold']
+                        if format_info.get('font_italic') is not None:
+                            font.italic = format_info['font_italic']
+                        if format_info.get('font_color'):
+                            try:
+                                color_str = format_info['font_color']
+                                if color_str.startswith('theme_'):
+                                    theme_color_id = int(color_str.replace('theme_', ''))
+                                    font.color.theme_color = theme_color_id
+                                elif color_str and len(color_str) == 6 and all(c in '0123456789ABCDEFabcdef' for c in color_str):
+                                    # 应用十六进制颜色
+                                    r = int(color_str[0:2], 16)
+                                    g = int(color_str[2:4], 16)
+                                    b = int(color_str[4:6], 16)
+                                    font.color.rgb = RGBColor(r, g, b)
+                                elif 'RGB(' in color_str:
+                                    rgb_values = color_str.replace('RGB(', '').replace(')', '').split(', ')
+                                    if len(rgb_values) == 3:
+                                        r, g, b = map(int, rgb_values)
+                                        font.color.rgb = RGBColor(r, g, b)
+                            except Exception:
+                                pass
+        except Exception as e:
+            print(f"应用文本框格式失败: {e}")
+
+    def _apply_cached_format_to_shape(self, shape, cached_format: Dict[str, Any]):
+        """将缓存的格式应用到shape的所有文本"""
+        try:
+            from pptx.util import Pt
+            if hasattr(shape, 'text_frame') and shape.text_frame:
+                for paragraph in shape.text_frame.paragraphs:
+                    font = paragraph.font
+                    if cached_format.get('font_name'):
+                        font.name = cached_format['font_name']
+                    if cached_format.get('font_size'):
+                        font.size = Pt(cached_format['font_size'])
+                        print(f"      应用字体大小: {cached_format['font_size']}pt")
+                    if cached_format.get('font_bold') is not None:
+                        font.bold = cached_format['font_bold']
+                    if cached_format.get('font_italic') is not None:
+                        font.italic = cached_format['font_italic']
+        except Exception as e:
+            print(f"应用缓存格式失败: {e}")
     
     def _apply_text_with_cached_format(self, shape, text: str, format_info: Dict[str, Any]) -> bool:
         """使用缓存的格式信息应用文本"""
@@ -1618,6 +1826,84 @@ class PPTProcessor:
             print(f"应用缓存格式时出错: {str(e)}")
             return False
     
+    def _extract_placeholder_format(self, container, placeholder_name: str) -> Dict[str, Any]:
+        """以占位符为单元提取格式信息 - 通用文本扫描"""
+        format_info = {
+            'font_name': None,
+            'font_size': None,
+            'font_bold': False,
+            'font_italic': False,
+            'font_color': None
+        }
+        
+        def scan_text_frame(text_frame):
+            """扫描任何text_frame中的占位符格式"""
+            placeholder_pattern = f"{{{placeholder_name}}}"
+            for paragraph in text_frame.paragraphs:
+                for run in paragraph.runs:
+                    if placeholder_pattern in run.text:
+                        # 找到包含占位符的run，提取其格式
+                        font = run.font
+                        font_size = font.size.pt if font.size else None
+                        font_color = None
+                        if font.color:
+                            try:
+                                if hasattr(font.color, 'rgb') and font.color.rgb:
+                                    font_color = str(font.color.rgb)
+                                elif hasattr(font.color, 'theme_color') and font.color.theme_color is not None:
+                                    font_color = f"theme_{font.color.theme_color}"
+                            except Exception:
+                                pass
+                        return {
+                            'font_name': font.name,
+                            'font_size': font_size,
+                            'font_bold': font.bold,
+                            'font_italic': font.italic,
+                            'font_color': font_color
+                        }
+            # 如果没找到，返回第一个run的格式作为默认
+            if text_frame.paragraphs and text_frame.paragraphs[0].runs:
+                first_run = text_frame.paragraphs[0].runs[0]
+                font = first_run.font
+                font_size = font.size.pt if font.size else None
+                font_color = None
+                if font.color:
+                    try:
+                        if hasattr(font.color, 'rgb') and font.color.rgb:
+                            font_color = str(font.color.rgb)
+                        elif hasattr(font.color, 'theme_color') and font.color.theme_color is not None:
+                            font_color = f"theme_{font.color.theme_color}"
+                    except Exception:
+                        pass
+                return {
+                    'font_name': font.name,
+                    'font_size': font_size,
+                    'font_bold': font.bold,
+                    'font_italic': font.italic,
+                    'font_color': font_color
+                }
+            return format_info
+        
+        try:
+            # 通用扫描：任何有text_frame的对象
+            if hasattr(container, 'text_frame') and container.text_frame:
+                format_info.update(scan_text_frame(container.text_frame))
+            # 如果是表格等复杂对象，递归扫描
+            elif hasattr(container, 'table'):
+                # 表格：扫描所有单元格
+                for row in container.table.rows:
+                    for cell in row.cells:
+                        if hasattr(cell, 'text_frame') and cell.text_frame:
+                            result = scan_text_frame(cell.text_frame)
+                            if result['font_name'] or result['font_size']:
+                                format_info.update(result)
+                                break
+            
+        except Exception as e:
+            print(f"提取占位符{placeholder_name}格式失败: {e}")
+        
+        return format_info
+
     def _extract_text_format(self, shape) -> Dict[str, Any]:
         """提取文本框的格式信息"""
         format_info = {
@@ -1652,8 +1938,6 @@ class PPTProcessor:
                 format_info['margin_bottom'] = text_frame.margin_bottom
                 format_info['vertical_anchor'] = text_frame.vertical_anchor
                 
-                # 调试信息：打印文本框的基本信息
-                print(f"文本框分析 - 形状类型: {format_info['shape_type']}, 段落数: {len(text_frame.paragraphs) if text_frame.paragraphs else 0}")
                 
                 # 从第一个段落提取格式
                 if text_frame.paragraphs:
@@ -1687,7 +1971,6 @@ class PPTProcessor:
                         format_info['font_bold'] = font.bold
                         format_info['font_italic'] = font.italic
                         
-                        print(f"   📝 Runs格式 - 字体: {font.name}, 大小: {font.size}, 粗体: {font.bold}, 斜体: {font.italic}")
                         
                         # 特殊处理：如果runs中没有字体信息，尝试从其他runs获取
                         if not font.name or not font.size:

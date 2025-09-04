@@ -294,9 +294,7 @@ class AIPageSplitter:
         """调用GPT-5 Responses API进行文本分析"""
         from openai import OpenAI
         
-        client = OpenAI(
-            api_key="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"
-        )
+        client = OpenAI()
         
         # 组合系统提示和用户文本
         full_input = f"{system_prompt}\n\n用户文本：\n{user_text}"

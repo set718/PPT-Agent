@@ -30,9 +30,11 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 import json
 import re
+from typing import Dict, List, Any, Optional
 from config import get_config
 from utils import AIProcessor, PPTProcessor, FileManager, PPTAnalyzer
 from logger import get_logger, log_user_action, log_file_operation, LogContext
+from table_text_filler import TableTextFiller, TableTextProcessor
 
 # 依赖检查和安装函数
 def check_dependencies_light():
@@ -408,6 +410,197 @@ class UserPPTGenerator:
         
         log_user_action("用户界面AI文本分析", f"文本长度: {len(user_text)}字符")
         return self.ai_processor.analyze_text_for_ppt(user_text, self.ppt_structure)
+    
+    def process_text_with_openai_enhanced(self, user_text):
+        """使用增强的数字提取逻辑分析文本并填入PPT模板占位符"""
+        if not self.ppt_structure:
+            return {"assignments": []}
+        
+        log_user_action("用户界面增强AI文本分析", f"文本长度: {len(user_text)}字符")
+        
+        # 预处理：提取文本中的数字信息
+        extracted_data = self._extract_numbers_and_data(user_text)
+        
+        # 使用专门的数字感知AI提示
+        return self._analyze_text_with_number_extraction(user_text, extracted_data)
+    
+    def _extract_numbers_and_data(self, text: str):
+        """从文本中提取数字和结构化数据"""
+        import re
+        
+        extracted = {
+            'numbers': [],          # 纯数字
+            'percentages': [],      # 百分比
+            'currencies': [],       # 货币/价格
+            'dates': [],           # 日期
+            'measurements': [],     # 尺寸/度量
+            'ratios': [],          # 比例/分数
+            'key_value_pairs': []   # 键值对
+        }
+        
+        lines = text.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            
+            # 提取百分比
+            percentages = re.findall(r'(\d+(?:\.\d+)?[%％])', line)
+            extracted['percentages'].extend(percentages)
+            
+            # 提取货币/价格
+            currencies = re.findall(r'(\d+(?:\.\d+)?(?:元|美元|USD|\$|￥))', line)
+            extracted['currencies'].extend(currencies)
+            
+            # 提取日期
+            dates = re.findall(r'(\d{4}年\d{1,2}月|\d{1,2}/\d{1,2}/\d{4}|\d{4}-\d{1,2}-\d{1,2})', line)
+            extracted['dates'].extend(dates)
+            
+            # 提取尺寸/度量
+            measurements = re.findall(r'(\d+(?:\.\d+)?(?:英寸|寸|cm|mm|米|MB|GB|TB))', line)
+            extracted['measurements'].extend(measurements)
+            
+            # 提取纯数字（不包括已经匹配的特殊格式）
+            pure_numbers = re.findall(r'\b(\d+(?:\.\d+)?)\b', line)
+            # 过滤掉已经在其他类别中的数字
+            for num in pure_numbers:
+                if not any(num in item for item_list in [extracted['percentages'], extracted['currencies'], 
+                          extracted['dates'], extracted['measurements']] for item in item_list):
+                    extracted['numbers'].append(num)
+            
+            # 提取键值对
+            if ':' in line or '：' in line:
+                parts = re.split(r'[:：]', line, 1)
+                if len(parts) == 2:
+                    key = parts[0].strip()
+                    value = parts[1].strip()
+                    extracted['key_value_pairs'].append({'key': key, 'value': value})
+        
+        return extracted
+    
+    def _analyze_text_with_number_extraction(self, user_text: str, extracted_data):
+        """使用数字提取信息进行AI分析"""
+        # 构建专门的数字感知系统提示
+        system_prompt = self._build_number_aware_prompt(extracted_data)
+        
+        # 创建PPT结构描述
+        ppt_description = self.ai_processor._create_ppt_description(self.ppt_structure)
+        
+        # 组合完整提示
+        full_prompt = f"{system_prompt}\n\n{ppt_description}\n\n用户原始文本：\n{user_text}"
+        
+        try:
+            # 确保AI客户端已初始化
+            self.ai_processor._ensure_client()
+            
+            # 调用AI进行分析
+            model_info = self.ai_processor.config.get_model_info()
+            
+            if model_info.get('request_format') == 'dify_compatible':
+                content = self.ai_processor._call_liai_api(system_prompt, f"{ppt_description}\n\n{user_text}")
+            else:
+                actual_model = model_info.get('actual_model', self.ai_processor.config.ai_model)
+                
+                response = self.ai_processor.client.chat.completions.create(
+                    model=actual_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": f"{ppt_description}\n\n用户文本：\n{user_text}"}
+                    ],
+                    temperature=0.3,
+                    max_tokens=4000,
+                    stream=True
+                )
+                
+                content = ""
+                for chunk in response:
+                    if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
+                        content += chunk.choices[0].delta.content
+                
+                content = content.strip() if content else ""
+            
+            # 解析AI返回结果
+            return self.ai_processor._extract_json_from_response(content, user_text)
+            
+        except Exception as e:
+            log_user_action("数字感知AI分析失败", str(e))
+            return {"error": f"AI分析失败: {str(e)}"}
+    
+    def _build_number_aware_prompt(self, extracted_data):
+        """构建数字感知的AI提示"""
+        prompt = """你是一个专业的PPT内容分配专家，特别擅长处理数字和数据信息。你的任务是将用户文本智能分配到PPT模板的占位符中，并特别注意数字的精确提取和分配。
+
+**核心原则：**
+1. **数字优先**：识别并单独提取所有数字信息，避免将包含数字的整段文本填入通用占位符
+2. **精确匹配**：根据占位符名称推断应该填入的具体数据类型
+3. **数据分离**：将数字、文本描述、标题等分别处理
+4. **逻辑分配**：确保每个占位符得到最合适的内容
+
+**数字处理规则：**
+- 如果占位符名称包含"价格"、"金额"、"费用"等，优先填入货币数字
+- 如果占位符名称包含"百分比"、"比例"、"率"等，优先填入百分比数字
+- 如果占位符名称包含"数量"、"个数"、"量"等，优先填入纯数字
+- 如果占位符名称包含"尺寸"、"大小"、"长度"等，优先填入度量数字
+- 如果占位符名称包含"日期"、"时间"等，优先填入日期信息
+
+**内容分配策略：**
+- {标题}、{名称}、{title} -> 填入主要标题或名称文本（不包含数字）
+- {内容}、{描述}、{content} -> 填入描述性文本（移除已单独提取的数字）
+- {价格}、{金额}、{cost} -> 填入提取的货币数字
+- {百分比}、{比例}、{percent} -> 填入百分比数字
+- {数量}、{quantity}、{count} -> 填入纯数字
+- {日期}、{时间}、{date} -> 填入日期信息"""
+        
+        # 添加提取到的数字信息
+        if extracted_data:
+            prompt += "\n\n**已提取的数字信息：**\n"
+            
+            if extracted_data['numbers']:
+                prompt += f"- 纯数字: {', '.join(extracted_data['numbers'])}\n"
+            if extracted_data['percentages']:
+                prompt += f"- 百分比: {', '.join(extracted_data['percentages'])}\n"
+            if extracted_data['currencies']:
+                prompt += f"- 货币/价格: {', '.join(extracted_data['currencies'])}\n"
+            if extracted_data['dates']:
+                prompt += f"- 日期: {', '.join(extracted_data['dates'])}\n"
+            if extracted_data['measurements']:
+                prompt += f"- 度量/尺寸: {', '.join(extracted_data['measurements'])}\n"
+            if extracted_data['key_value_pairs']:
+                prompt += f"- 键值对: {len(extracted_data['key_value_pairs'])}组\n"
+        
+        prompt += """
+
+**重要要求：**
+1. 数字信息必须单独提取，不要将"价格999元的手机"整体填入{content}，而是将"999元"填入{价格}，"手机"相关描述填入{content}
+2. 优先根据占位符名称的语义匹配对应的数据类型
+3. 如果同一类型有多个数字，优先使用最相关或最重要的
+4. 描述性占位符只填入文本内容，不包含已单独提取的数字
+
+请严格按照以下JSON格式返回分配方案：
+
+```json
+{
+  "assignments": [
+    {
+      "action": "replace_placeholder",
+      "slide_index": 0,
+      "placeholder": "占位符名称",
+      "content": "填充内容",
+      "reason": "分配理由"
+    }
+  ]
+}
+```
+
+**字段说明：**
+- action: 固定为 "replace_placeholder"
+- slide_index: 幻灯片索引（从0开始）
+- placeholder: 占位符名称（不包含大括号）
+- content: 要填充的内容
+- reason: 选择此内容的理由"""
+        
+        return prompt
     
     def apply_text_assignments(self, assignments, user_text: str = ""):
         """根据分配方案替换PPT模板中的占位符，并将原始文本添加到备注"""
@@ -1010,7 +1203,7 @@ def main():
     # 功能选择选项卡
     st.markdown("---")
     # 仅保留核心入口功能
-    tab1, tab3, tab_format = st.tabs(["🎨 智能PPT生成", "🧪 自定义模板测试", "🔍 PPT格式读取展示"])
+    tab1, tab3, tab_table, tab_format = st.tabs(["🎨 智能PPT生成", "🧪 自定义模板测试", "📊 表格文本填充", "🔍 PPT格式读取展示"])
     
     with tab1:
         # 智能PPT生成功能 - AI分页 + 模板匹配
@@ -2105,6 +2298,365 @@ def main():
                 """)
             
             st.markdown('<div class="warning-box">💡 <strong>提示：</strong> 请确保您的PPT模板中包含形如 {标题}、{内容}、{要点}、{作者}、{日期}、{描述} 等占位符。AI将根据占位符的名称自动理解其含义并智能分配相应的内容。支持所有{}格式的占位符，包括文本框和表格单元格中的占位符。</div>', unsafe_allow_html=True)
+    
+    with tab_table:
+        # 数字智能提取填充功能
+        st.markdown("### 📊 数字智能提取填充")
+        
+        st.markdown('<div class="info-box">🎯 <strong>功能说明</strong><br>专门用于处理包含数字信息的文本填充。AI会特别关注并提取所有数字（价格、百分比、尺寸、日期等），将数字单独填充到对应的占位符中，而不是将包含数字的整段文本都填入{content}等通用占位符。</div>', unsafe_allow_html=True)
+        
+        # 模板上传区域
+        st.markdown("#### 📁 上传您的PPT模板")
+        
+        table_uploaded_file = st.file_uploader(
+            "选择您的PPT模板文件",
+            type=['pptx'],
+            help="请上传.pptx格式的PPT模板文件，建议文件大小不超过50MB",
+            key="table_template_uploader"
+        )
+        
+        if table_uploaded_file is not None:
+            # 显示上传文件信息
+            file_details = {
+                "文件名": table_uploaded_file.name,
+                "文件大小": f"{table_uploaded_file.size / 1024:.1f} KB",
+                "文件类型": table_uploaded_file.type
+            }
+            
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                st.success("✅ 模板文件已上传")
+                for key, value in file_details.items():
+                    st.text(f"{key}: {value}")
+            
+            with col2:
+                # 保存上传的文件到临时目录
+                import tempfile
+                import shutil
+                
+                try:
+                    # 创建临时文件
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.pptx') as tmp_file:
+                        tmp_file.write(table_uploaded_file.getvalue())
+                        temp_table_ppt_path = tmp_file.name
+                    
+                    # 验证PPT文件
+                    is_valid, error_msg = FileManager.validate_ppt_file(temp_table_ppt_path)
+                    
+                    if is_valid:
+                        st.success("✅ 模板文件格式验证通过")
+                        
+                        # 分析模板结构
+                        try:
+                            from pptx import Presentation
+                            temp_presentation = Presentation(temp_table_ppt_path)
+                            
+                            # 基本信息
+                            slide_count = len(temp_presentation.slides)
+                            st.metric("📑 幻灯片数量", slide_count)
+                            
+                            # 分析占位符 - 支持文本框和表格中的占位符
+                            total_placeholders = 0
+                            placeholder_info = []
+                            
+                            for i, slide in enumerate(temp_presentation.slides):
+                                slide_placeholders = []
+                                table_placeholders = []
+                                
+                                for shape in slide.shapes:
+                                    # 处理普通文本框中的占位符
+                                    if hasattr(shape, 'text') and shape.text:
+                                        import re  
+                                        placeholders = re.findall(r'\{([^}]+)\}', shape.text)
+                                        if placeholders:
+                                            slide_placeholders.extend(placeholders)
+                                            total_placeholders += len(placeholders)
+                                    
+                                    # 处理表格中的占位符
+                                    elif hasattr(shape, 'shape_type') and shape.shape_type == 19:  # MSO_SHAPE_TYPE.TABLE = 19
+                                        table = shape.table
+                                        for row_idx, row in enumerate(table.rows):
+                                            for col_idx, cell in enumerate(row.cells):
+                                                cell_text = cell.text.strip()
+                                                if cell_text:
+                                                    placeholders = re.findall(r'\{([^}]+)\}', cell_text)
+                                                    if placeholders:
+                                                        for placeholder in placeholders:
+                                                            table_placeholders.append(f"{placeholder}(表格{row_idx+1},{col_idx+1})")
+                                                            total_placeholders += 1
+                                
+                                # 合并文本框和表格占位符
+                                all_slide_placeholders = slide_placeholders + table_placeholders
+                                if all_slide_placeholders:
+                                    placeholder_info.append({
+                                        'slide_num': i + 1,
+                                        'placeholders': slide_placeholders,
+                                        'table_placeholders': table_placeholders,
+                                        'total_count': len(all_slide_placeholders)
+                                    })
+                            
+                            st.metric("🎯 发现占位符", total_placeholders)
+                            
+                            # 显示占位符详情
+                            if placeholder_info:
+                                with st.expander("🔍 模板结构分析", expanded=False):
+                                    for info in placeholder_info[:5]:  # 只显示前5页
+                                        slide_num = info['slide_num']
+                                        text_placeholders = info['placeholders']
+                                        table_placeholders = info['table_placeholders']
+                                        
+                                        st.write(f"**第{slide_num}页（共{info['total_count']}个占位符）：**")
+                                        
+                                        if text_placeholders:
+                                            st.write(f"  📝 文本框：{', '.join([f'{{{p}}}' for p in text_placeholders])}")
+                                        
+                                        if table_placeholders:
+                                            st.write(f"  📊 表格：{', '.join([f'{{{p}}}' for p in table_placeholders])}")
+                                    
+                                    if len(placeholder_info) > 5:
+                                        remaining_pages = len(placeholder_info) - 5
+                                        remaining_placeholders = sum(info['total_count'] for info in placeholder_info[5:])
+                                        st.write(f"... 还有 {remaining_pages} 页包含 {remaining_placeholders} 个占位符（包括表格占位符）")
+                            else:
+                                st.warning("⚠️ 未检测到占位符模式 {xxx}，请确保模板中包含要填充的占位符")
+                        
+                        except Exception as e:
+                            st.error(f"❌ 模板分析失败: {str(e)}")
+                    else:
+                        st.error(f"❌ 模板文件验证失败: {error_msg}")
+                        temp_table_ppt_path = None
+                    
+                except Exception as e:
+                    st.error(f"❌ 文件处理失败: {str(e)}")
+                    temp_table_ppt_path = None
+            
+            # 如果模板验证通过，显示文本输入和处理区域
+            if 'temp_table_ppt_path' in locals() and temp_table_ppt_path and is_valid:
+                st.markdown("---")
+                st.markdown("#### 📝 输入测试内容")
+                
+                table_text = st.text_area(
+                    "请输入要填充到模板中的文本内容：",
+                    height=200,
+                    placeholder="""例如（产品信息）：
+
+iPhone 15 Pro
+价格：999美元
+屏幕尺寸：6.1英寸
+处理器：A17 Pro芯片
+存储容量：128GB
+电池续航：提升15%
+发布日期：2023年9月
+
+产品特点：
+- 先进的摄影系统
+- 钛金属设计
+- 支持5G网络
+
+AI将自动提取数字信息（999美元、6.1英寸、15%等）并分别填入对应的占位符，而不是将整段文本填入{content}。""",
+                    help="AI将智能提取数字信息并分别填充，文本描述和数字数据会分开处理",
+                    key="table_fill_text"
+                )
+                
+                # 处理选项和数字预览
+                col1, col2 = st.columns(2)
+                with col1:
+                    # 获取当前模型信息
+                    current_model_info = config.get_model_info()
+                    supports_vision = current_model_info.get('supports_vision', False)
+                    
+                    if supports_vision:
+                        enable_table_visual = st.checkbox(
+                            "🎨 启用视觉优化",
+                            value=False,
+                            help="对自定义模板应用AI视觉优化（需要额外时间）",
+                            key="table_visual_opt"
+                        )
+                    else:
+                        enable_table_visual = False
+                
+                with col2:
+                    if table_text:
+                        # 实时预览数字提取结果
+                        temp_generator = UserPPTGenerator(api_key)
+                        extracted_preview = temp_generator._extract_numbers_and_data(table_text)
+                        
+                        st.markdown("**🔢 检测到的数据：**")
+                        if extracted_preview['currencies']:
+                            st.text(f"💰 价格/金额: {', '.join(extracted_preview['currencies'][:3])}")
+                        if extracted_preview['percentages']:
+                            st.text(f"📊 百分比: {', '.join(extracted_preview['percentages'][:3])}")
+                        if extracted_preview['measurements']:
+                            st.text(f"📏 尺寸/度量: {', '.join(extracted_preview['measurements'][:3])}")
+                        if extracted_preview['numbers']:
+                            st.text(f"🔢 纯数字: {', '.join(extracted_preview['numbers'][:3])}")
+                        if extracted_preview['dates']:
+                            st.text(f"📅 日期: {', '.join(extracted_preview['dates'][:3])}")
+                
+                # 处理按钮
+                st.markdown("#### 🚀 开始测试")
+                
+                table_fill_button = st.button(
+                    "📊 智能数字填充",
+                    type="primary",
+                    use_container_width=True,
+                    disabled=not table_text.strip(),
+                    help="AI将提取数字信息并分别填充到对应占位符，文本和数据分开处理",
+                    key="table_fill_btn"
+                )
+                
+                # 处理逻辑
+                if table_fill_button and table_text.strip():
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    try:
+                        # 创建自定义模板生成器
+                        status_text.text("🔧 正在初始化自定义模板处理器...")
+                        progress_bar.progress(20)
+                        
+                        table_generator = UserPPTGenerator(api_key)
+                        success, message = table_generator.load_ppt_from_path(temp_table_ppt_path)
+                        
+                        if not success:
+                            st.error(f"❌ 自定义模板加载失败: {message}")
+                            return
+                        
+                        # AI分析
+                        status_text.text("🤖 AI正在分析您的内容和模板结构...")
+                        progress_bar.progress(40)
+                        
+                        # 使用专门的数字提取逻辑进行AI分析
+                        assignments = table_generator.process_text_with_openai_enhanced(table_text)
+                        
+                        # 调试：显示AI分析结果
+                        if assignments.get('error'):
+                            st.error(f"❌ AI分析失败: {assignments['error']}")
+                            return
+                        elif assignments.get('assignments'):
+                            st.info(f"✅ AI成功分析，生成了 {len(assignments['assignments'])} 个分配方案")
+                        else:
+                            st.warning("⚠️ AI分析完成，但没有生成分配方案")
+                            st.json(assignments)  # 显示完整结果用于调试
+                        
+                        # 填充内容
+                        status_text.text("📝 正在将内容填入自定义模板...")
+                        progress_bar.progress(60)
+                        
+                        success, results = table_generator.apply_text_assignments(assignments, table_text)
+                        
+                        if not success:
+                            st.error("❌ 内容填充失败，请检查模板格式")
+                            return
+                        
+                        # 清理占位符
+                        status_text.text("🧹 正在清理未使用的占位符...")
+                        progress_bar.progress(80)
+                        
+                        cleanup_results = table_generator.cleanup_unfilled_placeholders()
+                        
+                        # 可选的视觉优化
+                        if enable_table_visual:
+                            status_text.text("🎨 正在应用视觉优化...")
+                            progress_bar.progress(90)
+                            
+                            optimization_results = table_generator.apply_visual_optimization(
+                                temp_table_ppt_path, 
+                                enable_visual_optimization=True
+                            )
+                        else:
+                            optimization_results = table_generator.apply_basic_beautification()
+                        
+                        # 完成处理
+                        status_text.text("📦 正在准备下载...")
+                        progress_bar.progress(100)
+                        
+                        # 清除进度显示
+                        progress_bar.empty()
+                        status_text.empty()
+                        
+                        # 显示成功信息
+                        st.markdown('<div class="success-box">🎉 自定义模板测试完成！</div>', unsafe_allow_html=True)
+                        
+                        # 显示处理摘要
+                        if optimization_results and "error" not in optimization_results:
+                            st.markdown("### 📊 处理结果")
+                            
+                            col1, col2, col3, col4 = st.columns(4)
+                            
+                            with col1:
+                                summary = optimization_results.get('summary', {})
+                                final_slide_count = summary.get('final_slide_count', 0)
+                                st.metric("📑 最终页数", final_slide_count)
+                            
+                            with col2:
+                                cleanup_count = cleanup_results.get('cleaned_placeholders', 0) if cleanup_results else 0
+                                st.metric("🧹 清理占位符", cleanup_count)
+                                
+                                # 显示清理详情
+                                if cleanup_results and cleanup_results.get('cleaned_placeholder_list'):
+                                    with st.expander("🔍 查看清理详情", expanded=False):
+                                        st.write("**已清理的未填充占位符：**")
+                                        for item in cleanup_results['cleaned_placeholder_list']:
+                                            st.text(f"• {item}")
+                                        st.info("💡 已填充的占位符保持不变")
+                                elif cleanup_count == 0:
+                                    st.success("✅ 所有占位符都已被正确填充")
+                            
+                            with col3:
+                                removed_empty = summary.get('removed_empty_slides_count', 0)
+                                st.metric("🗑️ 删除空页", removed_empty)
+                            
+                            with col4:
+                                reorganized = summary.get('reorganized_slides_count', 0)
+                                st.metric("🔄 重新排版", reorganized)
+                        
+                        # 下载文件
+                        st.markdown("### 💾 下载测试结果")
+                        
+                        try:
+                            updated_ppt_bytes = table_generator.get_ppt_bytes()
+                            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                            original_name = table_uploaded_file.name.rsplit('.', 1)[0]
+                            filename = f"{original_name}_测试结果_{timestamp}.pptx"
+                            
+                            col1, col2, col3 = st.columns([1, 2, 1])
+                            with col2:
+                                st.download_button(
+                                    label="📥 下载处理结果",
+                                    data=updated_ppt_bytes,
+                                    file_name=filename,
+                                    mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                                    use_container_width=True,
+                                    key="download_table_result"
+                                )
+                            
+                        except Exception as e:
+                            st.error(f"❌ 生成下载文件失败: {str(e)}")
+                        
+                    except Exception as e:
+                        progress_bar.empty()
+                        status_text.empty()
+                        st.error(f"❌ 智能PPT生成过程中出现异常: {str(e)}")
+                        logger.error("智能PPT生成异常: %s", str(e))
+            
+            # 使用说明
+        else:
+            st.markdown("### 📖 功能特点")
+            st.markdown("""
+            **🔢 数字智能处理**
+            - 自动提取文本中的所有数字信息
+            - 将数字和文本分开填充到对应占位符
+            - 支持价格、百分比、尺寸、日期等多种数据类型
+            - 避免将包含数字的整段文本填入通用占位符
+            
+            **🎯 精确匹配**
+            - 根据占位符名称智能匹配数据类型
+            - {价格} 填入货币数字，{描述} 填入文本描述
+            - 数据和内容完全分离，提高填充精度
+            """)
+            
+            st.markdown('<div class="warning-box">💡 <strong>提示：</strong> 推荐使用具体的占位符名称，如 {产品名称}、{价格}、{百分比}、{尺寸}、{数量}、{日期} 等。AI将根据占位符名称智能提取对应的数字或文本信息。避免使用{content}这样的通用占位符来包含数字数据。</div>', unsafe_allow_html=True)
     
     with tab_format:
         # PPT格式读取展示功能

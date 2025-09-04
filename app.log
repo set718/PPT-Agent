@@ -3693,3 +3693,103 @@
 2025-09-04 11:27:13 - ppt_generator - INFO - 开始创建高级PPT分析
 2025-09-04 11:27:13 - ppt_generator - INFO - 开始完整PPT结构分析
 2025-09-04 11:27:13 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 16:23:52 - ppt_generator - INFO - 开始操作: 表格填充器加载PPT模板
+2025-09-04 16:23:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 16:23:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 16:23:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 16:23:52 - ppt_generator - INFO - 文件操作成功: load_ppt_table_filler - C:\Users\jiayihan\AppData\Local\Temp\tmpi4xood41.pptx
+2025-09-04 16:23:52 - ppt_generator - INFO - 操作完成: 表格填充器加载PPT模板 耗时 0.12s
+2025-09-04 16:34:55 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 16:34:55 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 16:34:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 16:34:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 16:34:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 16:34:55 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpkgt_2jp6.pptx
+2025-09-04 16:34:55 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.18s
+2025-09-04 16:34:55 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 9字符
+2025-09-04 16:35:01 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 2
+2025-09-04 16:35:01 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-04 16:35:01 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 16:35:01 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 16:35:01 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 17:07:05 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:07:16 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:07:16 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:07:16 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 17:07:16 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 17:07:16 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 17:07:16 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 17:07:16 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmps4cspwxb.pptx
+2025-09-04 17:07:16 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.12s
+2025-09-04 17:07:16 - ppt_generator - INFO - 用户操作: 用户界面增强AI文本分析 - 文本长度: 243字符
+2025-09-04 17:07:16 - ppt_generator - INFO - 用户操作: 数字感知AI分析失败 - 'NoneType' object has no attribute 'chat'
+2025-09-04 17:07:16 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 0
+2025-09-04 17:07:16 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-04 17:07:16 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 17:07:16 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 17:07:16 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 17:07:22 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:09:49 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:09:52 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:09:52 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:09:52 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 17:09:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 17:09:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 17:09:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 17:09:52 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpo09e4yuv.pptx
+2025-09-04 17:09:52 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-09-04 17:09:52 - ppt_generator - INFO - 用户操作: 用户界面增强AI文本分析 - 文本长度: 243字符
+2025-09-04 17:09:52 - ppt_generator - INFO - 用户操作: 数字感知AI分析失败 - 'NoneType' object has no attribute 'chat'
+2025-09-04 17:09:52 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 0
+2025-09-04 17:09:52 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-04 17:09:52 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 17:09:52 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 17:09:52 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 17:17:02 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:17:08 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:17:08 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:17:08 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 17:17:08 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 17:17:08 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 17:17:08 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 17:17:08 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpd_mkkg6a.pptx
+2025-09-04 17:17:08 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.11s
+2025-09-04 17:17:08 - ppt_generator - INFO - 用户操作: 用户界面增强AI文本分析 - 文本长度: 243字符
+2025-09-04 17:17:55 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 22
+2025-09-04 17:17:55 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-04 17:17:55 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 17:17:55 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 17:17:55 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 17:18:04 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:21:14 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:21:40 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:21:40 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:21:40 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 17:21:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 17:21:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 17:21:40 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 17:21:40 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmptpx_hm9o.pptx
+2025-09-04 17:21:40 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.10s
+2025-09-04 17:21:40 - ppt_generator - INFO - 用户操作: 用户界面增强AI文本分析 - 文本长度: 243字符
+2025-09-04 17:23:27 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 22
+2025-09-04 17:23:27 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-04 17:23:27 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 17:23:27 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 17:23:27 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 17:25:21 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:25:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:25:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 17:25:26 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 17:25:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 17:25:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 17:25:26 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 17:25:26 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpr9zuf3ct.pptx
+2025-09-04 17:25:26 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.11s
+2025-09-04 17:25:26 - ppt_generator - INFO - 用户操作: 用户界面增强AI文本分析 - 文本长度: 243字符
+2025-09-04 17:28:24 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 22
+2025-09-04 17:28:24 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-04 17:28:24 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 17:28:24 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['number_2']
+2025-09-04 17:28:24 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 17:28:24 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 17:29:12 - ppt_generator - INFO - 用户界面初始化PPT生成器

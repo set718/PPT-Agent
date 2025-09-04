@@ -126,6 +126,9 @@ class AIPageSplitter:
             elif model_info.get('request_format') == 'streaming_compatible':
                 # 使用OpenRouter API格式（类似Liai的分批处理）
                 content = self._call_openrouter_api(system_prompt, user_text)
+            elif model_info.get('request_format') == 'openai_responses_api':
+                # 使用GPT-5 Responses API格式
+                content = self._call_gpt5_responses_api(system_prompt, user_text)
             else:
                 # 标准OpenAI API格式
                 request_timeout = 60
@@ -287,6 +290,25 @@ class AIPageSplitter:
         print(f"❌ 所有{len(self.api_keys)}个OpenRouter API密钥都失败了")
         raise last_exception or Exception("所有OpenRouter API密钥调用失败")
     
+    def _call_gpt5_responses_api(self, system_prompt: str, user_text: str) -> str:
+        """调用GPT-5 Responses API进行文本分析"""
+        from openai import OpenAI
+        
+        client = OpenAI(
+            api_key="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"
+        )
+        
+        # 组合系统提示和用户文本
+        full_input = f"{system_prompt}\n\n用户文本：\n{user_text}"
+        
+        response = client.responses.create(
+            model="gpt-5",
+            input=full_input,
+            store=True
+        )
+        
+        return response.output_text
+    
     def _build_system_prompt(self, target_pages: Optional[int] = None) -> str:
         """构建AI系统提示"""
         target_instruction = ""
@@ -296,17 +318,15 @@ class AIPageSplitter:
         return f"""你是一个专业的PPT内容分析专家。你的任务是将用户提供的文本内容智能分割为适合PPT展示的多个页面。
 
 **核心原则：**
-1. **逻辑优先**：按照内容的逻辑结构和主题划分页面，同一主题的内容优先安排在同一页
-2. **信息完整**：不遗漏原文的重要信息
-3. **层次分明**：按照重要性和逻辑顺序安排页面
-4. **内容充实**：每页内容量适中，宁可内容稍多也不要过于稀少
-5. **保守分页**：倾向于合并相关内容到同一页，避免过度细分
+1. **逻辑结构优先**：按内容的逻辑主题分页，同一主题和相关主题必须合并
+2. **内容充实性**：每页必须有足够内容量，严禁薄页面，AI倾向过度分页需主动抵制
+3. **强制合并策略**：相似、相关、关联主题必须合并，只有完全不同主题才分页
+4. **信息完整性**：不遗漏重要信息，保持逻辑完整
 
 **分页策略：**
 - **标题页（第1页）**：仅提取文档标题和日期信息，其他所有文本内容都延后到第三页开始处理
-- **目录页（第2页）**：根据内容页标题动态生成，需要收集所有内容页的标题信息
+- **目录页（第2页）**：AI必须生成完整的目录内容，包括各章节标题，格式如"第一章节\n第二章节\n第三章节"
 - **内容页（第3页开始）**：从第三页开始处理所有实际内容，按主要观点、时间顺序或逻辑结构分页
-- **概述页**：如果内容复杂，可在第三页作为概述页
 - **结尾页**：不生成结尾页（使用预设的固定结尾页模板）
 
 **标题页处理规则：**
@@ -322,28 +342,16 @@ class AIPageSplitter:
 - **内容量优先级**：适中 >> 过多 >> 过少（宁可内容多一些，也不要让页面显得空洞）
 - 保持内容的**连贯性**和**完整性**
 
-**分页建议（保守策略）：**
-- 短文本（<800字）：2-4页内容（倾向于合并到较少页面）
-- 中长文本（800-2000字）：4-8页内容（避免过度细分）
-- 长文本（2000-5000字）：8-15页内容（优先合并相关主题）
-- 超长文本（>5000字）：15-20页内容（控制在合理范围）
-- **重要限制：总页数≤25页，生成页数≤23页**
-- **分页原则：宁可内容多一些，也不要页面过多**
-
-**逻辑分配指导（减少分页）：**
-- **主题完整性第一**：同一个概念、步骤、案例的内容不要拆分到不同页面
-- **合并相关内容**：相关的子主题尽量合并到同一页，避免过度细分
-- **逻辑连贯性第二**：相关的主题按逻辑顺序安排，确保阅读流畅
-- **内容充实性第三**：每页内容要有足够的信息量，避免页面过于简单
-- **减少页面数量**：优先考虑将多个小主题合并，而不是拆分成独立页面
+**分页建议（极简策略 - 最大化内容合并）：**
+- 极短文本（<300字）：仅1页内容（全部内容放在一页）
+- 短文本（300-1000字）：1页内容（强制合并为1页）
+- 中等文本（1000-2000字）：1-2页内容（优先合并为1页，仅在逻辑完全不相关时分为2页）
+- 长文本（2000-4000字）：2-3页内容（按主要章节分页，大量合并小节）
+- 超长文本（>4000字）：3-6页内容（仅按主要章节分页，严格合并子主题）
+- **核心原则：能合并必须合并，宁可单页内容丰富也不要页面分散**
+- **最小阈值：每页至少300字，低于此阈值必须与相邻页面合并**
 
 {target_instruction}请分析用户文本的结构和内容，按逻辑主题智能分割为合适的页面数量。
-
-**重要提醒：**
-- 如果用户文本可以合理地分为5页，不要分成8页
-- 优先考虑内容的逻辑关联性，将相关内容合并到同一页
-- 每页内容宁可丰富一些，也不要为了展示而人为增加页面数
-- 分页数量应当接近人工判断的合理页数
 
 **输出格式要求：**
 请严格按照以下JSON格式返回：
@@ -365,6 +373,12 @@ class AIPageSplitter:
       "original_text_segment": "人工智能发展历程"
     }}}},
     {{{{
+      "page_number": 2,
+      "page_type": "table_of_contents",
+      "title": "目录",
+      "original_text_segment": "AI发展概述\n技术突破阶段\n当前发展趋势\n未来展望"
+    }}}},
+    {{{{
       "page_number": 3,
       "page_type": "content", 
       "title": "AI发展概述",
@@ -376,15 +390,15 @@ class AIPageSplitter:
 
 **页面类型说明：**
 - `title`: 标题页，仅包含文档标题和日期
-- `overview`: 概述页，总体介绍内容框架（可选）
+- `table_of_contents`: 目录页，必须包含各章节标题（不含页码）
 - `content`: 内容页，具体的要点和详细内容（分页重点）
 
 **关键注意事项：**
 - **title字段**：必须准确概括该页内容（用于生成目录）
 - **original_text_segment字段最重要**：必须包含该页对应的完整原文片段，不能遗漏或截断
 - **标题页original_text_segment**：只包含提取的标题部分
+- **目录页original_text_segment**：包含各章节标题，每行一个标题
 - **内容页original_text_segment**：包含该页面对应的所有原文内容，确保完整性
-- 不要生成subtitle、content_summary、key_points等字段
 - 不要生成结尾页，系统将使用预设的固定结尾页模板
 
 只返回JSON格式，不要其他文字。"""

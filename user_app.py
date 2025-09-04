@@ -9,6 +9,21 @@
 import streamlit as st
 import os
 import sys
+
+# 强制设置UTF-8编码
+import locale
+try:
+    locale.setlocale(locale.LC_ALL, 'zh_CN.UTF-8')
+except:
+    try:
+        locale.setlocale(locale.LC_ALL, 'C.UTF-8')
+    except:
+        pass
+
+# 设置环境变量
+os.environ['PYTHONIOENCODING'] = 'utf-8'
+if hasattr(sys, 'setdefaultencoding'):
+    sys.setdefaultencoding('utf-8')
 import subprocess
 from datetime import datetime
 from pptx import Presentation
@@ -654,6 +669,7 @@ def display_processing_summary(optimization_results, cleanup_results, enable_vis
         st.info("💡 提示：启用AI视觉优化可获得更详细的美观度分析和自动布局优化")
 
 def main():
+    import os
     # 延迟初始化系统
     if not lazy_initialize():
         st.error("❌ 系统初始化失败，请刷新页面重试")
@@ -951,7 +967,7 @@ def main():
     
     # 跳过系统默认模板检查，直接使用Dify API和模板库
     # 注释掉原有的模板检查，改为检查模板库是否可用
-    templates_dir = os.path.join(os.path.dirname(__file__), "templates", "ppt_template")
+    templates_dir = os.path.join(os.getcwd(), "templates", "ppt_template")
     if not os.path.exists(templates_dir):
         st.markdown('<div class="error-box">❌ 模板库文件夹不存在，请检查templates/ppt_template目录</div>', unsafe_allow_html=True)
         return
@@ -994,7 +1010,7 @@ def main():
     # 功能选择选项卡
     st.markdown("---")
     # 仅保留核心入口功能
-    tab1, tab3 = st.tabs(["🎨 智能PPT生成", "🧪 自定义模板测试"])
+    tab1, tab3, tab_format = st.tabs(["🎨 智能PPT生成", "🧪 自定义模板测试", "🔍 PPT格式读取展示"])
     
     with tab1:
         # 智能PPT生成功能 - AI分页 + 模板匹配
@@ -1285,7 +1301,26 @@ def main():
                                     
                                     # 处理当前批次
                                     for page_info in batch_pages:
-                                        bridge_result = sync_test_dify_template_bridge(page_info['page_content'])
+                                        # 合并title和content作为完整输入
+                                        page_title = page_info['page_data'].get('title', '')
+                                        page_content = page_info['page_content']
+                                        full_content = f"标题: {page_title}\n\n{page_content}" if page_title else page_content
+                                        
+                                        bridge_result = sync_test_dify_template_bridge(full_content)
+                                        
+                                        # 如果成功且有title，强制添加title占位符填充
+                                        if bridge_result.get('success') and page_title:
+                                            step_3_result = bridge_result.get('step_3_template_fill', {})
+                                            if step_3_result.get('success'):
+                                                assignments = step_3_result.get('assignments', {}).get('assignments', [])
+                                                # 直接添加title占位符填充（内容页都有title占位符）
+                                                assignments.append({
+                                                    'action': 'replace_placeholder',
+                                                    'slide_index': 0,
+                                                    'placeholder': 'title',
+                                                    'content': page_title,
+                                                    'reason': '自动填充页面标题'
+                                                })
                                         
                                         if bridge_result.get('success'):
                                             dify_result = bridge_result["step_1_dify_api"]
@@ -1495,35 +1530,67 @@ def main():
                             # 加载模板
                             template_prs = Presentation(template_path)
                             
-                            # 检查是否为特殊页面（目录页、标题页、结尾页）
-                            if (page_result.get('is_toc_page') or 
-                                page_result.get('is_title_page') or 
-                                page_result.get('is_ending_page') or
-                                page_result.get('page_type') == 'table_of_contents'):
-                                # 特殊页面直接使用模板，不进行AI文本填充
+                            # 检查是否为结尾页（只有结尾页完全跳过文本填充）
+                            if (page_result.get('is_ending_page') or page_result.get('page_type') == 'ending'):
+                                # 结尾页直接使用模板，不进行文本填充
                                 fill_results = []
+                                print(f"🔍 跳过结尾页文本填充: 第{page_number}页")
+                                st.info(f"ℹ️ 第{page_number}页(结尾页)：使用固定模板")
                             else:
                                 # 创建PPT处理器并进行文本填充
+                                print(f"🔍 开始文本填充: 第{page_number}页 - {page_result.get('page_type', 'content')}")
+                                print(f"📄 页面内容长度: {len(page_content)}字")
+                                st.info(f"🔄 第{page_number}页：开始AI文本填充分析...")
+                                
                                 processor = PPTProcessor(template_prs)
                                 
                                 # 使用完整的文本填充流程（会自动使用当前选择的AI模型）
                                 # 1. 创建AI处理器来分析文本并生成分配方案
-                                ai_processor = AIProcessor(config)
+                                ai_processor = AIProcessor()
                                 
                                 # 2. 分析PPT结构
-                                ppt_structure = processor.analyze_ppt_structure()
-                                
-                                # 3. 生成文本分配方案
-                                assignments = ai_processor.analyze_text_for_ppt(page_content, ppt_structure)
-                                
-                                # 4. 应用分配方案
-                                fill_results = processor.apply_assignments(assignments, page_content)
+                                try:
+                                    print(f"🔍 分析PPT结构...")
+                                    print(f"📁 模板路径: {template_path}")
+                                    print(f"📑 模板slides数量: {len(template_prs.slides)}")
+                                    
+                                    ppt_structure = PPTAnalyzer.analyze_ppt_structure(template_prs)
+                                    # 从slides中收集所有占位符
+                                    all_placeholders = {}
+                                    for slide in ppt_structure.get('slides', []):
+                                        all_placeholders.update(slide.get('placeholders', {}))
+                                    
+                                    print(f"📊 检测到占位符数量: {len(all_placeholders)}")
+                                    if all_placeholders:
+                                        print(f"🔍 占位符列表: {list(all_placeholders.keys())}")
+                                    else:
+                                        print(f"⚠️ 未检测到任何占位符，模板可能没有{{placeholder}}格式的内容")
+                                    
+                                    # 3. 生成文本分配方案
+                                    print(f"🤖 调用AI生成分配方案...")
+                                    assignments = ai_processor.analyze_text_for_ppt(page_content, ppt_structure)
+                                    print(f"📋 生成分配方案数量: {len(assignments.get('assignments', []))}")
+                                    
+                                    # 4. 应用分配方案
+                                    print(f"✏️ 应用分配方案...")
+                                    fill_results = processor.apply_assignments(assignments, page_content)
+                                    print(f"✅ 文本填充完成，结果数量: {len(fill_results)}")
+                                except Exception as fill_error:
+                                    print(f"❌ 文本填充过程异常: {fill_error}")
+                                    st.error(f"文本填充过程异常: {fill_error}")
+                                    fill_results = []
                             
-                            # 更新结果信息（在内存中处理，合并时再保存临时文件）
+                            # 更新结果信息（为合并器保存临时文件）
                             filled_result = page_result.copy()
-                            filled_result['filled_presentation'] = template_prs  # 填充后的presentation对象
                             filled_result['fill_results'] = fill_results
-                            # 保持原template_path，合并器会处理presentation对象
+                            
+                            # 为所有页面保存临时文件用于合并（确保合并器能正确处理）
+                            import tempfile
+                            temp_dir = tempfile.gettempdir()
+                            filled_temp_path = os.path.join(temp_dir, f"filled_temp_{page_number}_{os.path.basename(template_path)}")
+                            template_prs.save(filled_temp_path)
+                            filled_result['template_path'] = filled_temp_path  # 使用处理后的临时文件路径
+                            
                             filled_page_results.append(filled_result)
                             
                             st.success(f"✅ 第{page_number}页：文本填充完成")
@@ -1537,7 +1604,32 @@ def main():
                         # 失败时使用原始模板
                         filled_page_results.append(page_result)
                 
-                # 步骤4：整合PPT页面
+                # 步骤4：清理未填充的占位符
+                status_text.text("🧹 正在清理未填充的占位符...")
+                progress_bar.progress(75)
+                
+                # 对每个填充后的页面调用现有的清理功能
+                for filled_result in filled_page_results:
+                    if filled_result.get('template_path') and os.path.exists(filled_result['template_path']):
+                        try:
+                            # 加载已填充的模板并创建临时生成器实例用于清理
+                            filled_prs = Presentation(filled_result['template_path'])
+                            
+                            # 创建临时的UserPPTGenerator实例来调用清理方法
+                            temp_generator = UserPPTGenerator(api_key)
+                            temp_generator.presentation = filled_prs
+                            temp_generator.ppt_processor = PPTProcessor(filled_prs)
+                            
+                            # 调用清理功能
+                            cleanup_results = temp_generator.cleanup_unfilled_placeholders()
+                            
+                            # 保存清理后的结果
+                            filled_prs.save(filled_result['template_path'])
+                            
+                        except Exception as cleanup_error:
+                            print(f"⚠️ 第{filled_result.get('page_number')}页占位符清理失败: {cleanup_error}")
+                
+                # 步骤5：整合PPT页面
                 status_text.text("🔗 正在整合填充后的PPT页面...")
                 progress_bar.progress(80)
                 
@@ -2014,6 +2106,255 @@ def main():
             
             st.markdown('<div class="warning-box">💡 <strong>提示：</strong> 请确保您的PPT模板中包含形如 {标题}、{内容}、{要点}、{作者}、{日期}、{描述} 等占位符。AI将根据占位符的名称自动理解其含义并智能分配相应的内容。支持所有{}格式的占位符，包括文本框和表格单元格中的占位符。</div>', unsafe_allow_html=True)
     
+    with tab_format:
+        # PPT格式读取展示功能
+        st.markdown("### 🔍 PPT格式读取展示")
+        st.markdown("**上传一个PPT文件，查看我们的格式读取功能能识别到什么信息**")
+        
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            st.markdown("#### 📤 上传文件")
+            uploaded_file = st.file_uploader(
+                "选择PPT文件",
+                type=['pptx'],
+                help="支持.pptx格式的PowerPoint文件"
+            )
+            
+            if uploaded_file is not None:
+                st.success(f"✅ 已上传：{uploaded_file.name}")
+                
+                # 分析按钮
+                if st.button("🔍 开始分析格式", type="primary"):
+                    with st.spinner("正在分析PPT格式..."):
+                        try:
+                            # 保存上传的文件到临时位置
+                            import tempfile
+                            with tempfile.NamedTemporaryFile(suffix=".pptx", delete=False) as temp_file:
+                                temp_file.write(uploaded_file.getbuffer())
+                                temp_path = temp_file.name
+                            
+                            # 使用现有的PPT分析功能
+                            from pptx import Presentation as PptxPresentation
+                            presentation = PptxPresentation(temp_path)
+                            ppt_structure = PPTAnalyzer.analyze_ppt_structure(presentation)
+                            
+                            # 将结果存储到session state，包括临时文件路径用于后续格式提取
+                            st.session_state.format_analysis_result = {
+                                'filename': uploaded_file.name,
+                                'structure': ppt_structure,
+                                'temp_path': temp_path,
+                                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            }
+                            
+                            # 注意：临时文件暂时保留，用于后续格式提取
+                            # 文件会在清除结果或会话结束时清理
+                                
+                            st.success("🎉 分析完成！")
+                            st.rerun()
+                            
+                        except Exception as e:
+                            st.error(f"❌ 分析失败：{e}")
+                            # 清理临时文件
+                            try:
+                                os.remove(temp_path)
+                            except:
+                                pass
+        
+        with col2:
+            st.markdown("#### 📊 分析结果")
+            
+            if 'format_analysis_result' in st.session_state:
+                result = st.session_state.format_analysis_result
+                
+                st.markdown(f"**文件名：** {result['filename']}")
+                st.markdown(f"**分析时间：** {result['timestamp']}")
+                
+                structure = result['structure']
+                total_slides = structure.get('total_slides', 0)
+                total_placeholders = structure.get('total_placeholders', 0)
+                
+                # 基本统计
+                st.markdown("---")
+                st.markdown("### 📈 基本统计")
+                
+                metric_cols = st.columns(3)
+                with metric_cols[0]:
+                    st.metric("幻灯片数量", total_slides)
+                with metric_cols[1]:
+                    st.metric("占位符总数", total_placeholders)
+                with metric_cols[2]:
+                    all_placeholders = []
+                    for slide in structure.get('slides', []):
+                        all_placeholders.extend(slide.get('placeholders', {}).keys())
+                    unique_placeholders = len(set(all_placeholders))
+                    st.metric("不同占位符", unique_placeholders)
+                
+                # 详细信息展开
+                st.markdown("---")
+                st.markdown("### 🔍 详细分析")
+                
+                with st.expander("📋 占位符详情"):
+                    for i, slide in enumerate(structure.get('slides', [])):
+                        placeholders = slide.get('placeholders', {})
+                        if placeholders:
+                            st.markdown(f"**第 {i+1} 页：**")
+                            
+                            for placeholder_name, placeholder_info in placeholders.items():
+                                st.markdown(f"- **{{{placeholder_name}}}**")
+                                
+                                # 显示类型信息
+                                ph_type = placeholder_info.get('type', 'unknown')
+                                st.markdown(f"  - 类型：{ph_type}")
+                                
+                                # 显示原始文本
+                                original_text = placeholder_info.get('original_text', '')
+                                if original_text:
+                                    st.markdown(f"  - 原始文本：`{original_text[:100]}{'...' if len(original_text) > 100 else ''}`")
+                                
+                                # 实时提取字体格式信息
+                                try:
+                                    # 重新加载presentation来提取格式
+                                    from pptx import Presentation as PptxPresentation
+                                    temp_path = result.get('temp_path')
+                                    if not temp_path or not os.path.exists(temp_path):
+                                        st.markdown(f"  - 🎨 **格式：** ❌ 临时文件不存在")
+                                        continue
+                                        
+                                    temp_presentation = PptxPresentation(temp_path)
+                                    slide_obj = temp_presentation.slides[i]
+                                    
+                                    # 创建临时的PPTProcessor来提取格式
+                                    from utils import PPTProcessor
+                                    temp_processor = PPTProcessor(temp_presentation)
+                                    
+                                    # 获取容器对象
+                                    container = placeholder_info.get('shape')
+                                    if placeholder_info.get('type') == 'table_cell':
+                                        container = placeholder_info.get('cell')
+                                    
+                                    # 如果没有容器信息，尝试重新查找
+                                    if not container:
+                                        # 在slide中查找包含这个占位符的shape
+                                        placeholder_pattern = f"{{{placeholder_name}}}"
+                                        for shape in slide_obj.shapes:
+                                            if hasattr(shape, 'text') and placeholder_pattern in shape.text:
+                                                container = shape
+                                                break
+                                            elif hasattr(shape, 'table'):
+                                                # 检查表格
+                                                for row in shape.table.rows:
+                                                    for cell in row.cells:
+                                                        if placeholder_pattern in cell.text:
+                                                            container = cell
+                                                            break
+                                                    if container:
+                                                        break
+                                                if container:
+                                                    break
+                                    
+                                    # 如果找到容器，提取格式信息
+                                    if container:
+                                        format_info = temp_processor._extract_placeholder_format(container, placeholder_name)
+                                        
+                                        # 格式化显示
+                                        font_details = []
+                                        
+                                        # 字体名称
+                                        font_name = format_info.get('font_name')
+                                        if font_name:
+                                            font_details.append(f"字体: {font_name}")
+                                        else:
+                                            font_details.append("字体: None")
+                                        
+                                        # 字体大小
+                                        font_size = format_info.get('font_size')
+                                        if font_size:
+                                            font_details.append(f"大小: {font_size}pt")
+                                        else:
+                                            font_details.append("大小: None")
+                                        
+                                        # 字体颜色
+                                        font_color = format_info.get('font_color')
+                                        if font_color:
+                                            font_details.append(f"颜色: {font_color}")
+                                        else:
+                                            font_details.append("颜色: None")
+                                        
+                                        # 粗体和斜体
+                                        style_details = []
+                                        if format_info.get('font_bold'):
+                                            style_details.append("粗体")
+                                        if format_info.get('font_italic'):
+                                            style_details.append("斜体")
+                                        
+                                        if style_details:
+                                            font_details.append(f"样式: {', '.join(style_details)}")
+                                        else:
+                                            font_details.append("样式: 普通")
+                                        
+                                        st.markdown(f"  - 🎨 **格式：** {' | '.join(font_details)}")
+                                        
+                                        # 如果有问题的格式，用颜色标出
+                                        problems = []
+                                        if not font_name:
+                                            problems.append("字体名称")
+                                        if not font_size:
+                                            problems.append("字体大小")
+                                        if not font_color:
+                                            problems.append("字体颜色")
+                                        
+                                        if problems:
+                                            st.markdown(f"    ⚠️ *无法读取: {', '.join(problems)}*")
+                                    else:
+                                        st.markdown(f"  - 🎨 **格式：** ❌ 无法定位占位符容器")
+                                        
+                                except Exception as format_error:
+                                    st.markdown(f"  - 🎨 **格式：** ❌ 提取失败 ({str(format_error)[:50]})")
+                                
+                                st.markdown("")
+                        else:
+                            st.markdown(f"**第 {i+1} 页：** 无占位符")
+                
+                with st.expander("🗂️ 原始结构数据"):
+                    st.json(structure, expanded=False)
+                
+                # 清除结果按钮
+                if st.button("🗑️ 清除结果"):
+                    # 清理临时文件
+                    temp_path = result.get('temp_path')
+                    if temp_path and os.path.exists(temp_path):
+                        try:
+                            os.remove(temp_path)
+                        except:
+                            pass
+                    del st.session_state.format_analysis_result
+                    st.rerun()
+                    
+            else:
+                st.markdown("👆 请先上传PPT文件并点击分析按钮")
+                
+                # 功能说明
+                st.markdown("---")
+                st.markdown("#### 💡 功能说明")
+                st.markdown("""
+                **这个工具会显示：**
+                
+                1. **📊 基本统计**：幻灯片数量、占位符总数等
+                2. **🔍 占位符详情**：每个占位符的类型、位置、原始文本
+                3. **🎨 格式信息**：字体名称、大小、颜色等（如果可读取）
+                4. **📂 原始数据**：完整的结构分析结果
+                
+                **支持的格式：**
+                - 文本框中的 `{占位符}`
+                - 表格单元格中的 `{占位符}`
+                - 多种字体格式识别
+                
+                **用途：**
+                - 调试模板兼容性
+                - 验证占位符识别准确性
+                - 了解格式读取能力的边界
+                """)
 
     
     # 页脚信息

@@ -1387,3 +1387,2309 @@
 2025-08-30 23:22:45 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250830_232245.pptx
 2025-08-30 23:22:45 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 0页
 2025-08-30 23:22:45 - ppt_generator - INFO - Spire合并成功
+2025-08-30 23:36:47 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-08-30 23:36:47 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-08-30 23:36:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:36:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:36:47 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:36:47 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmppe1tbj2g.pptx
+2025-08-30 23:36:47 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-08-30 23:36:47 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 1030字符
+2025-08-30 23:37:25 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 25
+2025-08-30 23:37:25 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-08-30 23:37:25 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-08-30 23:37:25 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-08-30 23:37:25 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-08-30 23:38:12 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 118
+2025-08-30 23:38:20 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-30 23:38:20 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-30 23:38:20 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-30 23:38:20 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 45字符
+2025-08-30 23:38:20 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:38:20 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-30 23:38:20 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-30 23:38:33 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 12.91s)
+2025-08-30 23:38:33 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-30 23:38:33 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-30 23:38:33 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-30 23:38:33 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.93秒
+2025-08-30 23:38:33 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:38:33 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.91s, 健康分数0.73
+2025-08-30 23:38:33 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 33字符
+2025-08-30 23:38:33 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:38:33 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-30 23:38:44 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 11.44s)
+2025-08-30 23:38:44 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-30 23:38:44 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-30 23:38:44 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-30 23:38:44 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 11.47秒
+2025-08-30 23:38:44 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:38:44 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.91s, 健康分数0.73
+2025-08-30 23:38:44 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间11.44s, 健康分数0.73
+2025-08-30 23:38:44 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 29字符
+2025-08-30 23:38:44 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-30 23:38:44 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-30 23:38:59 - ppt_generator - INFO - 成功获取模板编号: 8 (响应时间: 14.17s)
+2025-08-30 23:38:59 - ppt_generator - INFO - Dify API返回模板编号: 8
+2025-08-30 23:38:59 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_8.pptx
+2025-08-30 23:38:59 - ppt_generator - INFO - 成功获取模板文件: split_presentations_8.pptx (920.9KB)
+2025-08-30 23:38:59 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.20秒
+2025-08-30 23:38:59 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-30 23:38:59 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.91s, 健康分数0.73
+2025-08-30 23:38:59 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间11.44s, 健康分数0.73
+2025-08-30 23:38:59 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间14.17s, 健康分数0.73
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-30 23:38:59 - ppt_generator - INFO - 开始提取位置信息
+2025-08-30 23:38:59 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(5页)智能选择合并器
+2025-08-30 23:38:59 - ppt_generator - INFO - 页面数量5页(≤10页)，使用Spire.Presentation合并器
+2025-08-30 23:38:59 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并5个模板页面
+2025-08-30 23:38:59 - ppt_generator - INFO - 使用第一个模板作为基础: title_slides.pptx
+2025-08-30 23:38:59 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-30 23:39:00 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-30 23:39:00 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_8.pptx
+2025-08-30 23:39:00 - ppt_generator - INFO - 使用AppendBySlide合并: ending_slides.pptx
+2025-08-30 23:39:00 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250830_233900.pptx
+2025-08-30 23:39:00 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 0页
+2025-08-30 23:39:00 - ppt_generator - INFO - Spire合并成功
+2025-08-31 20:21:42 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 20:21:50 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 20:21:50 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-31 20:21:50 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-31 20:21:50 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 20:21:50 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 20:21:50 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-31 20:21:50 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-31 20:22:08 - ppt_generator - INFO - 成功获取模板编号: 1 (响应时间: 18.20s)
+2025-08-31 20:22:08 - ppt_generator - INFO - Dify API返回模板编号: 1
+2025-08-31 20:22:08 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_1.pptx
+2025-08-31 20:22:08 - ppt_generator - INFO - 成功获取模板文件: split_presentations_1.pptx (929.9KB)
+2025-08-31 20:22:08 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 18.24秒
+2025-08-31 20:22:08 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 20:22:08 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.20s, 健康分数0.73
+2025-08-31 20:22:08 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-08-31 20:22:08 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 20:22:08 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-31 20:22:18 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 9.66s)
+2025-08-31 20:22:18 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 20:22:18 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 20:22:18 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 20:22:18 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.69秒
+2025-08-31 20:22:18 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 20:22:18 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.20s, 健康分数0.73
+2025-08-31 20:22:18 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间9.66s, 健康分数0.73
+2025-08-31 20:22:18 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 23字符
+2025-08-31 20:22:18 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 20:22:18 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-31 20:22:31 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 12.84s)
+2025-08-31 20:22:31 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 20:22:31 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 20:22:31 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 20:22:31 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.85秒
+2025-08-31 20:22:31 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 20:22:31 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.20s, 健康分数0.73
+2025-08-31 20:22:31 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间9.66s, 健康分数0.73
+2025-08-31 20:22:31 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间12.84s, 健康分数0.73
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 20:22:31 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 20:22:32 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(5页)智能选择合并器
+2025-08-31 20:22:32 - ppt_generator - INFO - 页面数量5页(≤10页)，使用Spire.Presentation合并器
+2025-08-31 20:22:32 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并5个模板页面
+2025-08-31 20:22:33 - ppt_generator - INFO - 使用第一个模板作为基础: title_slides.pptx
+2025-08-31 20:22:33 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_1.pptx
+2025-08-31 20:22:33 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-31 20:22:34 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-31 20:22:34 - ppt_generator - INFO - 使用AppendBySlide合并: ending_slides.pptx
+2025-08-31 20:22:34 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250831_202234.pptx
+2025-08-31 20:22:34 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 0页
+2025-08-31 20:22:34 - ppt_generator - INFO - Spire合并成功
+2025-08-31 20:30:55 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 20:31:04 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 20:31:04 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 20:31:04 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-31 20:31:04 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-31 20:31:04 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 20:31:04 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 20:31:04 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-31 20:31:04 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-31 20:31:15 - ppt_generator - INFO - 成功获取模板编号: 1 (响应时间: 11.54s)
+2025-08-31 20:31:15 - ppt_generator - INFO - Dify API返回模板编号: 1
+2025-08-31 20:31:15 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_1.pptx
+2025-08-31 20:31:15 - ppt_generator - INFO - 成功获取模板文件: split_presentations_1.pptx (929.9KB)
+2025-08-31 20:31:15 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 11.56秒
+2025-08-31 20:31:15 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 20:31:15 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.54s, 健康分数0.73
+2025-08-31 20:31:15 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-08-31 20:31:15 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 20:31:15 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-31 20:31:24 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 8.39s)
+2025-08-31 20:31:24 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 20:31:24 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 20:31:24 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 20:31:24 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 8.41秒
+2025-08-31 20:31:24 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 20:31:24 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.54s, 健康分数0.73
+2025-08-31 20:31:24 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间8.39s, 健康分数0.74
+2025-08-31 20:31:24 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 20:31:24 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 20:31:24 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-31 20:31:36 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 12.00s)
+2025-08-31 20:31:36 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 20:31:36 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 20:31:36 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 20:31:36 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.02秒
+2025-08-31 20:31:36 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 20:31:36 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.54s, 健康分数0.73
+2025-08-31 20:31:36 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间8.39s, 健康分数0.74
+2025-08-31 20:31:36 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间12.00s, 健康分数0.73
+2025-08-31 20:31:36 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 8字符
+2025-08-31 20:31:36 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 20:31:36 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-08-31 20:31:52 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 15.88s)
+2025-08-31 20:31:52 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 20:31:52 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 20:31:52 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 20:31:52 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 15.90秒
+2025-08-31 20:31:52 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 20:31:52 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.54s, 健康分数0.73
+2025-08-31 20:31:52 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间8.39s, 健康分数0.74
+2025-08-31 20:31:52 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间12.00s, 健康分数0.73
+2025-08-31 20:31:52 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率100.0%, 平均响应时间15.88s, 健康分数0.73
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 20:31:52 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 20:31:52 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(6页)智能选择合并器
+2025-08-31 20:31:52 - ppt_generator - INFO - 页面数量6页(≤10页)，使用Spire.Presentation合并器
+2025-08-31 20:31:52 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并6个模板页面
+2025-08-31 20:31:52 - ppt_generator - INFO - 使用第一个模板作为基础: title_slides.pptx
+2025-08-31 20:31:53 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_1.pptx
+2025-08-31 20:31:53 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-31 20:31:53 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-31 20:31:53 - ppt_generator - INFO - 使用AppendBySlide合并: ending_slides.pptx
+2025-08-31 20:31:53 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-31 20:31:54 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250831_203153.pptx
+2025-08-31 20:31:54 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 6页, 跳过: 0页
+2025-08-31 20:31:54 - ppt_generator - INFO - Spire合并成功
+2025-08-31 20:51:03 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 20:51:09 - ppt_generator - ERROR - 智能PPT生成异常: Connection error.
+2025-08-31 20:53:44 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 20:53:49 - ppt_generator - ERROR - 智能PPT生成异常: Connection error.
+2025-08-31 21:00:06 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 21:00:11 - ppt_generator - ERROR - 智能PPT生成异常: Connection error.
+2025-08-31 21:01:56 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 21:02:00 - ppt_generator - ERROR - 智能PPT生成异常: Connection error.
+2025-08-31 21:17:49 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 21:17:56 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 21:17:56 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-31 21:17:56 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-31 21:17:56 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-08-31 21:17:56 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 21:17:56 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-31 21:17:56 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-31 21:18:17 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 21.91s)
+2025-08-31 21:18:17 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 21:18:17 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 21:18:17 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 21:18:17 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 21.94秒
+2025-08-31 21:18:17 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 21:18:17 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间21.91s, 健康分数0.73
+2025-08-31 21:18:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 21:18:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 21:18:18 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 21:18:18 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-08-31 21:18:18 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-08-31 21:18:18 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-08-31 21:18:19 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-08-31 21:18:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-08-31 21:18:20 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-31 21:18:21 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-08-31 21:18:21 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250831_211821.pptx
+2025-08-31 21:18:21 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-08-31 21:18:21 - ppt_generator - INFO - Spire合并成功
+2025-08-31 23:25:43 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 23:25:51 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 23:25:51 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 23:25:51 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-31 23:25:51 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-31 23:25:51 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 23:25:51 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:25:51 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-31 23:25:51 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-31 23:26:16 - ppt_generator - INFO - 成功获取模板编号: 1 (响应时间: 24.90s)
+2025-08-31 23:26:16 - ppt_generator - INFO - Dify API返回模板编号: 1
+2025-08-31 23:26:16 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_1.pptx
+2025-08-31 23:26:16 - ppt_generator - INFO - 成功获取模板文件: split_presentations_1.pptx (929.9KB)
+2025-08-31 23:26:16 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 24.93秒
+2025-08-31 23:26:16 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:26:16 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间24.90s, 健康分数0.73
+2025-08-31 23:26:16 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-08-31 23:26:16 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:26:16 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-31 23:26:27 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 10.72s)
+2025-08-31 23:26:27 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 23:26:27 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 23:26:27 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 23:26:27 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.75秒
+2025-08-31 23:26:27 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:26:27 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间24.90s, 健康分数0.73
+2025-08-31 23:26:27 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间10.72s, 健康分数0.73
+2025-08-31 23:26:27 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 23:26:27 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:26:27 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-31 23:26:36 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 8.99s)
+2025-08-31 23:26:36 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-08-31 23:26:36 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-08-31 23:26:36 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-08-31 23:26:36 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.01秒
+2025-08-31 23:26:36 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:26:36 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间24.90s, 健康分数0.73
+2025-08-31 23:26:36 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间10.72s, 健康分数0.73
+2025-08-31 23:26:36 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间8.99s, 健康分数0.73
+2025-08-31 23:26:36 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 8字符
+2025-08-31 23:26:36 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:26:36 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-08-31 23:26:48 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 12.15s)
+2025-08-31 23:26:48 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 23:26:48 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 23:26:48 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 23:26:48 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.16秒
+2025-08-31 23:26:48 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:26:48 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间24.90s, 健康分数0.73
+2025-08-31 23:26:48 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间10.72s, 健康分数0.73
+2025-08-31 23:26:48 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间8.99s, 健康分数0.73
+2025-08-31 23:26:48 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率100.0%, 平均响应时间12.15s, 健康分数0.73
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:26:49 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:26:49 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(7页)智能选择合并器
+2025-08-31 23:26:49 - ppt_generator - INFO - 页面数量7页(≤10页)，使用Spire.Presentation合并器
+2025-08-31 23:26:49 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并7个模板页面
+2025-08-31 23:26:49 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-08-31 23:26:50 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-08-31 23:26:50 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_1.pptx
+2025-08-31 23:26:50 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-31 23:26:51 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_7.pptx
+2025-08-31 23:26:51 - ppt_generator - INFO - 使用AppendBySlide合并: split_presentations_10.pptx
+2025-08-31 23:26:51 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_7_ending_slides.pptx
+2025-08-31 23:26:52 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250831_232651.pptx
+2025-08-31 23:26:52 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 7页, 跳过: 0页
+2025-08-31 23:26:52 - ppt_generator - INFO - Spire合并成功
+2025-08-31 23:30:32 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 23:30:41 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 23:30:41 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 23:30:41 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-31 23:30:41 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-31 23:30:41 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 23:30:41 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:30:41 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-31 23:30:41 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-31 23:30:53 - ppt_generator - INFO - 成功获取模板编号: 1 (响应时间: 12.58s)
+2025-08-31 23:30:53 - ppt_generator - INFO - Dify API返回模板编号: 1
+2025-08-31 23:30:53 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_1.pptx
+2025-08-31 23:30:53 - ppt_generator - INFO - 成功获取模板文件: split_presentations_1.pptx (929.9KB)
+2025-08-31 23:30:53 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.60秒
+2025-08-31 23:30:53 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:30:53 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.58s, 健康分数0.73
+2025-08-31 23:30:53 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-08-31 23:30:53 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:30:53 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-31 23:31:01 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 8.01s)
+2025-08-31 23:31:01 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 23:31:01 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 23:31:01 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 23:31:01 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 8.03秒
+2025-08-31 23:31:01 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:31:01 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.58s, 健康分数0.73
+2025-08-31 23:31:01 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间8.01s, 健康分数0.74
+2025-08-31 23:31:01 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 23:31:01 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:31:01 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-31 23:31:11 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 10.02s)
+2025-08-31 23:31:11 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-08-31 23:31:11 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-08-31 23:31:11 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-08-31 23:31:11 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.05秒
+2025-08-31 23:31:11 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:31:11 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.58s, 健康分数0.73
+2025-08-31 23:31:11 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间8.01s, 健康分数0.74
+2025-08-31 23:31:11 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间10.02s, 健康分数0.73
+2025-08-31 23:31:11 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 8字符
+2025-08-31 23:31:11 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:31:11 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-08-31 23:31:19 - ppt_generator - INFO - 成功获取模板编号: 9 (响应时间: 7.83s)
+2025-08-31 23:31:19 - ppt_generator - INFO - Dify API返回模板编号: 9
+2025-08-31 23:31:19 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_9.pptx
+2025-08-31 23:31:19 - ppt_generator - INFO - 成功获取模板文件: split_presentations_9.pptx (920.1KB)
+2025-08-31 23:31:19 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 7.85秒
+2025-08-31 23:31:19 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:31:19 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.58s, 健康分数0.73
+2025-08-31 23:31:19 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间8.01s, 健康分数0.74
+2025-08-31 23:31:19 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间10.02s, 健康分数0.73
+2025-08-31 23:31:19 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率100.0%, 平均响应时间7.83s, 健康分数0.74
+2025-08-31 23:31:19 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:31:19 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:31:19 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:31:19 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:31:19 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:31:19 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:31:20 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:31:20 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:31:20 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:31:20 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:31:20 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:31:20 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:31:20 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(7页)智能选择合并器
+2025-08-31 23:31:20 - ppt_generator - INFO - 页面数量7页(≤10页)，使用Spire.Presentation合并器
+2025-08-31 23:31:20 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并7个模板页面
+2025-08-31 23:31:20 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-08-31 23:31:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-08-31 23:31:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_1.pptx
+2025-08-31 23:31:21 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_10.pptx
+2025-08-31 23:31:21 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_split_presentations_7.pptx
+2025-08-31 23:31:21 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_split_presentations_9.pptx
+2025-08-31 23:31:21 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_7_ending_slides.pptx
+2025-08-31 23:31:22 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250831_233121.pptx
+2025-08-31 23:31:22 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 7页, 跳过: 0页
+2025-08-31 23:31:22 - ppt_generator - INFO - Spire合并成功
+2025-08-31 23:33:56 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-08-31 23:34:05 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 23:34:05 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-08-31 23:34:05 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-08-31 23:34:05 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-08-31 23:34:05 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 23:34:05 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:34:05 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-08-31 23:34:05 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-08-31 23:34:14 - ppt_generator - INFO - 成功获取模板编号: 1 (响应时间: 8.83s)
+2025-08-31 23:34:14 - ppt_generator - INFO - Dify API返回模板编号: 1
+2025-08-31 23:34:14 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_1.pptx
+2025-08-31 23:34:14 - ppt_generator - INFO - 成功获取模板文件: split_presentations_1.pptx (929.9KB)
+2025-08-31 23:34:14 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 8.85秒
+2025-08-31 23:34:14 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:34:14 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间8.83s, 健康分数0.73
+2025-08-31 23:34:14 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-08-31 23:34:14 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:34:14 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-08-31 23:34:21 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 7.09s)
+2025-08-31 23:34:21 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 23:34:21 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 23:34:21 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 23:34:21 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 7.11秒
+2025-08-31 23:34:21 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:34:21 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间8.83s, 健康分数0.73
+2025-08-31 23:34:21 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间7.09s, 健康分数0.74
+2025-08-31 23:34:21 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-08-31 23:34:21 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:34:21 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-08-31 23:34:29 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 7.80s)
+2025-08-31 23:34:29 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-08-31 23:34:29 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-08-31 23:34:29 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-08-31 23:34:29 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 7.83秒
+2025-08-31 23:34:29 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:34:29 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间8.83s, 健康分数0.73
+2025-08-31 23:34:29 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间7.09s, 健康分数0.74
+2025-08-31 23:34:29 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间7.80s, 健康分数0.74
+2025-08-31 23:34:29 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 8字符
+2025-08-31 23:34:29 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-08-31 23:34:29 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-08-31 23:34:38 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 9.29s)
+2025-08-31 23:34:38 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-08-31 23:34:38 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-08-31 23:34:38 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-08-31 23:34:38 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.32秒
+2025-08-31 23:34:38 - ppt_generator - INFO - API密钥健康状态报告:
+2025-08-31 23:34:38 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间8.83s, 健康分数0.73
+2025-08-31 23:34:38 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间7.09s, 健康分数0.74
+2025-08-31 23:34:38 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间7.80s, 健康分数0.74
+2025-08-31 23:34:38 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率100.0%, 平均响应时间9.29s, 健康分数0.73
+2025-08-31 23:34:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:34:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:34:39 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:34:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:34:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:34:41 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:34:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:34:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:34:43 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:34:44 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-08-31 23:34:44 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-08-31 23:34:44 - ppt_generator - INFO - 开始提取位置信息
+2025-08-31 23:34:46 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(7页)智能选择合并器
+2025-08-31 23:34:46 - ppt_generator - INFO - 页面数量7页(≤10页)，使用Spire.Presentation合并器
+2025-08-31 23:34:46 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并7个模板页面
+2025-08-31 23:34:46 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-08-31 23:34:47 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-08-31 23:34:47 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_1.pptx
+2025-08-31 23:34:47 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_10.pptx
+2025-08-31 23:34:47 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_split_presentations_7.pptx
+2025-08-31 23:34:48 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_split_presentations_10.pptx
+2025-08-31 23:34:48 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_7_ending_slides.pptx
+2025-08-31 23:34:48 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250831_233448.pptx
+2025-08-31 23:34:48 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 7页, 跳过: 0页
+2025-08-31 23:34:48 - ppt_generator - INFO - Spire合并成功
+2025-09-01 16:59:17 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-01 16:59:28 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 16:59:28 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 16:59:28 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-01 16:59:28 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-01 16:59:28 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-09-01 16:59:28 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 16:59:28 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-01 16:59:28 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-01 16:59:46 - ppt_generator - INFO - 成功获取模板编号: 1 (响应时间: 18.21s)
+2025-09-01 16:59:46 - ppt_generator - INFO - Dify API返回模板编号: 1
+2025-09-01 16:59:46 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_1.pptx
+2025-09-01 16:59:46 - ppt_generator - INFO - 成功获取模板文件: split_presentations_1.pptx (929.9KB)
+2025-09-01 16:59:46 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 18.26秒
+2025-09-01 16:59:46 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 16:59:46 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.21s, 健康分数0.73
+2025-09-01 16:59:46 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-09-01 16:59:46 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 16:59:46 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-01 17:00:00 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 14.11s)
+2025-09-01 17:00:00 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:00:00 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:00:00 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:00:00 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.13秒
+2025-09-01 17:00:00 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:00:00 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.21s, 健康分数0.73
+2025-09-01 17:00:00 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间14.11s, 健康分数0.73
+2025-09-01 17:00:00 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-09-01 17:00:00 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:00:00 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-01 17:00:20 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 20.00s)
+2025-09-01 17:00:20 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-01 17:00:20 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-01 17:00:20 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-01 17:00:20 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 20.01秒
+2025-09-01 17:00:20 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:00:20 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.21s, 健康分数0.73
+2025-09-01 17:00:20 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间14.11s, 健康分数0.73
+2025-09-01 17:00:20 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间20.00s, 健康分数0.73
+2025-09-01 17:00:20 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 8字符
+2025-09-01 17:00:20 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:00:20 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-09-01 17:00:34 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 13.49s)
+2025-09-01 17:00:34 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:00:34 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:00:34 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:00:34 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 13.50秒
+2025-09-01 17:00:34 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:00:34 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间18.21s, 健康分数0.73
+2025-09-01 17:00:34 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间14.11s, 健康分数0.73
+2025-09-01 17:00:34 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间20.00s, 健康分数0.73
+2025-09-01 17:00:34 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率100.0%, 平均响应时间13.49s, 健康分数0.73
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:00:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:00:35 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(7页)智能选择合并器
+2025-09-01 17:00:35 - ppt_generator - INFO - 页面数量7页(≤10页)，使用Spire.Presentation合并器
+2025-09-01 17:00:35 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并7个模板页面
+2025-09-01 17:00:36 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-01 17:00:36 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-01 17:00:36 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_1.pptx
+2025-09-01 17:00:37 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_10.pptx
+2025-09-01 17:00:37 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_split_presentations_7.pptx
+2025-09-01 17:00:37 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_split_presentations_10.pptx
+2025-09-01 17:00:37 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_7_ending_slides.pptx
+2025-09-01 17:00:38 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250901_170037.pptx
+2025-09-01 17:00:38 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 7页, 跳过: 0页
+2025-09-01 17:00:38 - ppt_generator - INFO - Spire合并成功
+2025-09-01 17:08:32 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-01 17:08:39 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 17:08:39 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-01 17:08:39 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-01 17:08:39 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-01 17:08:39 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:08:39 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-01 17:08:39 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-01 17:08:55 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 15.78s)
+2025-09-01 17:08:55 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:08:55 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:08:55 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:08:55 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 15.80秒
+2025-09-01 17:08:55 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:08:55 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间15.78s, 健康分数0.73
+2025-09-01 17:08:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:08:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:08:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:08:58 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-01 17:08:58 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-01 17:08:58 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-01 17:08:58 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-01 17:08:58 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-01 17:08:58 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-01 17:08:59 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-01 17:08:59 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250901_170859.pptx
+2025-09-01 17:08:59 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-01 17:08:59 - ppt_generator - INFO - Spire合并成功
+2025-09-01 17:20:13 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-01 17:20:20 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 17:20:20 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-01 17:20:20 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-01 17:20:20 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-01 17:20:20 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:20:20 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-01 17:20:20 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-01 17:20:37 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 17.03s)
+2025-09-01 17:20:37 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:20:37 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:20:37 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:20:37 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 17.05秒
+2025-09-01 17:20:37 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:20:37 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间17.03s, 健康分数0.73
+2025-09-01 17:20:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:20:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:20:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:20:39 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-01 17:20:39 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-01 17:20:39 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-01 17:20:39 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-01 17:20:39 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-01 17:20:39 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-01 17:20:40 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-01 17:20:40 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250901_172040.pptx
+2025-09-01 17:20:40 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-01 17:20:40 - ppt_generator - INFO - Spire合并成功
+2025-09-01 17:24:24 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-01 17:24:32 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 17:24:32 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-01 17:24:32 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-01 17:24:32 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-01 17:24:32 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:24:32 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-01 17:24:32 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-01 17:24:42 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 10.09s)
+2025-09-01 17:24:42 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:24:42 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:24:42 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:24:42 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.11秒
+2025-09-01 17:24:42 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:24:42 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间10.09s, 健康分数0.73
+2025-09-01 17:24:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:24:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:24:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:24:44 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-01 17:24:44 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-01 17:24:44 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-01 17:24:44 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-01 17:24:44 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-01 17:24:44 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-01 17:24:44 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-01 17:24:45 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250901_172444.pptx
+2025-09-01 17:24:45 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-01 17:24:45 - ppt_generator - INFO - Spire合并成功
+2025-09-01 17:28:26 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-01 17:28:32 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 17:28:32 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-01 17:28:32 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-01 17:28:32 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-01 17:28:32 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:28:32 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-01 17:28:32 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-01 17:28:46 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 14.07s)
+2025-09-01 17:28:46 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:28:46 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:28:46 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:28:46 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.08秒
+2025-09-01 17:28:46 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:28:46 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.07s, 健康分数0.73
+2025-09-01 17:28:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:28:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:28:47 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:28:48 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-01 17:28:48 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-01 17:28:48 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-01 17:28:48 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-01 17:28:48 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-01 17:28:48 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-01 17:28:49 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-01 17:28:49 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250901_172849.pptx
+2025-09-01 17:28:49 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-01 17:28:49 - ppt_generator - INFO - Spire合并成功
+2025-09-01 17:34:56 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-01 17:35:07 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 17:35:07 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 17:35:07 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-01 17:35:07 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-01 17:35:07 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-09-01 17:35:07 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:35:07 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-01 17:35:07 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-01 17:35:30 - ppt_generator - INFO - 成功获取模板编号: 1 (响应时间: 23.63s)
+2025-09-01 17:35:31 - ppt_generator - INFO - Dify API返回模板编号: 1
+2025-09-01 17:35:31 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_1.pptx
+2025-09-01 17:35:31 - ppt_generator - INFO - 成功获取模板文件: split_presentations_1.pptx (929.9KB)
+2025-09-01 17:35:31 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 23.65秒
+2025-09-01 17:35:31 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:35:31 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间23.63s, 健康分数0.73
+2025-09-01 17:35:31 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-09-01 17:35:31 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:35:31 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-01 17:35:43 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 12.48s)
+2025-09-01 17:35:43 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:35:43 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:35:43 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:35:43 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.51秒
+2025-09-01 17:35:43 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:35:43 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间23.63s, 健康分数0.73
+2025-09-01 17:35:43 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间12.48s, 健康分数0.73
+2025-09-01 17:35:43 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-09-01 17:35:43 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:35:43 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-01 17:35:52 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 8.81s)
+2025-09-01 17:35:52 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-01 17:35:52 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-01 17:35:52 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-01 17:35:52 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 8.83秒
+2025-09-01 17:35:52 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:35:52 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间23.63s, 健康分数0.73
+2025-09-01 17:35:52 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间12.48s, 健康分数0.73
+2025-09-01 17:35:52 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间8.81s, 健康分数0.73
+2025-09-01 17:35:52 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 8字符
+2025-09-01 17:35:52 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:35:52 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-09-01 17:36:08 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 15.98s)
+2025-09-01 17:36:08 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:36:08 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:36:08 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:36:08 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 15.99秒
+2025-09-01 17:36:08 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:36:08 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间23.63s, 健康分数0.73
+2025-09-01 17:36:08 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间12.48s, 健康分数0.73
+2025-09-01 17:36:08 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间8.81s, 健康分数0.73
+2025-09-01 17:36:08 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率100.0%, 平均响应时间15.98s, 健康分数0.73
+2025-09-01 17:36:08 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:36:08 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:36:08 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:36:09 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:36:09 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:36:09 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:36:10 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:36:10 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:36:10 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:36:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:36:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:36:12 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:36:13 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(7页)智能选择合并器
+2025-09-01 17:36:13 - ppt_generator - INFO - 页面数量7页(≤10页)，使用Spire.Presentation合并器
+2025-09-01 17:36:13 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并7个模板页面
+2025-09-01 17:36:13 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-01 17:36:13 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-01 17:36:13 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_1.pptx
+2025-09-01 17:36:14 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_10.pptx
+2025-09-01 17:36:14 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_split_presentations_7.pptx
+2025-09-01 17:36:14 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_split_presentations_10.pptx
+2025-09-01 17:36:14 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_7_ending_slides.pptx
+2025-09-01 17:36:14 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250901_173614.pptx
+2025-09-01 17:36:14 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 7页, 跳过: 0页
+2025-09-01 17:36:14 - ppt_generator - INFO - Spire合并成功
+2025-09-01 17:51:26 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-01 17:51:34 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 17:51:34 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-01 17:51:34 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-01 17:51:34 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-01 17:51:34 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:51:34 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-01 17:51:34 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-01 17:51:55 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 21.02s)
+2025-09-01 17:51:55 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:51:55 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:51:55 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:51:55 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 21.03秒
+2025-09-01 17:51:55 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:51:55 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间21.02s, 健康分数0.73
+2025-09-01 17:51:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:51:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:51:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:51:57 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-01 17:51:57 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-01 17:51:57 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-01 17:51:57 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-01 17:51:57 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-01 17:51:58 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-01 17:51:58 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-01 17:51:58 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250901_175158.pptx
+2025-09-01 17:51:58 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-01 17:51:58 - ppt_generator - INFO - Spire合并成功
+2025-09-01 17:58:34 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-01 17:58:43 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-01 17:58:43 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-01 17:58:43 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-01 17:58:43 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-01 17:58:43 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-01 17:58:43 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-01 17:58:43 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-01 17:58:52 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 9.01s)
+2025-09-01 17:58:52 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-01 17:58:52 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-01 17:58:52 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-01 17:58:52 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.04秒
+2025-09-01 17:58:52 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-01 17:58:52 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间9.01s, 健康分数0.73
+2025-09-01 17:58:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-01 17:58:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-01 17:58:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-01 17:58:54 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-01 17:58:54 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-01 17:58:54 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-01 17:58:54 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-01 17:58:55 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-01 17:58:55 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-01 17:58:55 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-01 17:58:56 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250901_175855.pptx
+2025-09-01 17:58:56 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-01 17:58:56 - ppt_generator - INFO - Spire合并成功
+2025-09-02 09:26:57 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 09:27:07 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 09:27:07 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 09:27:07 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 09:27:07 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 09:27:07 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:27:07 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 09:27:07 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 09:27:22 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 15.93s)
+2025-09-02 09:27:22 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 09:27:22 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 09:27:23 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 09:27:23 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 15.96秒
+2025-09-02 09:27:23 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:27:23 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间15.93s, 健康分数0.73
+2025-09-02 09:27:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:27:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:27:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:27:24 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-02 09:27:24 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 09:27:24 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-02 09:27:24 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 09:27:25 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 09:27:25 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-02 09:27:25 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-02 09:27:25 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_092725.pptx
+2025-09-02 09:27:25 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-02 09:27:25 - ppt_generator - INFO - Spire合并成功
+2025-09-02 09:45:49 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 09:45:55 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 09:45:55 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:45:55 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 09:45:55 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-02 09:46:09 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 14.24s)
+2025-09-02 09:46:09 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 09:46:09 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 09:46:09 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 09:46:09 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.25秒
+2025-09-02 09:46:09 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:46:09 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间15.93s, 健康分数0.73
+2025-09-02 09:46:09 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间14.24s, 健康分数0.73
+2025-09-02 09:46:10 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:46:10 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:46:10 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:46:11 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(3页)智能选择合并器
+2025-09-02 09:46:11 - ppt_generator - INFO - 页面数量3页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 09:46:11 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并3个模板页面
+2025-09-02 09:46:11 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 09:46:11 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_split_presentations_10.pptx
+2025-09-02 09:46:11 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_ending_slides.pptx
+2025-09-02 09:46:11 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_094611.pptx
+2025-09-02 09:46:11 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 3页, 跳过: 0页
+2025-09-02 09:46:11 - ppt_generator - INFO - Spire合并成功
+2025-09-02 09:48:43 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 09:48:51 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 09:48:51 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 09:48:51 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 09:48:51 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 30字符
+2025-09-02 09:48:51 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:48:51 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 09:48:51 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 09:49:04 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 13.25s)
+2025-09-02 09:49:04 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-02 09:49:04 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-02 09:49:04 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-02 09:49:04 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 13.26秒
+2025-09-02 09:49:04 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:49:04 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间13.25s, 健康分数0.73
+2025-09-02 09:49:04 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 24字符
+2025-09-02 09:49:04 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:49:04 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-02 09:49:18 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 13.73s)
+2025-09-02 09:49:18 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 09:49:18 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 09:49:18 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 09:49:18 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 13.75秒
+2025-09-02 09:49:18 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:49:18 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间13.25s, 健康分数0.73
+2025-09-02 09:49:18 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间13.73s, 健康分数0.73
+2025-09-02 09:49:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:49:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:49:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:49:19 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:49:19 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:49:19 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:49:19 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(5页)智能选择合并器
+2025-09-02 09:49:19 - ppt_generator - INFO - 页面数量5页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 09:49:19 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并5个模板页面
+2025-09-02 09:49:19 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 09:49:19 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 09:49:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_7.pptx
+2025-09-02 09:49:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_10.pptx
+2025-09-02 09:49:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_ending_slides.pptx
+2025-09-02 09:49:21 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_094920.pptx
+2025-09-02 09:49:21 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 0页
+2025-09-02 09:49:21 - ppt_generator - INFO - Spire合并成功
+2025-09-02 09:51:58 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 09:52:07 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 09:52:07 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 09:52:07 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 09:52:07 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 30字符
+2025-09-02 09:52:07 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:52:07 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 09:52:07 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 09:52:16 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 9.14s)
+2025-09-02 09:52:16 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-02 09:52:16 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-02 09:52:16 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-02 09:52:16 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.16秒
+2025-09-02 09:52:16 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:52:16 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间9.14s, 健康分数0.73
+2025-09-02 09:52:16 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 24字符
+2025-09-02 09:52:16 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:52:16 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-02 09:52:23 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 6.78s)
+2025-09-02 09:52:23 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 09:52:23 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 09:52:23 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 09:52:23 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 6.80秒
+2025-09-02 09:52:23 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:52:23 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间9.14s, 健康分数0.73
+2025-09-02 09:52:23 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间6.78s, 健康分数0.74
+2025-09-02 09:52:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:52:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:52:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:52:24 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:52:24 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:52:24 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:52:26 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(5页)智能选择合并器
+2025-09-02 09:52:26 - ppt_generator - INFO - 页面数量5页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 09:52:26 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并5个模板页面
+2025-09-02 09:52:26 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 09:52:26 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 09:52:26 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_7.pptx
+2025-09-02 09:52:26 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_10.pptx
+2025-09-02 09:52:26 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_ending_slides.pptx
+2025-09-02 09:52:27 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_095226.pptx
+2025-09-02 09:52:27 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 0页
+2025-09-02 09:52:27 - ppt_generator - INFO - Spire合并成功
+2025-09-02 09:55:45 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 09:55:56 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 09:55:56 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 09:55:56 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 09:55:56 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 09:55:56 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-09-02 09:55:56 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:55:56 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 09:55:56 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 09:56:07 - ppt_generator - INFO - 成功获取模板编号: 1 (响应时间: 10.81s)
+2025-09-02 09:56:07 - ppt_generator - INFO - Dify API返回模板编号: 1
+2025-09-02 09:56:07 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_1.pptx
+2025-09-02 09:56:07 - ppt_generator - INFO - 成功获取模板文件: split_presentations_1.pptx (929.9KB)
+2025-09-02 09:56:07 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.84秒
+2025-09-02 09:56:07 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:56:07 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间10.81s, 健康分数0.73
+2025-09-02 09:56:07 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 15字符
+2025-09-02 09:56:07 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:56:07 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-02 09:56:17 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 9.91s)
+2025-09-02 09:56:17 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 09:56:17 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 09:56:17 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 09:56:17 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.96秒
+2025-09-02 09:56:17 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:56:17 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间10.81s, 健康分数0.73
+2025-09-02 09:56:17 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间9.91s, 健康分数0.73
+2025-09-02 09:56:17 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 14字符
+2025-09-02 09:56:17 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:56:17 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-02 09:56:26 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 9.69s)
+2025-09-02 09:56:26 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-02 09:56:26 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-02 09:56:26 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-02 09:56:26 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 9.72秒
+2025-09-02 09:56:26 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:56:26 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间10.81s, 健康分数0.73
+2025-09-02 09:56:26 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间9.91s, 健康分数0.73
+2025-09-02 09:56:26 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间9.69s, 健康分数0.73
+2025-09-02 09:56:26 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 8字符
+2025-09-02 09:56:26 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 09:56:26 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-09-02 09:56:38 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 11.85s)
+2025-09-02 09:56:38 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 09:56:38 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 09:56:38 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 09:56:38 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 11.87秒
+2025-09-02 09:56:38 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 09:56:38 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间10.81s, 健康分数0.73
+2025-09-02 09:56:38 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间9.91s, 健康分数0.73
+2025-09-02 09:56:38 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间9.69s, 健康分数0.73
+2025-09-02 09:56:38 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率100.0%, 平均响应时间11.85s, 健康分数0.73
+2025-09-02 09:56:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:56:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:56:39 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:56:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:56:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:56:40 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:56:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:56:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:56:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:56:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 09:56:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 09:56:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 09:56:43 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(7页)智能选择合并器
+2025-09-02 09:56:43 - ppt_generator - INFO - 页面数量7页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 09:56:43 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并7个模板页面
+2025-09-02 09:56:43 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 09:56:44 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 09:56:44 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_1.pptx
+2025-09-02 09:56:44 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_10.pptx
+2025-09-02 09:56:44 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_split_presentations_7.pptx
+2025-09-02 09:56:45 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_split_presentations_10.pptx
+2025-09-02 09:56:45 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_7_ending_slides.pptx
+2025-09-02 09:56:45 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_095645.pptx
+2025-09-02 09:56:45 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 7页, 跳过: 0页
+2025-09-02 09:56:45 - ppt_generator - INFO - Spire合并成功
+2025-09-02 10:00:18 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 10:00:26 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 10:00:26 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 10:00:26 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 10:00:26 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 10:00:26 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:00:26 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 10:00:26 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 10:00:38 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 12.00s)
+2025-09-02 10:00:38 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 10:00:38 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 10:00:38 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 10:00:38 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.04秒
+2025-09-02 10:00:38 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:00:38 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.00s, 健康分数0.73
+2025-09-02 10:00:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:00:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:00:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:00:41 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-02 10:00:41 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 10:00:41 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-02 10:00:41 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 10:00:42 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 10:00:43 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-02 10:00:43 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-02 10:00:43 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_100043.pptx
+2025-09-02 10:00:43 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-02 10:00:43 - ppt_generator - INFO - Spire合并成功
+2025-09-02 10:05:54 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 10:06:02 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 10:06:02 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 10:06:02 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 10:06:02 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 10:06:02 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:06:02 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 10:06:02 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 10:06:32 - ppt_generator - WARNING - API请求超时 (尝试 1)
+2025-09-02 10:06:32 - ppt_generator - WARNING - API密钥请求失败: app-riHQ722n1xYctciP... (连续失败: 1, 错误类型: timeout)
+2025-09-02 10:06:34 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)，使用密钥索引: 1
+2025-09-02 10:06:43 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 9.04s)
+2025-09-02 10:06:43 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 10:06:43 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 10:06:43 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 10:06:43 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 41.21秒
+2025-09-02 10:06:43 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:06:43 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-02 10:06:43 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间9.04s, 健康分数0.73
+2025-09-02 10:06:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:06:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:06:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:06:44 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-02 10:06:44 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 10:06:44 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-02 10:06:44 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 10:06:45 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 10:06:45 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-02 10:06:45 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-02 10:06:45 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_100645.pptx
+2025-09-02 10:06:45 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-02 10:06:45 - ppt_generator - INFO - Spire合并成功
+2025-09-02 10:12:26 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 10:12:36 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 10:12:36 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 10:12:36 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 10:12:36 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 10:12:36 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:12:36 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 10:12:36 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 10:12:50 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 14.41s)
+2025-09-02 10:12:50 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 10:12:50 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 10:12:50 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 10:12:50 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.43秒
+2025-09-02 10:12:50 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:12:50 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.41s, 健康分数0.73
+2025-09-02 10:12:50 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:12:50 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:12:50 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:12:52 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(3页)智能选择合并器
+2025-09-02 10:12:52 - ppt_generator - INFO - 页面数量3页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 10:12:52 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并3个模板页面
+2025-09-02 10:12:52 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 10:12:52 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_split_presentations_10.pptx
+2025-09-02 10:12:52 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_ending_slides.pptx
+2025-09-02 10:12:53 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_101252.pptx
+2025-09-02 10:12:53 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 3页, 跳过: 0页
+2025-09-02 10:12:53 - ppt_generator - INFO - Spire合并成功
+2025-09-02 10:16:18 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 10:16:25 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 10:16:25 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 10:16:25 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 10:16:25 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 10:16:25 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:16:25 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 10:16:25 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 10:16:36 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 10.31s)
+2025-09-02 10:16:36 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 10:16:36 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 10:16:36 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 10:16:36 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.32秒
+2025-09-02 10:16:36 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:16:36 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间10.31s, 健康分数0.73
+2025-09-02 10:16:36 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:16:36 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:16:36 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:16:37 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-02 10:16:37 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 10:16:37 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-02 10:16:37 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 10:16:38 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 10:16:39 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-02 10:16:39 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-02 10:16:39 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_101639.pptx
+2025-09-02 10:16:39 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-02 10:16:39 - ppt_generator - INFO - Spire合并成功
+2025-09-02 10:19:02 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 10:19:11 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 10:19:11 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 10:19:11 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 10:19:11 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 10:19:11 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:19:11 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 10:19:11 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 10:19:25 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 14.46s)
+2025-09-02 10:19:25 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 10:19:25 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 10:19:25 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 10:19:25 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.49秒
+2025-09-02 10:19:25 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:19:25 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.46s, 健康分数0.73
+2025-09-02 10:19:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:19:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:19:26 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:19:39 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-02 10:19:39 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 10:19:39 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-02 10:19:39 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 10:19:39 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 10:19:40 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-02 10:19:40 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-02 10:19:40 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_101940.pptx
+2025-09-02 10:19:40 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-02 10:19:40 - ppt_generator - INFO - Spire合并成功
+2025-09-02 10:37:02 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 10:37:09 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 10:37:09 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 10:37:09 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 10:37:09 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 10:37:09 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:37:09 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 10:37:09 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 10:37:23 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 14.36s)
+2025-09-02 10:37:23 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 10:37:23 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 10:37:23 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 10:37:23 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.39秒
+2025-09-02 10:37:23 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:37:23 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.36s, 健康分数0.73
+2025-09-02 10:37:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:37:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:37:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:37:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:37:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:37:28 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:37:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:37:41 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(3页)智能选择合并器
+2025-09-02 10:37:41 - ppt_generator - INFO - 页面数量3页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 10:37:41 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并3个模板页面
+2025-09-02 10:37:41 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 10:37:41 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_split_presentations_10.pptx
+2025-09-02 10:37:42 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_ending_slides.pptx
+2025-09-02 10:37:42 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_103742.pptx
+2025-09-02 10:37:42 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 3页, 跳过: 0页
+2025-09-02 10:37:42 - ppt_generator - INFO - Spire合并成功
+2025-09-02 10:46:53 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 10:47:00 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 10:47:00 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 10:47:00 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 10:47:00 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 10:47:00 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:47:00 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 10:47:00 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 10:47:11 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 11.06s)
+2025-09-02 10:47:11 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 10:47:11 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 10:47:11 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 10:47:11 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 11.10秒
+2025-09-02 10:47:11 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:47:11 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.06s, 健康分数0.73
+2025-09-02 10:47:11 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:47:11 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:47:11 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:47:15 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:47:15 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:47:15 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:47:28 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:47:28 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(3页)智能选择合并器
+2025-09-02 10:47:28 - ppt_generator - INFO - 页面数量3页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 10:47:28 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并3个模板页面
+2025-09-02 10:47:28 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 10:47:28 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_split_presentations_10.pptx
+2025-09-02 10:47:28 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_ending_slides.pptx
+2025-09-02 10:47:28 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_104728.pptx
+2025-09-02 10:47:28 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 3页, 跳过: 0页
+2025-09-02 10:47:28 - ppt_generator - INFO - Spire合并成功
+2025-09-02 10:51:27 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 10:51:36 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 10:51:36 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 10:51:36 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 10:51:36 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 30字符
+2025-09-02 10:51:36 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:51:36 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 10:51:36 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 10:51:47 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 11.33s)
+2025-09-02 10:51:47 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-02 10:51:47 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-02 10:51:47 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-02 10:51:47 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 11.34秒
+2025-09-02 10:51:47 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:51:47 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.33s, 健康分数0.73
+2025-09-02 10:51:47 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 23字符
+2025-09-02 10:51:47 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 10:51:47 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-02 10:51:56 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 8.50s)
+2025-09-02 10:51:56 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 10:51:56 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 10:51:56 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 10:51:56 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 8.51秒
+2025-09-02 10:51:56 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 10:51:56 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.33s, 健康分数0.73
+2025-09-02 10:51:56 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间8.50s, 健康分数0.74
+2025-09-02 10:51:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:51:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:51:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:52:01 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:52:01 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:52:01 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:52:09 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:52:09 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:52:09 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:52:20 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 10:52:20 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 10:52:20 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 10:52:28 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(5页)智能选择合并器
+2025-09-02 10:52:28 - ppt_generator - INFO - 页面数量5页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 10:52:28 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并5个模板页面
+2025-09-02 10:52:29 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 10:52:30 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 10:52:30 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_7.pptx
+2025-09-02 10:52:31 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_10.pptx
+2025-09-02 10:52:31 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_ending_slides.pptx
+2025-09-02 10:52:31 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_105231.pptx
+2025-09-02 10:52:31 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 0页
+2025-09-02 10:52:31 - ppt_generator - INFO - Spire合并成功
+2025-09-02 16:26:32 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 16:26:40 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 16:26:40 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 16:26:40 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 16:26:40 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 16:26:40 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 16:26:40 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 16:26:40 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 16:26:56 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 15.54s)
+2025-09-02 16:26:56 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 16:26:56 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 16:26:56 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 16:26:56 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 15.56秒
+2025-09-02 16:26:56 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 16:26:56 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间15.54s, 健康分数0.73
+2025-09-02 16:26:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 16:26:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 16:26:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 16:27:00 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 16:27:00 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 16:27:00 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 16:27:13 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 16:27:13 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 16:27:13 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 16:27:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 16:27:26 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 16:27:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 16:27:26 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 16:27:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 16:27:26 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 16:27:26 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 16:27:26 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 16:27:26 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 16:27:27 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-02 16:27:27 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 16:27:27 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-02 16:27:29 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 16:27:30 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 16:27:30 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-02 16:27:31 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-02 16:27:31 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_162731.pptx
+2025-09-02 16:27:31 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-02 16:27:31 - ppt_generator - INFO - Spire合并成功
+2025-09-02 17:12:18 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 17:12:28 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 17:12:28 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 17:12:28 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 17:12:28 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 17:12:28 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 24字符
+2025-09-02 17:12:29 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 17:12:29 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 17:12:29 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 17:12:41 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 12.83s)
+2025-09-02 17:12:41 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-02 17:12:41 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-02 17:12:41 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-02 17:12:41 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.87秒
+2025-09-02 17:12:41 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 17:12:41 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.83s, 健康分数0.73
+2025-09-02 17:12:41 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 25字符
+2025-09-02 17:12:41 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 17:12:41 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-02 17:12:53 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 11.52s)
+2025-09-02 17:12:53 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-02 17:12:53 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-02 17:12:53 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-02 17:12:53 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 11.54秒
+2025-09-02 17:12:53 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 17:12:53 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.83s, 健康分数0.73
+2025-09-02 17:12:53 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间11.52s, 健康分数0.73
+2025-09-02 17:12:53 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 22字符
+2025-09-02 17:12:53 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 17:12:53 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-02 17:13:06 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 13.10s)
+2025-09-02 17:13:06 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-02 17:13:06 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-02 17:13:06 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-02 17:13:06 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 13.11秒
+2025-09-02 17:13:06 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 17:13:06 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.83s, 健康分数0.73
+2025-09-02 17:13:06 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间11.52s, 健康分数0.73
+2025-09-02 17:13:06 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间13.10s, 健康分数0.73
+2025-09-02 17:13:06 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 16字符
+2025-09-02 17:13:06 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 17:13:06 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-09-02 17:13:17 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 10.62s)
+2025-09-02 17:13:17 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 17:13:17 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 17:13:17 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 17:13:17 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.63秒
+2025-09-02 17:13:17 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 17:13:17 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间12.83s, 健康分数0.73
+2025-09-02 17:13:17 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间11.52s, 健康分数0.73
+2025-09-02 17:13:17 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间13.10s, 健康分数0.73
+2025-09-02 17:13:17 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率100.0%, 平均响应时间10.62s, 健康分数0.73
+2025-09-02 17:13:17 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:17 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:17 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:20 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:20 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:20 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:28 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:33 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:33 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:33 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:39 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:13:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(7页)智能选择合并器
+2025-09-02 17:13:56 - ppt_generator - INFO - 页面数量7页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 17:13:56 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并7个模板页面
+2025-09-02 17:13:57 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 17:13:57 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 17:13:57 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_7.pptx
+2025-09-02 17:13:57 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_7.pptx
+2025-09-02 17:13:58 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_split_presentations_7.pptx
+2025-09-02 17:13:58 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_split_presentations_10.pptx
+2025-09-02 17:13:58 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_7_ending_slides.pptx
+2025-09-02 17:13:58 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_171358.pptx
+2025-09-02 17:13:58 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 7页, 跳过: 0页
+2025-09-02 17:13:58 - ppt_generator - INFO - Spire合并成功
+2025-09-02 17:24:23 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 55
+2025-09-02 17:24:31 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 17:24:31 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 17:24:31 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 17:24:31 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-02 17:24:31 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 17:24:31 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 17:24:31 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 17:24:48 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 16.71s)
+2025-09-02 17:24:48 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-02 17:24:48 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-02 17:24:48 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-02 17:24:48 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 16.74秒
+2025-09-02 17:24:48 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 17:24:48 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间16.71s, 健康分数0.73
+2025-09-02 17:24:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:24:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:24:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:24:53 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:24:53 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:24:53 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:25:01 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:25:01 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:25:01 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:25:14 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:25:14 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:25:14 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:25:14 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:25:14 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:25:14 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:25:14 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:25:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:25:14 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:25:15 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-02 17:25:15 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 17:25:15 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-02 17:25:15 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 17:25:16 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 17:25:16 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-02 17:25:16 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-02 17:25:17 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_172516.pptx
+2025-09-02 17:25:17 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-02 17:25:17 - ppt_generator - INFO - Spire合并成功
+2025-09-02 17:34:51 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 118
+2025-09-02 17:35:00 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-02 17:35:00 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-02 17:35:00 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-02 17:35:00 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 79字符
+2025-09-02 17:35:00 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 17:35:00 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-02 17:35:00 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-02 17:35:11 - ppt_generator - INFO - 成功获取模板编号: 7 (响应时间: 11.45s)
+2025-09-02 17:35:11 - ppt_generator - INFO - Dify API返回模板编号: 7
+2025-09-02 17:35:11 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_7.pptx
+2025-09-02 17:35:11 - ppt_generator - INFO - 成功获取模板文件: split_presentations_7.pptx (920.7KB)
+2025-09-02 17:35:11 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 11.47秒
+2025-09-02 17:35:11 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 17:35:11 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.45s, 健康分数0.73
+2025-09-02 17:35:11 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 30字符
+2025-09-02 17:35:11 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-02 17:35:11 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-02 17:35:24 - ppt_generator - INFO - 成功获取模板编号: 8 (响应时间: 12.48s)
+2025-09-02 17:35:24 - ppt_generator - INFO - Dify API返回模板编号: 8
+2025-09-02 17:35:24 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_8.pptx
+2025-09-02 17:35:24 - ppt_generator - INFO - 成功获取模板文件: split_presentations_8.pptx (920.9KB)
+2025-09-02 17:35:24 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.50秒
+2025-09-02 17:35:24 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-02 17:35:24 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间11.45s, 健康分数0.73
+2025-09-02 17:35:24 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间12.48s, 健康分数0.73
+2025-09-02 17:35:24 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:35:24 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:35:24 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:35:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:35:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:35:30 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:35:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:35:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:35:40 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:36:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:36:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:36:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:36:24 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:36:24 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:36:24 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:36:24 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:36:24 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:36:24 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:36:24 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:36:24 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:36:24 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:36:24 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:36:24 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:36:24 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:36:25 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:36:25 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:36:25 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:36:25 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:36:25 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:36:25 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:36:25 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:36:25 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:36:25 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-02 17:36:25 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-02 17:36:25 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-02 17:36:25 - ppt_generator - INFO - 开始提取位置信息
+2025-09-02 17:36:25 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-02 17:36:25 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(5页)智能选择合并器
+2025-09-02 17:36:25 - ppt_generator - INFO - 页面数量5页(≤10页)，使用Spire.Presentation合并器
+2025-09-02 17:36:25 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并5个模板页面
+2025-09-02 17:36:25 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-02 17:36:25 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-02 17:36:26 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_7.pptx
+2025-09-02 17:36:26 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_8.pptx
+2025-09-02 17:36:26 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_ending_slides.pptx
+2025-09-02 17:36:27 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250902_173626.pptx
+2025-09-02 17:36:27 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 0页
+2025-09-02 17:36:27 - ppt_generator - INFO - Spire合并成功
+2025-09-03 14:49:34 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 81
+2025-09-03 14:49:43 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-03 14:49:43 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-03 14:49:43 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-03 14:49:43 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 81字符
+2025-09-03 14:49:43 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-03 14:49:43 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-03 14:49:43 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-03 14:49:58 - ppt_generator - INFO - 成功获取模板编号: 8 (响应时间: 14.46s)
+2025-09-03 14:49:58 - ppt_generator - INFO - Dify API返回模板编号: 8
+2025-09-03 14:49:58 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_8.pptx
+2025-09-03 14:49:58 - ppt_generator - INFO - 成功获取模板文件: split_presentations_8.pptx (920.9KB)
+2025-09-03 14:49:58 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.49秒
+2025-09-03 14:49:58 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-03 14:49:58 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.46s, 健康分数0.73
+2025-09-03 14:49:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 14:49:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 14:49:58 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 14:50:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 14:50:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 14:50:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 14:50:10 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 14:50:10 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 14:50:10 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 14:50:23 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 14:50:23 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-03 14:50:23 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 14:50:23 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-03 14:50:23 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 14:50:23 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-03 14:50:23 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 14:50:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 14:50:23 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-03 14:50:24 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-03 14:50:24 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-03 14:50:24 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-03 14:50:24 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-03 14:50:25 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-03 14:50:25 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_8.pptx
+2025-09-03 14:50:25 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-03 14:50:26 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250903_145025.pptx
+2025-09-03 14:50:26 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-03 14:50:26 - ppt_generator - INFO - Spire合并成功
+2025-09-03 15:14:12 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 81
+2025-09-03 15:14:22 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-03 15:14:22 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-03 15:14:22 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-03 15:14:22 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 81字符
+2025-09-03 15:14:22 - ppt_generator - INFO - 步骤1: 调用Dify API获取模板编号
+2025-09-03 15:14:22 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-03 15:14:22 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-03 15:14:36 - ppt_generator - INFO - 成功获取模板编号: 10 (响应时间: 14.29s)
+2025-09-03 15:14:36 - ppt_generator - INFO - Dify API返回模板编号: 10
+2025-09-03 15:14:36 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_10.pptx
+2025-09-03 15:14:36 - ppt_generator - INFO - 成功获取模板文件: split_presentations_10.pptx (916.6KB)
+2025-09-03 15:14:36 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.30秒
+2025-09-03 15:14:36 - ppt_generator - INFO - API密钥健康状态报告:
+2025-09-03 15:14:36 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间14.29s, 健康分数0.73
+2025-09-03 15:14:36 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 15:14:36 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 15:14:36 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 15:14:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 15:14:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 15:14:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 15:14:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 15:14:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 15:14:47 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 15:15:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(4页)智能选择合并器
+2025-09-03 15:15:04 - ppt_generator - INFO - 页面数量4页(≤10页)，使用Spire.Presentation合并器
+2025-09-03 15:15:04 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并4个模板页面
+2025-09-03 15:15:04 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-03 15:15:05 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-03 15:15:05 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_10.pptx
+2025-09-03 15:15:06 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_ending_slides.pptx
+2025-09-03 15:15:06 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250903_151506.pptx
+2025-09-03 15:15:06 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
+2025-09-03 15:15:06 - ppt_generator - INFO - Spire合并成功
+2025-09-03 17:26:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:26:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:26:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:26:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:26:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:26:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:38:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:38:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:38:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:38:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:38:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:38:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:39:02 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:39:02 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:39:02 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:39:02 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:39:02 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:39:02 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:39:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:39:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:39:26 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:39:26 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:39:26 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:39:26 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:40:13 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:40:13 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:40:13 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:40:13 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:40:13 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:40:13 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:40:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:40:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:40:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:40:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:40:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:40:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:40:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:40:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:40:58 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:40:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:40:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:40:58 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:41:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:41:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:41:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:41:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:41:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:41:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:41:24 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:41:24 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:41:24 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:41:24 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:41:24 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:41:24 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:41:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:41:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:41:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:41:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:41:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:41:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:41:51 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:41:51 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:41:51 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:41:51 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:41:51 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:41:51 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:44:10 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:44:10 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:44:10 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:44:10 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:44:10 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:44:10 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:44:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:44:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:44:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-03 17:44:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-03 17:44:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-03 17:44:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:04:17 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:04:17 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:04:17 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:04:17 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:04:17 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:04:17 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:04:28 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:04:28 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:04:28 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:04:29 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:04:29 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:04:29 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:04:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:04:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:04:39 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:04:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:04:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:04:39 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:23:25 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:23:25 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:23:25 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:23:25 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:23:25 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:23:25 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:23:29 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:23:29 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:23:29 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:23:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:23:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:23:30 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:25:51 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:25:51 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:25:51 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:25:51 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:25:51 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:25:51 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:31:15 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:31:15 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:31:15 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:31:15 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:31:15 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:31:15 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:31:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:31:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:31:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:31:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:31:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:31:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:31:44 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:31:44 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:31:44 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:31:44 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:31:44 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:31:44 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:32:29 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:32:29 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:32:29 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:32:29 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:32:29 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:32:29 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:32:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:32:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:32:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:32:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:32:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:32:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:32:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:32:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:32:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:32:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:32:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:32:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:39:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:39:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:39:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:39:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:39:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:39:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:39:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:39:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:39:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:39:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:39:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:39:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:40:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:40:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:40:06 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:40:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:40:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:40:06 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:40:11 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:40:11 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:40:11 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:40:11 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:40:11 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:40:11 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:45:01 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:45:01 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:45:01 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:45:01 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:45:01 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:45:01 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:49:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:49:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:49:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:49:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:49:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:49:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:49:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:49:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:49:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:49:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:49:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:49:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:54:36 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:59:01 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:59:01 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:59:01 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:59:02 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:59:02 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:59:02 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:59:02 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:59:02 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:59:02 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 10:59:10 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:00:44 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:01:41 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:03:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:03:11 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:03:11 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:03:11 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:03:11 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:03:11 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:03:11 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:07:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:07:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:07:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:07:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:07:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:07:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:07:51 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:07:51 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:07:51 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:07:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:07:53 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:30 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:30 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:39 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:39 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:39 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:39 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:58 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:58 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:08:59 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:09:07 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:09:07 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:09:07 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:09:07 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:09:07 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:09:07 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:09:07 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:09:07 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:09:08 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:09:08 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:09:08 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:09:08 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:09:08 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:09:08 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:09:08 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:10:54 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:10:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:10:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:10:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:11:03 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:14 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:13:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:15:36 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:15:36 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:15:36 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:15:37 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:22 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 11:18:22 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 11:18:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:22 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp8nfh2cg8.pptx
+2025-09-04 11:18:22 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.17s
+2025-09-04 11:18:22 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 9字符
+2025-09-04 11:18:30 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 2
+2025-09-04 11:18:30 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-04 11:18:30 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 11:18:30 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 11:18:30 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:30 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:31 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:18:38 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:35 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:35 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:35 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:35 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:35 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:35 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:40 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 11:20:40 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 11:20:40 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:40 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:40 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:40 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp_uku5lmu.pptx
+2025-09-04 11:20:40 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.18s
+2025-09-04 11:20:40 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 9字符
+2025-09-04 11:20:47 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 2
+2025-09-04 11:20:47 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-04 11:20:47 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 11:20:47 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 11:20:47 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 11:20:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:47 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:47 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:47 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:47 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:48 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:48 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:48 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:53 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:53 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:53 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:53 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:53 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:53 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:20:54 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:13 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:21:21 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:26:51 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:26:51 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:26:51 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:26:52 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:26:56 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-04 11:26:56 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-04 11:26:57 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:26:57 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:26:57 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:26:57 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpq7n1qis5.pptx
+2025-09-04 11:26:57 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.38s
+2025-09-04 11:26:57 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 9字符
+2025-09-04 11:27:04 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 2
+2025-09-04 11:27:04 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-04 11:27:04 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-04 11:27:04 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-04 11:27:04 - ppt_generator - INFO - 用户操作: 用户界面获取PPT字节数据
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:04 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:12 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:12 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:12 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:12 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始提取位置信息
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-04 11:27:13 - ppt_generator - INFO - 开始提取位置信息

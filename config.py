@@ -53,7 +53,7 @@ class Config:
             "api_key_url": "https://liai-app.chj.cloud",
             "chat_endpoint": "/chat-messages",
             "request_format": "dify_compatible"
-        }
+        },
     })
     
     # 根据模型自动启用/禁用视觉分析

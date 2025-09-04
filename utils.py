@@ -153,13 +153,15 @@ class AIProcessor:
                 if model_info.get('api_provider') == 'Volces' and model_info.get('use_multiple_keys'):
                     # 尝试获取多个密钥，使用第一个可用的
                     for i in range(1, 6):
-                        key = os.getenv(f'{api_key_env}_{i}')
+                        key_name = f'{api_key_env}_{i}'
+                        key = os.getenv(key_name)
                         if key:
                             self.api_key = key
                             break
                     else:
                         # 如果没找到编号密钥，尝试单个密钥
-                        self.api_key = os.getenv(api_key_env) or config.openai_api_key or ""
+                        single_key = os.getenv(api_key_env)
+                        self.api_key = single_key or config.openai_api_key or ""
                 else:
                     self.api_key = os.getenv(api_key_env) or config.openai_api_key or ""
             else:
@@ -167,6 +169,7 @@ class AIProcessor:
         
         if not self.api_key:
             raise ValueError("请设置API密钥")
+        
         
         # 根据当前选择的模型获取对应的base_url
         self.base_url = model_info.get('base_url', config.openai_base_url)
@@ -212,6 +215,7 @@ class AIProcessor:
         
         # 检查是否为Liai API
         model_info = self.config.get_model_info()
+        
         if model_info.get('request_format') == 'dify_compatible':
             # 使用Liai API格式，单页的所有占位符用一次API调用处理
             content = self._call_liai_api(system_prompt, user_text)
@@ -220,11 +224,19 @@ class AIProcessor:
             try:
                 # 使用actual_model而不是ai_model配置名
                 actual_model = model_info.get('actual_model', self.config.ai_model)
+                
+                # 确保消息内容使用UTF-8编码
+                system_content = system_prompt
+                user_content = user_text
+                if isinstance(system_prompt, str):
+                    system_content = system_prompt.encode('utf-8', errors='ignore').decode('utf-8')
+                if isinstance(user_text, str):
+                    user_content = user_text.encode('utf-8', errors='ignore').decode('utf-8')
                 response = self.client.chat.completions.create(
                     model=actual_model,
                     messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_text}
+                        {"role": "system", "content": system_content},
+                        {"role": "user", "content": user_content}
                     ],
                     temperature=self.config.ai_temperature,
                     max_tokens=self.config.ai_max_tokens,
@@ -324,12 +336,16 @@ class AIProcessor:
         
         headers = {
             'Authorization': f'Bearer {selected_key}',
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
             'Connection': 'keep-alive'
         }
         
         try:
-            response = requests.post(url, headers=headers, json=payload, timeout=120, stream=True)
+            # 确保payload中的中文字符正确编码
+            import json
+            json_payload = json.dumps(payload, ensure_ascii=False)
+            response = requests.post(url, headers=headers, data=json_payload.encode('utf-8'), timeout=120, stream=True)
+            response.encoding = 'utf-8'  # 确保使用UTF-8编码
             response.raise_for_status()
             
             # 处理streaming响应
@@ -461,11 +477,25 @@ class AIProcessor:
                     page_number = page_data.get('page_number', batch_idx + page_idx + 1)
                     user_text = page_data.get('content', '')
                     ppt_structure = page_data.get('ppt_structure', {})
+                    page_info = page_data.get('page_data', {})
                     
                     print(f"  分析第{page_number}页...")
                     
                     # 调用Liai API进行分析
                     analysis_result = self.analyze_text_for_ppt(user_text, ppt_structure)
+                    
+                    # 自动添加title占位符填充
+                    page_title = page_info.get('title', '')
+                    if page_title and analysis_result.get('success'):
+                        assignments = analysis_result.get('assignments', [])
+                        # 直接添加title占位符填充（内容页都有title占位符）
+                        assignments.append({
+                            'action': 'replace_placeholder',
+                            'slide_index': 0,
+                            'placeholder': 'title',
+                            'content': page_title,
+                            'reason': '自动填充页面标题'
+                        })
                     
                     batch_results.append({
                         'page_number': page_number,
@@ -806,7 +836,7 @@ class AIProcessor:
         return """你是一个专业的PPT内容分析专家，具备强大的PPT文件识别能力。你的任务是将用户提供的文本内容智能分配到PPT模板的合适占位符中。
 
 **你的PPT识别能力包括：**
-- **文本内容**：议程页 (Agenda with icons)、欢迎页 (Welcome 10:00 am)、团队介绍 (The team 11:00 am)、服务介绍 (Our services 12:00 pm)、愿景展示 (Vision 1:00 pm) 等
+- **文本内容**：议程页、项目介绍、技术方案、数据分析、总结汇报等各类PPT常见内容
 - **结构信息**：每一页的标题、正文、占位符（所有{}格式，AI需根据占位符名称理解其含义）  
 - **布局元素**：能读取每张幻灯片的布局类型 (标题+正文、两栏布局、带图标的议程、带图文的组合页等)
 - **样式信息**：字体名称、字号、是否加粗/斜体、颜色等
@@ -865,10 +895,16 @@ class AIProcessor:
             content = json_match.group(1)
         
         try:
+            # 确保content是UTF-8编码的字符串
+            if isinstance(content, bytes):
+                content = content.decode('utf-8')
             return json.loads(content)
         except json.JSONDecodeError as e:
             print(f"AI返回的JSON格式有误，错误：{str(e)}")
             return self._create_fallback_assignment(user_text, f"JSON解析失败: {str(e)}")
+        except UnicodeDecodeError as e:
+            print(f"编码错误：{str(e)}")
+            return self._create_fallback_assignment(user_text, f"编码错误: {str(e)}")
     
     def _create_fallback_assignment(self, user_text: str, error_msg: str) -> Dict[str, Any]:
         """创建备用分配方案"""
@@ -1048,11 +1084,19 @@ class PPTProcessor:
         assignments_list = assignments.get('assignments', [])
         results = []
         
-        # 清理旧缓存并提取最新的格式信息
-        print("清理旧格式缓存...")
-        self._clear_format_cache()
-        print("预先提取所有占位符格式信息...")
-        self._cache_all_placeholder_formats(assignments_list)
+        # 获取当前处理涉及的页面索引
+        involved_slides = set()
+        for assignment in assignments_list:
+            if assignment.get('action') == 'replace_placeholder':
+                involved_slides.add(assignment.get('slide_index', 0))
+        
+        # 只清理和缓存涉及的页面
+        if involved_slides:
+            print(f"清理页面{list(involved_slides)}的格式缓存...")
+            self._clear_format_cache(list(involved_slides))
+            print(f"预先提取页面{list(involved_slides)}的占位符格式信息...")
+            for slide_index in involved_slides:
+                self._cache_placeholder_formats_for_page(assignments_list, slide_index)
         
         # 如果提供了用户原始文本，则为幻灯片添加备注
         if user_text.strip():
@@ -1163,37 +1207,41 @@ class PPTProcessor:
             print(f"逐个替换占位符时出错: {e}")
             return False
     
-    def _clear_format_cache(self):
-        """清理所有占位符的格式缓存，确保使用最新格式"""
+    def _clear_format_cache(self, slide_indices: List[int] = None):
+        """清理指定页面的占位符格式缓存"""
         cleared_count = 0
-        for slide_info in self.ppt_structure['slides']:
-            for placeholder_name, placeholder_info in slide_info.get('placeholders', {}).items():
-                if 'cached_format' in placeholder_info:
-                    del placeholder_info['cached_format']
-                    cleared_count += 1
+        target_slides = slide_indices if slide_indices else range(len(self.ppt_structure['slides']))
+        
+        for slide_index in target_slides:
+            if 0 <= slide_index < len(self.ppt_structure['slides']):
+                slide_info = self.ppt_structure['slides'][slide_index]
+                for placeholder_name, placeholder_info in slide_info.get('placeholders', {}).items():
+                    if 'cached_format' in placeholder_info:
+                        del placeholder_info['cached_format']
+                        cleared_count += 1
         
         if cleared_count > 0:
-            print(f"   已清理{cleared_count}个占位符的旧格式缓存")
+            print(f"   已清理{cleared_count}个占位符的格式缓存")
         else:
-            print("   无需清理，首次使用")
+            print("   无需清理，首次使用或无相关缓存")
     
-    def _cache_all_placeholder_formats(self, assignments_list: List[Dict]):
-        """预先提取所有占位符的格式信息，避免替换过程中格式丢失"""
+    def _cache_placeholder_formats_for_page(self, assignments_list: List[Dict], target_slide_index: int):
+        """为指定页面预先提取占位符格式信息"""
         cached_count = 0
         for assignment in assignments_list:
-            if assignment.get('action') == 'replace_placeholder':
-                slide_index = assignment.get('slide_index', 0)
+            if (assignment.get('action') == 'replace_placeholder' and 
+                assignment.get('slide_index', 0) == target_slide_index):
+                
                 placeholder = assignment.get('placeholder', '')
                 
-                if 0 <= slide_index < len(self.presentation.slides):
-                    slide_info = self.ppt_structure['slides'][slide_index]
+                if 0 <= target_slide_index < len(self.presentation.slides):
+                    slide_info = self.ppt_structure['slides'][target_slide_index]
                     
                     if placeholder in slide_info['placeholders']:
                         placeholder_info = slide_info['placeholders'][placeholder]
                         
                         # 只有在还没有缓存格式时才提取
                         if 'cached_format' not in placeholder_info:
-                            # 根据占位符类型选择正确的容器
                             container = placeholder_info.get('cell') if placeholder_info.get('type') == 'table_cell' else placeholder_info.get('shape')
                             format_info = self._extract_placeholder_format(container, placeholder)
                             placeholder_info['cached_format'] = format_info
@@ -1202,9 +1250,10 @@ class PPTProcessor:
                             if font_size is not None:
                                 font_size = float(font_size.pt) if hasattr(font_size, 'pt') else font_size
                             font_color = format_info.get('font_color', 'None')
-                            print(f"   缓存格式: 第{slide_index+1}页 {{{placeholder}}} - 字体:{format_info.get('font_name', 'None')}, 大小:{font_size}, 颜色:{font_color}")
+                            print(f"   缓存格式: 第{target_slide_index+1}页 {{{placeholder}}} - 字体:{format_info.get('font_name', 'None')}, 大小:{font_size}, 颜色:{font_color}")
         
-        print(f"格式缓存完成，共缓存{cached_count}个占位符的格式信息")
+        if cached_count > 0:
+            print(f"第{target_slide_index+1}页格式缓存完成，共缓存{cached_count}个占位符")
     
     def _add_notes_to_slides(self, assignments_list: List[Dict], user_text: str) -> List[str]:
         """

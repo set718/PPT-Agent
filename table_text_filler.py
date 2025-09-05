@@ -291,7 +291,14 @@ class TableTextFiller:
                 else:
                     results.append(f"❌ {{{placeholder}}} 填充失败")
             
+            # 填充完成后自动清理未使用的占位符
             if filled_count > 0:
+                cleanup_result = self.cleanup_unfilled_table_placeholders()
+                if cleanup_result.get('success'):
+                    cleaned_count = cleanup_result.get('cleaned_count', 0)
+                    if cleaned_count > 0:
+                        results.append(f"🧹 自动清理了 {cleaned_count} 个未使用的占位符")
+                
                 results.append(f"\n总共成功填充 {filled_count} 个表格占位符")
                 return True, results
             else:

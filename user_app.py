@@ -2410,157 +2410,174 @@ AI将分析您的文本结构，并智能地将内容分配到该模板的 {file
         # 模板上传区域
         st.markdown("#### 📁 上传您的PPT模板")
         
-        table_uploaded_file = st.file_uploader(
-            "选择您的PPT模板文件",
+        table_uploaded_files = st.file_uploader(
+            "选择您的PPT模板文件（可选择多个单页PPT）",
             type=['pptx'],
-            help="请上传.pptx格式的PPT模板文件，建议文件大小不超过50MB",
+            help="请上传.pptx格式的PPT模板文件，支持同时上传多个单页PPT文件",
+            accept_multiple_files=True,
             key="table_template_uploader"
         )
         
-        if table_uploaded_file is not None:
-            # 显示上传文件信息
-            file_details = {
-                "文件名": table_uploaded_file.name,
-                "文件大小": f"{table_uploaded_file.size / 1024:.1f} KB",
-                "文件类型": table_uploaded_file.type
-            }
+        if table_uploaded_files:
+            st.success(f"✅ 已上传 {len(table_uploaded_files)} 个PPT模板文件")
             
-            col1, col2 = st.columns([1, 2])
-            with col1:
-                st.success("✅ 模板文件已上传")
-                for key, value in file_details.items():
-                    st.text(f"{key}: {value}")
+            # 处理并存储所有文件的信息
+            processed_files = []
+            import tempfile
+            import re
+            from pptx import Presentation
             
-            with col2:
-                # 保存上传的文件到临时目录
-                import tempfile
-                import shutil
-                
+            # 为每个文件创建临时文件并验证
+            for idx, uploaded_file in enumerate(table_uploaded_files):
                 try:
                     # 创建临时文件
                     with tempfile.NamedTemporaryFile(delete=False, suffix='.pptx') as tmp_file:
-                        tmp_file.write(table_uploaded_file.getvalue())
-                        temp_table_ppt_path = tmp_file.name
+                        tmp_file.write(uploaded_file.getvalue())
+                        temp_path = tmp_file.name
                     
                     # 验证PPT文件
-                    is_valid, error_msg = FileManager.validate_ppt_file(temp_table_ppt_path)
+                    is_valid, error_msg = FileManager.validate_ppt_file(temp_path)
                     
                     if is_valid:
-                        st.success("✅ 模板文件格式验证通过")
-                        
                         # 分析模板结构
-                        try:
-                            from pptx import Presentation
-                            temp_presentation = Presentation(temp_table_ppt_path)
+                        presentation = Presentation(temp_path)
+                        slide_count = len(presentation.slides)
+                        
+                        # 分析占位符 - 支持文本框和表格中的占位符
+                        total_placeholders = 0
+                        placeholder_info = []
+                        
+                        for i, slide in enumerate(presentation.slides):
+                            slide_placeholders = []
+                            table_placeholders = []
                             
-                            # 基本信息
-                            slide_count = len(temp_presentation.slides)
-                            st.metric("📑 幻灯片数量", slide_count)
-                            
-                            # 分析占位符 - 支持文本框和表格中的占位符
-                            total_placeholders = 0
-                            placeholder_info = []
-                            
-                            for i, slide in enumerate(temp_presentation.slides):
-                                slide_placeholders = []
-                                table_placeholders = []
+                            for shape in slide.shapes:
+                                # 处理普通文本框中的占位符
+                                if hasattr(shape, 'text') and shape.text:
+                                    placeholders = re.findall(r'\{([^}]+)\}', shape.text)
+                                    if placeholders:
+                                        slide_placeholders.extend(placeholders)
+                                        total_placeholders += len(placeholders)
                                 
-                                for shape in slide.shapes:
-                                    # 处理普通文本框中的占位符
-                                    if hasattr(shape, 'text') and shape.text:
-                                        import re  
-                                        placeholders = re.findall(r'\{([^}]+)\}', shape.text)
-                                        if placeholders:
-                                            slide_placeholders.extend(placeholders)
-                                            total_placeholders += len(placeholders)
-                                    
-                                    # 处理表格中的占位符
-                                    elif hasattr(shape, 'shape_type') and shape.shape_type == 19:  # MSO_SHAPE_TYPE.TABLE = 19
-                                        table = shape.table
-                                        for row_idx, row in enumerate(table.rows):
-                                            for col_idx, cell in enumerate(row.cells):
-                                                cell_text = cell.text.strip()
-                                                if cell_text:
-                                                    placeholders = re.findall(r'\{([^}]+)\}', cell_text)
-                                                    if placeholders:
-                                                        for placeholder in placeholders:
-                                                            table_placeholders.append(f"{placeholder}(表格{row_idx+1},{col_idx+1})")
-                                                            total_placeholders += 1
-                                
-                                # 合并文本框和表格占位符
-                                all_slide_placeholders = slide_placeholders + table_placeholders
-                                if all_slide_placeholders:
-                                    placeholder_info.append({
-                                        'slide_num': i + 1,
-                                        'placeholders': slide_placeholders,
-                                        'table_placeholders': table_placeholders,
-                                        'total_count': len(all_slide_placeholders)
-                                    })
+                                # 处理表格中的占位符
+                                elif hasattr(shape, 'shape_type') and shape.shape_type == 19:  # MSO_SHAPE_TYPE.TABLE = 19
+                                    table = shape.table
+                                    for row_idx, row in enumerate(table.rows):
+                                        for col_idx, cell in enumerate(row.cells):
+                                            cell_text = cell.text.strip()
+                                            if cell_text:
+                                                placeholders = re.findall(r'\{([^}]+)\}', cell_text)
+                                                if placeholders:
+                                                    for placeholder in placeholders:
+                                                        table_placeholders.append(f"{placeholder}(表格{row_idx+1},{col_idx+1})")
+                                                        total_placeholders += 1
                             
-                            st.metric("🎯 发现占位符", total_placeholders)
+                            # 合并文本框和表格占位符
+                            all_slide_placeholders = slide_placeholders + table_placeholders
+                            if all_slide_placeholders:
+                                placeholder_info.append({
+                                    'slide_num': i + 1,
+                                    'placeholders': slide_placeholders,
+                                    'table_placeholders': table_placeholders,
+                                    'total_count': len(all_slide_placeholders)
+                                })
+                        
+                        processed_files.append({
+                            'index': idx,
+                            'filename': uploaded_file.name,
+                            'temp_path': temp_path,
+                            'slide_count': slide_count,
+                            'placeholder_count': total_placeholders,
+                            'placeholder_info': placeholder_info,
+                            'is_valid': True,
+                            'error': None
+                        })
+                    else:
+                        processed_files.append({
+                            'index': idx,
+                            'filename': uploaded_file.name,
+                            'temp_path': None,
+                            'is_valid': False,
+                            'error': error_msg
+                        })
+                        
+                except Exception as e:
+                    processed_files.append({
+                        'index': idx,
+                        'filename': uploaded_file.name,
+                        'temp_path': None,
+                        'is_valid': False,
+                        'error': str(e)
+                    })
+            
+            # 显示文件验证结果
+            valid_files = [f for f in processed_files if f['is_valid']]
+            invalid_files = [f for f in processed_files if not f['is_valid']]
+            
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                st.metric("✅ 有效文件", len(valid_files))
+                st.metric("❌ 无效文件", len(invalid_files))
+                
+            with col2:
+                if invalid_files:
+                    with st.expander("❌ 文件验证失败", expanded=True):
+                        for file_info in invalid_files:
+                            st.error(f"**{file_info['filename']}**: {file_info['error']}")
+                
+                if valid_files:
+                    with st.expander("✅ 文件结构分析", expanded=False):
+                        for file_info in valid_files:
+                            st.write(f"**{file_info['filename']}**")
+                            st.write(f"  📑 幻灯片: {file_info['slide_count']} 页")
+                            st.write(f"  🎯 占位符: {file_info['placeholder_count']} 个")
                             
                             # 显示占位符详情
-                            if placeholder_info:
-                                with st.expander("🔍 模板结构分析", expanded=False):
-                                    for info in placeholder_info[:5]:  # 只显示前5页
-                                        slide_num = info['slide_num']
-                                        text_placeholders = info['placeholders']
-                                        table_placeholders = info['table_placeholders']
-                                        
-                                        st.write(f"**第{slide_num}页（共{info['total_count']}个占位符）：**")
-                                        
-                                        if text_placeholders:
-                                            st.write(f"  📝 文本框：{', '.join([f'{{{p}}}' for p in text_placeholders])}")
-                                        
-                                        if table_placeholders:
-                                            st.write(f"  📊 表格：{', '.join([f'{{{p}}}' for p in table_placeholders])}")
+                            if file_info['placeholder_info']:
+                                for info in file_info['placeholder_info'][:3]:  # 显示前3页
+                                    slide_num = info['slide_num']
+                                    text_placeholders = info['placeholders']
+                                    table_placeholders = info['table_placeholders']
                                     
-                                    if len(placeholder_info) > 5:
-                                        remaining_pages = len(placeholder_info) - 5
-                                        remaining_placeholders = sum(info['total_count'] for info in placeholder_info[5:])
-                                        st.write(f"... 还有 {remaining_pages} 页包含 {remaining_placeholders} 个占位符（包括表格占位符）")
-                            else:
-                                st.warning("⚠️ 未检测到占位符模式 {xxx}，请确保模板中包含要填充的占位符")
-                        
-                        except Exception as e:
-                            st.error(f"❌ 模板分析失败: {str(e)}")
-                    else:
-                        st.error(f"❌ 模板文件验证失败: {error_msg}")
-                        temp_table_ppt_path = None
-                    
-                except Exception as e:
-                    st.error(f"❌ 文件处理失败: {str(e)}")
-                    temp_table_ppt_path = None
+                                    st.write(f"    第{slide_num}页（{info['total_count']}个占位符）：")
+                                    
+                                    if text_placeholders:
+                                        st.write(f"      📝 文本框：{', '.join([f'{{{p}}}' for p in text_placeholders])}")
+                                    
+                                    if table_placeholders:
+                                        st.write(f"      📊 表格：{', '.join([f'{{{p}}}' for p in table_placeholders])}")
+                                
+                                if len(file_info['placeholder_info']) > 3:
+                                    remaining = len(file_info['placeholder_info']) - 3
+                                    st.write(f"    ... 还有 {remaining} 页")
             
-            # 如果模板验证通过，显示文本输入和处理区域
-            if 'temp_table_ppt_path' in locals() and temp_table_ppt_path and is_valid:
+            # 如果有有效文件，显示文本输入区域
+            if valid_files:
                 st.markdown("---")
-                st.markdown("#### 📝 输入测试内容")
+                st.markdown("#### 📝 为每个文件输入文本")
                 
-                table_text = st.text_area(
-                    "请输入要填充到模板中的文本内容：",
-                    height=200,
-                    placeholder="""例如（产品信息）：
-
+                # 为每个有效文件创建文本输入框
+                text_inputs = {}
+                for file_info in valid_files:
+                    st.markdown(f"**{file_info['filename']}** (📑 {file_info['slide_count']} 页, 🎯 {file_info['placeholder_count']} 个占位符)")
+                    
+                    text_key = f"table_text_{file_info['index']}"
+                    text_inputs[file_info['index']] = st.text_area(
+                        f"为 {file_info['filename']} 输入要填充的文本内容：",
+                        height=120,
+                        placeholder="""例如（产品信息）：
 iPhone 15 Pro
 价格：999美元
 屏幕尺寸：6.1英寸
 处理器：A17 Pro芯片
-存储容量：128GB
-电池续航：提升15%
-发布日期：2023年9月
 
-产品特点：
-- 先进的摄影系统
-- 钛金属设计
-- 支持5G网络
-
-AI将自动提取数字信息（999美元、6.1英寸、15%等）并分别填入对应的占位符，而不是将整段文本填入{content}。""",
-                    help="AI将智能提取数字信息并分别填充，文本描述和数字数据会分开处理",
-                    key="table_fill_text"
-                )
+AI将自动提取数字信息并分别填入对应的占位符""",
+                        help="AI将智能提取数字信息并分别填充，文本描述和数字数据会分开处理",
+                        key=text_key
+                    )
+                    st.markdown("---")
                 
-                # 处理选项和数字预览
+                # 处理选项
                 col1, col2 = st.columns(2)
                 with col1:
                     # 获取当前模型信息
@@ -2571,88 +2588,133 @@ AI将自动提取数字信息（999美元、6.1英寸、15%等）并分别填入
                         enable_table_visual = st.checkbox(
                             "🎨 启用视觉优化",
                             value=False,
-                            help="对自定义模板应用AI视觉优化（需要额外时间）",
+                            help="对模板应用AI视觉优化（需要额外时间）",
                             key="table_visual_opt"
                         )
                     else:
                         enable_table_visual = False
                 
                 with col2:
-                    pass  # 移除数据检测预览功能
+                    pass  # 留空
                 
                 # 处理按钮
-                st.markdown("#### 🚀 开始测试")
+                st.markdown("#### 🚀 统一批量处理")
                 
-                table_fill_button = st.button(
-                    "📊 智能数字填充",
+                # 检查是否所有文件都有文本输入
+                has_all_text = all(text_inputs.get(file_info['index'], '').strip() for file_info in valid_files)
+                
+                table_batch_button = st.button(
+                    "📊 批量智能数字填充并合并",
                     type="primary",
                     use_container_width=True,
-                    disabled=not table_text.strip(),
-                    help="AI将提取数字信息并分别填充到对应占位符，文本和数据分开处理",
-                    key="table_fill_btn"
+                    disabled=not has_all_text,
+                    help="对所有文件批量处理，AI将提取数字信息并分别填充，然后合并为一个PPT",
+                    key="table_batch_btn"
                 )
                 
-                # 处理逻辑
-                if table_fill_button and table_text.strip():
+                # 批量处理逻辑
+                if table_batch_button and has_all_text:
                     progress_bar = st.progress(0)
                     status_text = st.empty()
                     
                     try:
-                        # 创建自定义模板生成器
-                        status_text.text("🔧 正在初始化自定义模板处理器...")
-                        progress_bar.progress(20)
+                        status_text.text("🚀 开始批量处理...")
+                        progress_bar.progress(10)
                         
-                        table_generator = UserPPTGenerator(api_key)
-                        success, message = table_generator.load_ppt_from_path(temp_table_ppt_path)
+                        # 存储处理结果
+                        processed_results = []
                         
-                        if not success:
-                            st.error(f"❌ 自定义模板加载失败: {message}")
+                        total_files = len(valid_files)
+                        for idx, file_info in enumerate(valid_files):
+                            file_progress = 20 + (idx * 50) // total_files
+                            status_text.text(f"📝 正在处理 {file_info['filename']} ({idx+1}/{total_files})...")
+                            progress_bar.progress(file_progress)
+                            
+                            try:
+                                # 创建生成器
+                                generator = UserPPTGenerator(api_key)
+                                success, message = generator.load_ppt_from_path(file_info['temp_path'])
+                                
+                                if not success:
+                                    st.warning(f"⚠️ {file_info['filename']} 加载失败: {message}")
+                                    continue
+                                
+                                # 获取对应的文本输入
+                                text_content = text_inputs.get(file_info['index'], '').strip()
+                                if not text_content:
+                                    continue
+                                
+                                # AI分析
+                                assignments = generator.process_text_with_openai_enhanced(text_content)
+                                
+                                if assignments.get('error'):
+                                    st.warning(f"⚠️ {file_info['filename']} AI分析失败: {assignments['error']}")
+                                    continue
+                                
+                                # 填充内容
+                                success, results = generator.apply_text_assignments(assignments, text_content)
+                                
+                                if not success:
+                                    st.warning(f"⚠️ {file_info['filename']} 内容填充失败")
+                                    continue
+                                
+                                # 清理占位符
+                                cleanup_results = generator.cleanup_unfilled_placeholders()
+                                
+                                # 可选的视觉优化
+                                if enable_table_visual:
+                                    optimization_results = generator.apply_visual_optimization(
+                                        file_info['temp_path'], 
+                                        enable_visual_optimization=True
+                                    )
+                                else:
+                                    optimization_results = generator.apply_basic_beautification()
+                                
+                                # 保存处理结果到临时文件（使用与自定义模板测试相同的方法）
+                                import tempfile
+                                import os
+                                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                                temp_dir = tempfile.gettempdir()
+                                processed_filename = f"table_processed_{idx}_{timestamp}.pptx"
+                                temp_result_path = os.path.join(temp_dir, processed_filename)
+                                
+                                # 使用presentation.save()方法保存文件
+                                generator.presentation.save(temp_result_path)
+                                
+                                processed_results.append({
+                                    'page_number': idx + 1,
+                                    'template_number': idx + 1,
+                                    'template_path': temp_result_path,
+                                    'template_filename': file_info['filename'],
+                                    'original_filename': file_info['filename'],
+                                    'success': True,
+                                    'cleanup_count': cleanup_results.get('cleaned_placeholders', 0) if cleanup_results else 0
+                                })
+                                
+                            except Exception as e:
+                                st.warning(f"⚠️ {file_info['filename']} 处理失败: {str(e)}")
+                                processed_results.append({
+                                    'page_number': idx + 1,
+                                    'template_path': file_info['temp_path'],
+                                    'template_filename': file_info['filename'],
+                                    'success': False,
+                                    'error': str(e)
+                                })
+                        
+                        # 合并结果
+                        successful_results = [r for r in processed_results if r.get('success', False)]
+                        
+                        if not successful_results:
+                            st.error("❌ 没有成功处理的文件，无法合并")
                             return
                         
-                        # AI分析
-                        status_text.text("🤖 AI正在分析您的内容和模板结构...")
-                        progress_bar.progress(40)
-                        
-                        # 使用专门的数字提取逻辑进行AI分析
-                        assignments = table_generator.process_text_with_openai_enhanced(table_text)
-                        
-                        # 调试：显示AI分析结果
-                        if assignments.get('error'):
-                            st.error(f"❌ AI分析失败: {assignments['error']}")
-                            return
-                        elif assignments.get('assignments'):
-                            st.info(f"✅ AI成功分析，生成了 {len(assignments['assignments'])} 个分配方案")
-                        else:
-                            st.warning("⚠️ AI分析完成，但没有生成分配方案")
-                            st.json(assignments)  # 显示完整结果用于调试
-                        
-                        # 填充内容
-                        status_text.text("📝 正在将内容填入自定义模板...")
-                        progress_bar.progress(60)
-                        
-                        success, results = table_generator.apply_text_assignments(assignments, table_text)
-                        
-                        if not success:
-                            st.error("❌ 内容填充失败，请检查模板格式")
-                            return
-                        
-                        # 清理占位符
-                        status_text.text("🧹 正在清理未使用的占位符...")
+                        status_text.text(f"🔍 正在合并 {len(successful_results)} 个处理结果...")
                         progress_bar.progress(80)
                         
-                        cleanup_results = table_generator.cleanup_unfilled_placeholders()
+                        # 使用Spire合并器进行格式保持合并
+                        from ppt_merger_spire import merge_dify_templates_to_ppt_spire
                         
-                        # 可选的视觉优化
-                        if enable_table_visual:
-                            status_text.text("🎨 正在应用视觉优化...")
-                            progress_bar.progress(90)
-                            
-                            optimization_results = table_generator.apply_visual_optimization(
-                                temp_table_ppt_path, 
-                                enable_visual_optimization=True
-                            )
-                        else:
-                            optimization_results = table_generator.apply_basic_beautification()
+                        merge_result = merge_dify_templates_to_ppt_spire(successful_results)
                         
                         # 完成处理
                         status_text.text("📦 正在准备下载...")
@@ -2662,72 +2724,79 @@ AI将自动提取数字信息（999美元、6.1英寸、15%等）并分别填入
                         progress_bar.empty()
                         status_text.empty()
                         
-                        # 显示成功信息
-                        st.markdown('<div class="success-box">🎉 自定义模板测试完成！</div>', unsafe_allow_html=True)
-                        
-                        # 显示处理摘要
-                        if optimization_results and "error" not in optimization_results:
-                            st.markdown("### 📊 处理结果")
+                        if merge_result.get('success'):
+                            st.markdown('<div class="success-box">🎉 批量表格数字填充完成！</div>', unsafe_allow_html=True)
+                            
+                            # 显示处理结果
+                            st.markdown("### 📊 批量处理结果")
                             
                             col1, col2, col3, col4 = st.columns(4)
                             
                             with col1:
-                                summary = optimization_results.get('summary', {})
-                                final_slide_count = summary.get('final_slide_count', 0)
-                                st.metric("📑 最终页数", final_slide_count)
+                                st.metric("📑 最终页数", merge_result.get('total_pages', 0))
                             
                             with col2:
-                                cleanup_count = cleanup_results.get('cleaned_placeholders', 0) if cleanup_results else 0
-                                st.metric("🧹 清理占位符", cleanup_count)
-                                
-                                # 显示清理详情
-                                if cleanup_results and cleanup_results.get('cleaned_placeholder_list'):
-                                    with st.expander("🔍 查看清理详情", expanded=False):
-                                        st.write("**已清理的未填充占位符：**")
-                                        for item in cleanup_results['cleaned_placeholder_list']:
-                                            st.text(f"• {item}")
-                                        st.info("💡 已填充的占位符保持不变")
-                                elif cleanup_count == 0:
-                                    st.success("✅ 所有占位符都已被正确填充")
+                                successful_count = len(successful_results)
+                                st.metric("✅ 成功文件", successful_count)
                             
                             with col3:
-                                removed_empty = summary.get('removed_empty_slides_count', 0)
-                                st.metric("🗑️ 删除空页", removed_empty)
+                                failed_count = len(processed_results) - successful_count
+                                st.metric("❌ 失败文件", failed_count)
                             
                             with col4:
-                                reorganized = summary.get('reorganized_slides_count', 0)
-                                st.metric("🔄 重新排版", reorganized)
-                        
-                        # 下载文件
-                        st.markdown("### 💾 下载测试结果")
-                        
-                        try:
-                            updated_ppt_bytes = table_generator.get_ppt_bytes()
-                            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                            original_name = table_uploaded_file.name.rsplit('.', 1)[0]
-                            filename = f"{original_name}_测试结果_{timestamp}.pptx"
+                                total_cleanup = sum(r.get('cleanup_count', 0) for r in successful_results)
+                                st.metric("🧹 清理占位符", total_cleanup)
                             
-                            col1, col2, col3 = st.columns([1, 2, 1])
-                            with col2:
-                                st.download_button(
-                                    label="📥 下载处理结果",
-                                    data=updated_ppt_bytes,
-                                    file_name=filename,
-                                    mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                                    use_container_width=True,
-                                    key="download_table_result"
-                                )
+                            # 显示详细结果
+                            if len(processed_results) > successful_count:
+                                failed_results = [r for r in processed_results if not r.get('success', False)]
+                                with st.expander("⚠️ 处理失败的文件", expanded=False):
+                                    for result in failed_results:
+                                        st.error(f"**{result['template_filename']}**: {result.get('error', '未知错误')}")
                             
-                        except Exception as e:
-                            st.error(f"❌ 生成下载文件失败: {str(e)}")
+                            # 下载文件
+                            st.markdown("### 💾 下载合并结果")
+                            
+                            try:
+                                if merge_result.get('presentation_bytes'):
+                                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                                    filename = f"表格数字填充批量处理结果_{timestamp}.pptx"
+                                    
+                                    col1, col2, col3 = st.columns([1, 2, 1])
+                                    with col2:
+                                        st.download_button(
+                                            label="📥 下载合并后的PPT",
+                                            data=merge_result['presentation_bytes'],
+                                            file_name=filename,
+                                            mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                                            use_container_width=True,
+                                            key="download_table_batch_result"
+                                        )
+                                else:
+                                    st.error("❌ 未能获取合并后的PPT数据")
+                                    
+                            except Exception as e:
+                                st.error(f"❌ 生成下载文件失败: {str(e)}")
+                        
+                        else:
+                            st.error(f"❌ 批量处理过程中出现错误: {merge_result.get('error', '未知错误')}")
+                        
+                        # 清理临时文件
+                        for result in processed_results:
+                            if result.get('success') and 'temp_result_path' in locals():
+                                try:
+                                    import os
+                                    if os.path.exists(result['template_path']):
+                                        os.unlink(result['template_path'])
+                                except:
+                                    pass
                         
                     except Exception as e:
                         progress_bar.empty()
                         status_text.empty()
-                        st.error(f"❌ 智能PPT生成过程中出现异常: {str(e)}")
-                        logger.error("智能PPT生成异常: %s", str(e))
+                        st.error(f"❌ 批量处理过程中出现异常: {str(e)}")
+                        logger.error("批量表格填充异常: %s", str(e))
             
-            # 使用说明
         else:
             st.markdown("### 📖 功能特点")
             st.markdown("""

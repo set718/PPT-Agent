@@ -149,8 +149,8 @@ class AIProcessor:
             api_key_env = model_info.get('api_key_env')
             if api_key_env:
                 import os
-                # 如果是火山引擎且支持多密钥，优先使用第一个密钥
-                if model_info.get('api_provider') == 'Volces' and model_info.get('use_multiple_keys'):
+                # 如果支持多密钥（火山引擎或Liai），优先使用第一个密钥
+                if model_info.get('use_multiple_keys'):
                     # 尝试获取多个密钥，使用第一个可用的
                     for i in range(1, 6):
                         key_name = f'{api_key_env}_{i}'
@@ -297,11 +297,10 @@ class AIProcessor:
                 return self._create_fallback_assignment(user_text, f"❌ GPT API调用失败: {error_msg}，这不是文本填充功能的问题")
     
     def _call_liai_api(self, system_prompt: str, user_text: str) -> str:
-        """调用Liai API"""
+        """调用Liai API（支持智能负载均衡）"""
         import requests
         import json
         import os
-        import random
         
         # 从环境变量获取API keys用于负载均衡
         liai_api_keys = []
@@ -310,11 +309,12 @@ class AIProcessor:
             if key:
                 liai_api_keys.append(key)
         
-        # 如果有多个API key，随机选择一个
-        if liai_api_keys:
-            selected_key = random.choice(liai_api_keys)
-        else:
-            selected_key = self.api_key
+        # 如果没有找到多密钥，回退到单密钥
+        if not liai_api_keys:
+            if hasattr(self, 'api_key') and self.api_key:
+                liai_api_keys = [self.api_key]
+            else:
+                raise ValueError("未找到可用的Liai API密钥")
         
         model_info = self.config.get_model_info()
         base_url = model_info.get('base_url', '')
@@ -334,49 +334,64 @@ class AIProcessor:
             "files": []
         }
         
-        headers = {
-            'Authorization': f'Bearer {selected_key}',
-            'Content-Type': 'application/json; charset=utf-8',
-            'Connection': 'keep-alive'
-        }
-        
-        try:
-            # 确保payload中的中文字符正确编码
-            import json
-            json_payload = json.dumps(payload, ensure_ascii=False)
-            response = requests.post(url, headers=headers, data=json_payload.encode('utf-8'), timeout=120, stream=True)
-            response.encoding = 'utf-8'  # 确保使用UTF-8编码
-            response.raise_for_status()
+        # 尝试所有可用密钥
+        last_exception = None
+        for attempt, selected_key in enumerate(liai_api_keys):
+            headers = {
+                'Authorization': f'Bearer {selected_key}',
+                'Content-Type': 'application/json; charset=utf-8',
+                'Connection': 'keep-alive'
+            }
             
-            # 处理streaming响应
-            content = ""
-            for line in response.iter_lines():
-                if line:
-                    try:
-                        line_text = line.decode('utf-8').strip()
-                        # 忽略keep-alive注释
-                        if line_text == ': keep-alive' or line_text == '':
+            try:
+                print(f"尝试使用Liai API密钥 {attempt + 1}/{len(liai_api_keys)} (末尾: ...{selected_key[-8:]})")
+                
+                # 确保payload中的中文字符正确编码
+                json_payload = json.dumps(payload, ensure_ascii=False)
+                response = requests.post(url, headers=headers, data=json_payload.encode('utf-8'), timeout=120, stream=True)
+                response.encoding = 'utf-8'  # 确保使用UTF-8编码
+                response.raise_for_status()
+                
+                # 处理streaming响应
+                content = ""
+                for line in response.iter_lines():
+                    if line:
+                        try:
+                            line_text = line.decode('utf-8').strip()
+                            # 忽略keep-alive注释
+                            if line_text == ': keep-alive' or line_text == '':
+                                continue
+                            if line_text.startswith('data: '):
+                                json_str = line_text[6:]  # 去掉'data: '前缀
+                                if json_str.strip() == '[DONE]':
+                                    break
+                                data = json.loads(json_str)
+                                if 'answer' in data:
+                                    content += data['answer']
+                                elif 'data' in data and 'answer' in data['data']:
+                                    content += data['data']['answer']
+                        except (json.JSONDecodeError, UnicodeDecodeError):
                             continue
-                        if line_text.startswith('data: '):
-                            json_str = line_text[6:]  # 去掉'data: '前缀
-                            if json_str.strip() == '[DONE]':
-                                break
-                            data = json.loads(json_str)
-                            if 'answer' in data:
-                                content += data['answer']
-                            elif 'data' in data and 'answer' in data['data']:
-                                content += data['data']['answer']
-                    except (json.JSONDecodeError, UnicodeDecodeError):
-                        continue
-            
-            return content.strip()
-            
-        except requests.exceptions.RequestException as e:
-            print(f"Liai API调用失败: {str(e)}")
-            raise e
-        except Exception as e:
-            print(f"Liai API处理失败: {str(e)}")
-            raise e
+                
+                # 成功获取内容，返回结果
+                if content.strip():
+                    print(f"✅ Liai API密钥 ...{selected_key[-8:]} 调用成功")
+                    return content.strip()
+                else:
+                    raise Exception("API返回空内容")
+                
+            except Exception as e:
+                last_exception = e
+                print(f"❌ Liai API密钥 ...{selected_key[-8:]} 调用失败: {e}")
+                
+                # 如果还有其他密钥可以尝试，继续下一个
+                if attempt < len(liai_api_keys) - 1:
+                    print(f"⏳ 尝试下一个Liai API密钥...")
+                    continue
+        
+        # 所有密钥都失败了
+        print(f"❌ 所有{len(liai_api_keys)}个Liai API密钥都失败了")
+        raise last_exception or Exception("所有Liai API密钥调用失败")
     
     def batch_process_liai_requests(self, requests_data: List[Dict], batch_size: int = 5) -> List[Dict]:
         """

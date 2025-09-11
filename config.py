@@ -50,9 +50,11 @@ class Config:
             "cost": "",
             "base_url": "https://liai-app.chj.cloud/v1",
             "api_provider": "Liai",
+            "api_key_env": "LIAI_API_KEY",
             "api_key_url": "https://liai-app.chj.cloud",
             "chat_endpoint": "/chat-messages",
-            "request_format": "dify_compatible"
+            "request_format": "dify_compatible",
+            "use_multiple_keys": True
         },
     })
     

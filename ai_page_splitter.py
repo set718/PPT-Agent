@@ -75,6 +75,20 @@ class AIPageSplitter:
                 single_key = os.getenv('ARK_API_KEY')
                 if single_key:
                     self.api_keys = [single_key]
+        elif model_info.get('api_provider') == 'Liai':
+            # Liai API多密钥负载均衡
+            self.api_keys = []
+            for i in range(1, 6):  # 支持1-5个密钥
+                key_name = f'LIAI_API_KEY_{i}'
+                key_value = os.getenv(key_name)
+                if key_value:
+                    self.api_keys.append(key_value)
+            
+            # 如果没有找到编号密钥，尝试单个密钥
+            if not self.api_keys:
+                single_key = os.getenv('LIAI_API_KEY')
+                if single_key:
+                    self.api_keys = [single_key]
         else:
             # 其他API使用单密钥
             api_key_env = model_info.get('api_key_env')
@@ -162,7 +176,7 @@ class AIPageSplitter:
             raise e
     
     def _call_liai_api(self, system_prompt: str, user_text: str) -> str:
-        """调用Liai API"""
+        """调用Liai API（支持多密钥负载均衡）"""
         model_info = self.config.get_model_info()
         base_url = model_info.get('base_url', '')
         endpoint = model_info.get('chat_endpoint', '/chat-messages')
@@ -181,51 +195,72 @@ class AIPageSplitter:
             "files": []
         }
         
-        headers = {
-            'Authorization': f'Bearer {self.api_key}',
-            'Content-Type': 'application/json',
-            'Connection': 'keep-alive'  # 保持连接
-        }
-        
-        try:
-            # 使用持久化会话复用连接，增加超时处理
-            response = self.session.post(url, headers=headers, json=payload, timeout=120, stream=True)
-            response.raise_for_status()
+        # 尝试所有可用密钥
+        last_exception = None
+        for attempt in range(len(self.api_keys)):
+            current_api_key = self._get_next_api_key()
             
-            # 处理streaming响应，特别处理阿里云API的keep-alive
-            content = ""
-            for line in response.iter_lines():
-                if line:
-                    try:
-                        line_text = line.decode('utf-8').strip()
-                        # 忽略阿里云的keep-alive注释
-                        if line_text == ': keep-alive' or line_text == '':
+            headers = {
+                'Authorization': f'Bearer {current_api_key}',
+                'Content-Type': 'application/json',
+                'Connection': 'keep-alive'  # 保持连接
+            }
+            
+            try:
+                print(f"尝试使用Liai API密钥 {attempt + 1}/{len(self.api_keys)} (末尾: ...{current_api_key[-8:]})")
+                
+                # 使用持久化会话复用连接，增加超时处理
+                response = self.session.post(url, headers=headers, json=payload, timeout=120, stream=True)
+                response.raise_for_status()
+                
+                # 处理streaming响应，特别处理阿里云API的keep-alive
+                content = ""
+                for line in response.iter_lines():
+                    if line:
+                        try:
+                            line_text = line.decode('utf-8').strip()
+                            # 忽略阿里云的keep-alive注释
+                            if line_text == ': keep-alive' or line_text == '':
+                                continue
+                            if line_text.startswith('data: '):
+                                json_str = line_text[6:]  # 去掉'data: '前缀
+                                if json_str.strip() == '[DONE]':
+                                    break
+                                data = json.loads(json_str)
+                                if 'answer' in data:
+                                    content += data['answer']
+                                elif 'data' in data and 'answer' in data['data']:
+                                    content += data['data']['answer']
+                        except (json.JSONDecodeError, UnicodeDecodeError):
                             continue
-                        if line_text.startswith('data: '):
-                            json_str = line_text[6:]  # 去掉'data: '前缀
-                            if json_str.strip() == '[DONE]':
-                                break
-                            data = json.loads(json_str)
-                            if 'answer' in data:
-                                content += data['answer']
-                            elif 'data' in data and 'answer' in data['data']:
-                                content += data['data']['answer']
-                    except (json.JSONDecodeError, UnicodeDecodeError):
-                        continue
-            
-            # 如果streaming失败，尝试作为普通JSON处理
-            if not content:
-                try:
-                    result = response.json()
-                    content = result.get('answer', '') or result.get('data', {}).get('answer', '')
-                except:
-                    pass
-            
-            return content.strip() if content else ""
-            
-        except Exception as e:
-            print(f"Liai API调用失败: {e}")
-            raise e
+                
+                # 如果streaming失败，尝试作为普通JSON处理
+                if not content:
+                    try:
+                        result = response.json()
+                        content = result.get('answer', '') or result.get('data', {}).get('answer', '')
+                    except:
+                        pass
+                
+                # 成功获取内容，返回结果
+                if content.strip():
+                    print(f"✅ Liai API密钥 ...{current_api_key[-8:]} 调用成功")
+                    return content.strip()
+                else:
+                    raise Exception("API返回空内容")
+                    
+            except Exception as e:
+                last_exception = e
+                print(f"❌ Liai API密钥 ...{current_api_key[-8:]} 调用失败: {e}")
+                
+                # 如果还有其他密钥可以尝试，继续下一个
+                if attempt < len(self.api_keys) - 1:
+                    print(f"⏳ 尝试下一个Liai API密钥...")
+                    continue
+        
+        # 所有密钥都失败了
+        print(f"❌ 所有{len(self.api_keys)}个Liai API密钥都失败了")
+        raise last_exception or Exception("所有Liai API密钥调用失败")
     
     def _call_openrouter_api(self, system_prompt: str, user_text: str) -> str:
         """调用OpenRouter API（带故障转移的多密钥负载均衡）"""

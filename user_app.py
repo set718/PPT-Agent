@@ -911,7 +911,7 @@ def main():
     with model_col2:
         st.markdown("**模型对比**")
         if selected_model == "liai-chat":
-            st.info("🏢 调用公司融合云AgentOps私有化模型\n🔒 数据安全保障\n✅ 支持视觉分析")
+            st.info("🏢 调用公司融合云AgentOps私有化模型\n🔒 数据安全保障\n🌐 需要连接公司网络使用")
         else:  # DeepSeek V3
             st.success("🚀 火山引擎DeepSeek V3模型\n⚡ 性能优异\n🌐 支持中英文对话")
     
@@ -1171,7 +1171,7 @@ def main():
         st.markdown('<div class="error-box">❌ 模板库中没有找到可用的PPT模板文件</div>', unsafe_allow_html=True)
         return
     
-    st.markdown(f'<div class="success-box">✅ 模板库已就绪！发现 {len(template_files)} 个可用模板</div>', unsafe_allow_html=True)
+    # 模板库检查通过，不显示成功提示
     
     # 初始化AI处理器（不依赖默认模板）
     try:
@@ -1198,7 +1198,7 @@ def main():
         st.error(f"详细错误: {error_msg}")
         return
     
-    st.markdown('<div class="success-box">✅ AI助手已准备就绪！可以使用智能PPT生成功能</div>', unsafe_allow_html=True)
+    # AI助手初始化成功，不显示成功提示
     
     # 功能选择选项卡
     st.markdown("---")
@@ -1207,7 +1207,7 @@ def main():
     
     with tab1:
         # 智能PPT生成功能 - AI分页 + 模板匹配
-        st.markdown("### 🚀 智能PPT生成 (AI分页 + 智能模板匹配)")
+        st.markdown("### 🚀 智能PPT生成")
         
         # 检查是否有保存的处理结果
         if 'current_page_results' in st.session_state and 'current_pages' in st.session_state:
@@ -1219,9 +1219,12 @@ def main():
             
             # 跳转到结果显示部分
             show_results_section(pages, page_results)
-        else:
-            # 显示输入界面
-            st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能使用AI智能分页与模板匹配：<br>1. 用户输入长文本<br>2. AI模型智能分页（DeepSeek V3/Liai Chat）<br>3. 每页内容调用AI模型获取对应模板<br>4. 系统自动整合所有模板页面为完整PPT<br>5. 用户直接下载完整的PPT文件</div>', unsafe_allow_html=True)
+            
+            # 处理完成后，不再显示输入界面
+            st.stop()
+        
+        # 显示输入界面
+        st.markdown('<div class="info-box">🎯 <strong>完整AI处理流程</strong><br>此功能使用AI智能分页与模板匹配：<br>• 用户输入长文本 • AI模型智能分页（DeepSeek V3/Liai Chat）<br>• 每页内容调用AI模型获取对应模板 • 系统自动整合为完整PPT</div>', unsafe_allow_html=True)
     
         # 文本输入
         st.markdown("#### 📝 输入您的内容")
@@ -1247,14 +1250,11 @@ def main():
 人工智能将继续向更加智能化、人性化的方向发展，实现更好的人机协作，为人类社会带来更多便利和创新可能性。同时需要关注AI安全和伦理问题。""",
             help="AI将分析文本结构进行智能分页，每页内容调用AI模型获取对应模板"
         )
-        
-        # 页面数量限制提醒
-        st.info("📋 **页面数量限制：**最多生成25页（包括标题页、内容页和结尾页）")
 
-        # 分页选项
+        # 分页选项 - 简化布局
         st.markdown("#### ⚙️ 分页选项")
         
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns([1, 1])
         with col1:
             target_pages = st.number_input(
                 "目标页面数量（可选）",
@@ -1263,36 +1263,29 @@ def main():
                 value=0,
                 help="设置为0时AI自动判断，手动设置时最少3页（封面+目录+结尾）"
             )
-            
-            # 页数建议
-            st.markdown("""
-            <div style="background-color: #f0f2f6; padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.5rem;">
-            <small>💡 <strong>页数建议：</strong><br>
-            • 5分钟演示：3-5页<br>
-            • 10分钟演示：5-8页<br>
-            • 15分钟演示：8-12页<br>
-            • 30分钟演示：15-20页<br>
-            • 学术报告：20-25页</small>
-            </div>
-            """, unsafe_allow_html=True)
         
         with col2:
-            if user_text:
-                char_count = len(user_text)
-                word_count = len(user_text.split())
-                st.metric("📊 文本统计", f"{char_count}字符 | {word_count}词")
+            # 页面数量限制提醒 - 移至右侧
+            st.info("📋 **页面限制：**最多生成25页")
         
-        # 处理按钮
-        st.markdown("#### 🚀 生成PPT")
+        # 页数建议 - 使用更简洁的布局
+        st.markdown("""
+        <div style="background-color: #f0f2f6; padding: 0.75rem; border-radius: 0.5rem; margin: 0.5rem 0;">
+        <small>💡 <strong>页数建议：</strong>
+        5分钟演示：3-5页 • 10分钟演示：5-8页 • 15分钟演示：8-12页 • 30分钟演示：15-20页 • 学术报告：20-25页</small>
+        </div>
+        """, unsafe_allow_html=True)
         
+        # 生成按钮 - 居中显示
+        st.markdown("---")
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             process_button = st.button(
-                "🚀 开始生成PPT（AI分页 + 智能模板匹配 + 自动整合）",
+                "🚀 开始生成PPT",
                 type="primary",
                 use_container_width=True,
                 disabled=not user_text.strip(),
-                help="AI分页 → 智能模板匹配 → 自动整合PPT → 可直接下载"
+                help="AI智能分页 → 模板匹配 → 自动整合PPT → 可直接下载"
             )
     
         # 处理逻辑 - AI分页 + 智能模板匹配
@@ -1499,7 +1492,11 @@ def main():
                                         page_content = page_info['page_content']
                                         full_content = f"标题: {page_title}\n\n{page_content}" if page_title else page_content
                                         
-                                        bridge_result = sync_test_dify_template_bridge(full_content)
+                                        # 获取当前模型配置
+                                        from config import get_config
+                                        current_config = get_config()
+                                        model_config = current_config.get_model_info()
+                                        bridge_result = sync_test_dify_template_bridge(full_content, model_config=model_config)
                                         
                                         # 如果成功且有title，强制添加title占位符填充
                                         if bridge_result.get('success') and page_title:
@@ -1602,7 +1599,11 @@ def main():
                                     })
                                     st.info(f"🔚 第{page_number}页(结尾页)：使用固定结尾模板")
                                 elif page_content:
-                                    bridge_result = sync_test_dify_template_bridge(page_content)
+                                    # 获取当前模型配置
+                                    from config import get_config
+                                    current_config = get_config()
+                                    model_config = current_config.get_model_info()
+                                    bridge_result = sync_test_dify_template_bridge(page_content, model_config=model_config)
                                     if bridge_result.get('success'):
                                         dify_result = bridge_result["step_1_dify_api"]
                                         template_result = bridge_result["step_2_template_lookup"]
@@ -1683,8 +1684,12 @@ def main():
                             st.info(f"🔚 第{page_number}页(结尾页)：使用固定结尾模板 ending_slides.pptx")
                         
                         elif page_content:
-                            # 其他页面调用Dify API
-                            bridge_result = sync_test_dify_template_bridge(page_content)
+                            # 其他页面调用API（支持Dify和Liai）
+                            # 获取当前模型配置
+                            from config import get_config
+                            current_config = get_config()
+                            model_config = current_config.get_model_info()
+                            bridge_result = sync_test_dify_template_bridge(page_content, model_config=model_config)
                             if bridge_result.get('success'):
                                 dify_result = bridge_result["step_1_dify_api"]
                                 template_result = bridge_result["step_2_template_lookup"]
@@ -2093,10 +2098,9 @@ AI将分析您的文本结构，并智能地将内容分配到该模板的 {file
                             enable_visual = False
                     
                     with col2:
+                        # 移除文本统计，保持布局平衡
                         if test_text:
-                            char_count = len(test_text)
-                            word_count = len(test_text.split())
-                            st.metric("📊 文本统计", f"{char_count}字符 | {word_count}词")
+                            st.markdown("&nbsp;")  # 占位符保持布局
                     
                     st.markdown("---")  # 分隔线，用于分隔不同文件的测试区域
                 

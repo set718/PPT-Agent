@@ -6,4 +6,4 @@ Pillow==10.0.1
 colorama==0.4.6
 aiohttp==3.9.1 
 Spire.Presentation
-#idaas-sdk --extra-index-url https://gitlabee.chehejia.com/api/v4/projects/10037/packages/pypi/simple
+idaas-sdk --extra-index-url https://gitlabee.chehejia.com/api/v4/projects/10037/packages/pypi/simple

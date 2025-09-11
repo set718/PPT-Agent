@@ -1203,7 +1203,7 @@ def main():
     # 功能选择选项卡
     st.markdown("---")
     # 仅保留核心入口功能
-    tab1, tab3, tab_table, tab_format = st.tabs(["🎨 智能PPT生成", "🧪 自定义模板测试", "📊 表格文本填充", "🔍 PPT格式读取展示"])
+    tab1, tab3, tab_table, tab_format, tab_watermark = st.tabs(["🎨 智能PPT生成", "🧪 自定义模板测试", "📊 表格文本填充", "🔍 PPT格式读取展示", "🧽 PPT去水印工具"])
     
     with tab1:
         # 智能PPT生成功能 - AI分页 + 模板匹配
@@ -3066,6 +3066,162 @@ AI将自动提取数字信息并分别填入对应的占位符""",
                 - 调试模板兼容性
                 - 验证占位符识别准确性
                 - 了解格式读取能力的边界
+                """)
+
+    with tab_watermark:
+        # PPT去水印工具功能
+        st.markdown("### 🧽 PPT去水印工具")
+        st.markdown("**上传含有Spire.Presentation水印的PPT文件，自动去除水印后提供下载**")
+        
+        col1, col2 = st.columns([1, 1])
+        
+        with col1:
+            st.markdown("#### 📤 上传含水印的PPT")
+            watermark_uploaded_file = st.file_uploader(
+                "选择含水印的PPT文件",
+                type=['pptx'],
+                help="支持去除Spire.Presentation生成的红色文字和白色框水印",
+                key="watermark_uploader"
+            )
+            
+            if watermark_uploaded_file is not None:
+                st.success(f"✅ 已上传：{watermark_uploaded_file.name}")
+                
+                # 显示文件信息
+                file_size = len(watermark_uploaded_file.getvalue()) / 1024 / 1024
+                st.info(f"📊 文件大小：{file_size:.2f} MB")
+                
+                # 去水印按钮
+                if st.button("🧽 开始去除水印", type="primary", key="remove_watermark_btn"):
+                    with st.spinner("正在去除水印，请稍候..."):
+                        try:
+                            # 保存上传的文件到临时位置
+                            import tempfile
+                            with tempfile.NamedTemporaryFile(suffix=".pptx", delete=False) as temp_input:
+                                temp_input.write(watermark_uploaded_file.getbuffer())
+                                temp_input_path = temp_input.name
+                            
+                            # 创建输出文件路径
+                            with tempfile.NamedTemporaryFile(suffix="_clean.pptx", delete=False) as temp_output:
+                                temp_output_path = temp_output.name
+                            
+                            # 导入去水印模块
+                            from watermark_remover import remove_spire_watermark
+                            
+                            # 执行去水印操作
+                            result_path = remove_spire_watermark(temp_input_path, temp_output_path)
+                            
+                            # 读取处理后的文件
+                            with open(result_path, 'rb') as f:
+                                clean_file_data = f.read()
+                            
+                            # 计算清理后的文件大小
+                            clean_file_size = len(clean_file_data) / 1024 / 1024
+                            
+                            # 将结果存储到session state
+                            original_filename = watermark_uploaded_file.name
+                            clean_filename = original_filename.replace('.pptx', '_无水印.pptx')
+                            
+                            st.session_state.watermark_removal_result = {
+                                'original_filename': original_filename,
+                                'clean_filename': clean_filename,
+                                'clean_file_data': clean_file_data,
+                                'original_size': file_size,
+                                'clean_size': clean_file_size,
+                                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            }
+                            
+                            # 清理临时文件
+                            try:
+                                os.remove(temp_input_path)
+                                os.remove(temp_output_path)
+                            except:
+                                pass
+                            
+                            st.success("🎉 水印去除完成！")
+                            st.rerun()
+                            
+                        except Exception as e:
+                            st.error(f"❌ 去水印失败：{str(e)}")
+                            # 清理临时文件
+                            try:
+                                if 'temp_input_path' in locals():
+                                    os.remove(temp_input_path)
+                                if 'temp_output_path' in locals():
+                                    os.remove(temp_output_path)
+                            except:
+                                pass
+        
+        with col2:
+            st.markdown("#### 📥 下载清理结果")
+            
+            if 'watermark_removal_result' in st.session_state:
+                result = st.session_state.watermark_removal_result
+                
+                st.markdown(f"**原始文件：** {result['original_filename']}")
+                st.markdown(f"**清理时间：** {result['timestamp']}")
+                
+                # 文件大小对比
+                st.markdown("---")
+                st.markdown("### 📊 处理结果")
+                
+                size_cols = st.columns(2)
+                with size_cols[0]:
+                    st.metric("原始大小", f"{result['original_size']:.2f} MB")
+                with size_cols[1]:
+                    st.metric("清理后大小", f"{result['clean_size']:.2f} MB")
+                
+                # 大小变化
+                size_diff = result['clean_size'] - result['original_size']
+                if size_diff < 0:
+                    st.success(f"✅ 文件缩小了 {abs(size_diff):.2f} MB")
+                elif size_diff > 0:
+                    st.info(f"ℹ️ 文件增大了 {size_diff:.2f} MB")
+                else:
+                    st.info("ℹ️ 文件大小无变化")
+                
+                # 下载按钮
+                st.markdown("---")
+                st.download_button(
+                    label="📥 下载无水印PPT",
+                    data=result['clean_file_data'],
+                    file_name=result['clean_filename'],
+                    mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                    type="primary"
+                )
+                
+                # 清除结果按钮
+                if st.button("🗑️ 清除结果", key="clear_watermark_result"):
+                    del st.session_state.watermark_removal_result
+                    st.rerun()
+                    
+            else:
+                st.markdown("👆 请先上传PPT文件并点击去水印按钮")
+                
+                # 功能说明
+                st.markdown("---")
+                st.markdown("#### 💡 功能说明")
+                st.markdown("""
+                **此工具可以去除：**
+                
+                1. **🔴 红色警告文字**：包含"Evaluation Warning"等文字的红色水印
+                2. **⬜ 白色警告框**：包含"document was created with Spire.Presentation"等的白框
+                3. **🔒 锁定的水印元素**：不可编辑、不可移动的水印形状
+                
+                **支持的水印类型：**
+                - Spire.Presentation for Python 免费版水印
+                - 其他类似的评估版水印（红色文字+白框组合）
+                
+                **处理过程：**
+                1. 自动解析PPT文件的XML结构
+                2. 识别包含特定文字的水印形状
+                3. 完全移除水印元素（包括红字和白框）
+                4. 重新打包成干净的PPT文件
+                
+                **注意事项：**
+                - 仅用于合法的水印清理用途
+                - 建议处理前备份原始文件
+                - 处理后请检查PPT内容是否完整
                 """)
 
     

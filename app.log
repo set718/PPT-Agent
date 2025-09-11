@@ -4156,3 +4156,251 @@
 2025-09-11 16:49:58 - ppt_generator - INFO - 开始创建高级PPT分析
 2025-09-11 16:49:58 - ppt_generator - INFO - 开始完整PPT结构分析
 2025-09-11 16:49:58 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:03:34 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-11 17:03:34 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-11 17:03:34 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:03:34 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:03:34 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:03:34 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmppqk3uzjv.pptx
+2025-09-11 17:03:34 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-09-11 17:03:34 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 2996字符
+2025-09-11 17:04:00 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 17
+2025-09-11 17:04:00 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-11 17:04:00 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-11 17:04:00 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-11 17:04:00 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并1个模板页面
+2025-09-11 17:04:00 - ppt_generator - INFO - 使用第一个模板作为基础: processed_0_20250911_170400.pptx
+2025-09-11 17:04:00 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250911_170400.pptx
+2025-09-11 17:04:00 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 1页, 跳过: 0页
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:04:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:05 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:08:06 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:42 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:43 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:55 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:14:56 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:02 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-11 17:15:02 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-11 17:15:02 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:02 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:02 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:02 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpd6mm33hw.pptx
+2025-09-11 17:15:02 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.09s
+2025-09-11 17:15:02 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 398字符
+2025-09-11 17:15:18 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 10
+2025-09-11 17:15:18 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-11 17:15:18 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-11 17:15:18 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-11 17:15:18 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并1个模板页面
+2025-09-11 17:15:18 - ppt_generator - INFO - 使用第一个模板作为基础: processed_0_20250911_171518.pptx
+2025-09-11 17:15:18 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250911_171518.pptx
+2025-09-11 17:15:18 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 1页, 跳过: 0页
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:18 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:19 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:22 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:22 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:22 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始创建高级PPT分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始完整PPT结构分析
+2025-09-11 17:15:23 - ppt_generator - INFO - 开始提取位置信息

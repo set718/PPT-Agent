@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Bash(python:*)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "mcp__ide__getDiagnostics",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)",
+      "Read(/D:\\Code\\AI大赛相关Code/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

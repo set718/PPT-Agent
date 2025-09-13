@@ -47,21 +47,7 @@ class AIPageSplitter:
             self.api_keys = [api_key]
             return
         
-        if model_info.get('api_provider') == 'OpenRouter':
-            # 从环境变量获取OpenRouter密钥（用户自定义）
-            self.api_keys = []
-            for i in range(1, 6):  # 支持1-5个密钥
-                key_name = f'OPENROUTER_API_KEY_{i}'
-                key_value = os.getenv(key_name)
-                if key_value:
-                    self.api_keys.append(key_value)
-            
-            # 如果没有找到编号密钥，尝试单个密钥
-            if not self.api_keys:
-                single_key = os.getenv('OPENROUTER_API_KEY')
-                if single_key:
-                    self.api_keys = [single_key]
-        elif model_info.get('api_provider') == 'Volces' and model_info.get('use_multiple_keys'):
+        if model_info.get('api_provider') == 'Volces' and model_info.get('use_multiple_keys'):
             # 从环境变量获取火山引擎密钥（多密钥负载均衡）
             self.api_keys = []
             for i in range(1, 6):  # 支持1-5个密钥
@@ -138,8 +124,8 @@ class AIPageSplitter:
                 # 使用Liai API格式
                 content = self._call_liai_api(system_prompt, user_text)
             elif model_info.get('request_format') == 'streaming_compatible':
-                # 使用OpenRouter API格式（类似Liai的分批处理）
-                content = self._call_openrouter_api(system_prompt, user_text)
+                # 使用火山引擎DeepSeek API格式
+                content = self._call_deepseek_api(system_prompt, user_text)
             elif model_info.get('request_format') == 'openai_responses_api':
                 # 使用GPT-5 Responses API格式
                 content = self._call_gpt5_responses_api(system_prompt, user_text)
@@ -262,12 +248,12 @@ class AIPageSplitter:
         print(f"❌ 所有{len(self.api_keys)}个Liai API密钥都失败了")
         raise last_exception or Exception("所有Liai API密钥调用失败")
     
-    def _call_openrouter_api(self, system_prompt: str, user_text: str) -> str:
-        """调用OpenRouter API（带故障转移的多密钥负载均衡）"""
+    def _call_deepseek_api(self, system_prompt: str, user_text: str) -> str:
+        """调用DeepSeek API（带故障转移的多密钥负载均衡）"""
         model_info = self.config.get_model_info()
         
         # 获取实际模型名称和额外头部
-        actual_model = model_info.get('actual_model', 'openai/gpt-5')
+        actual_model = model_info.get('actual_model', 'deepseek-v3-250324')
         extra_headers = model_info.get('extra_headers', {})
         
         # 尝试所有可用密钥

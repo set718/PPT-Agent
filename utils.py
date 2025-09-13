@@ -16,8 +16,6 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from config import get_config
 from ppt_beautifier import PPTBeautifier
-from ppt_advanced_analyzer import PPTStructureAnalyzer, PositionExtractor, SmartLayoutAdjuster, create_advanced_ppt_analysis
-from ppt_visual_analyzer import PPTVisualAnalyzer, VisualLayoutOptimizer
 
 class PPTAnalyzer:
     """PPT分析器"""
@@ -137,53 +135,73 @@ class AIProcessor:
     """AI处理器"""
     
     def __init__(self, api_key: str = None):
-        """初始化AI处理器"""
+        """初始化AI处理器（支持完整的多密钥负载均衡）"""
         config = get_config()
         model_info = config.get_model_info()
+        self.config = config
         
-        # 处理API密钥设置
+        # 处理API密钥设置 - 支持多密钥负载均衡
         if api_key:
-            self.api_key = api_key
+            self.api_keys = [api_key]
         else:
             # 检查模型配置中的环境变量设置
             api_key_env = model_info.get('api_key_env')
             if api_key_env:
                 import os
-                # 如果支持多密钥（火山引擎或Liai），优先使用第一个密钥
+                # 如果支持多密钥，获取所有可用密钥
                 if model_info.get('use_multiple_keys'):
-                    # 尝试获取多个密钥，使用第一个可用的
-                    for i in range(1, 6):
+                    self.api_keys = []
+                    for i in range(1, 6):  # 支持1-5个密钥
                         key_name = f'{api_key_env}_{i}'
                         key = os.getenv(key_name)
                         if key:
-                            self.api_key = key
-                            break
-                    else:
-                        # 如果没找到编号密钥，尝试单个密钥
+                            self.api_keys.append(key)
+                    
+                    # 如果没找到编号密钥，尝试单个密钥
+                    if not self.api_keys:
                         single_key = os.getenv(api_key_env)
-                        self.api_key = single_key or config.openai_api_key or ""
+                        if single_key:
+                            self.api_keys = [single_key]
+                        else:
+                            self.api_keys = [config.openai_api_key] if config.openai_api_key else []
                 else:
-                    self.api_key = os.getenv(api_key_env) or config.openai_api_key or ""
+                    # 单密钥配置
+                    key = os.getenv(api_key_env) or config.openai_api_key or ""
+                    self.api_keys = [key] if key else []
             else:
-                self.api_key = config.openai_api_key
+                self.api_keys = [config.openai_api_key] if config.openai_api_key else []
         
-        if not self.api_key:
+        if not self.api_keys:
             raise ValueError("请设置API密钥")
         
+        # 初始化轮询索引
+        self._current_key_index = 0
         
         # 根据当前选择的模型获取对应的base_url
         self.base_url = model_info.get('base_url', config.openai_base_url)
         
         # 延迟初始化client，避免在创建时就验证API密钥
         self.client = None
-        self.config = config
+        
+        print(f"AIProcessor初始化完成，可用API密钥数量: {len(self.api_keys)}")
+    
+    def _get_next_api_key(self):
+        """获取下一个API密钥（轮询）"""
+        if not self.api_keys:
+            raise ValueError("没有可用的API密钥")
+        
+        key = self.api_keys[self._current_key_index]
+        self._current_key_index = (self._current_key_index + 1) % len(self.api_keys)
+        return key
     
     def _ensure_client(self):
-        """确保client已初始化"""
+        """确保client已初始化（使用第一个密钥进行初始化）"""
         if self.client is None:
             try:
+                # 使用第一个密钥进行初始化，实际使用时会动态切换
+                first_key = self.api_keys[0]
                 self.client = OpenAI(
-                    api_key=self.api_key,
+                    api_key=first_key,
                     base_url=self.base_url
                 )
             except Exception as e:
@@ -217,42 +235,11 @@ class AIProcessor:
         model_info = self.config.get_model_info()
         
         if model_info.get('request_format') == 'dify_compatible':
-            # 使用Liai API格式，单页的所有占位符用一次API调用处理
+            # 使用Liai API格式，带多密钥负载均衡
             content = self._call_liai_api(system_prompt, user_text)
         else:
-            # 使用OpenAI格式
-            try:
-                # 使用actual_model而不是ai_model配置名
-                actual_model = model_info.get('actual_model', self.config.ai_model)
-                
-                # 确保消息内容使用UTF-8编码
-                system_content = system_prompt
-                user_content = user_text
-                if isinstance(system_prompt, str):
-                    system_content = system_prompt.encode('utf-8', errors='ignore').decode('utf-8')
-                if isinstance(user_text, str):
-                    user_content = user_text.encode('utf-8', errors='ignore').decode('utf-8')
-                response = self.client.chat.completions.create(
-                    model=actual_model,
-                    messages=[
-                        {"role": "system", "content": system_content},
-                        {"role": "user", "content": user_content}
-                    ],
-                    temperature=self.config.ai_temperature,
-                    max_tokens=self.config.ai_max_tokens,
-                    stream=True
-                )
-                
-                # 收集流式响应内容
-                content = ""
-                for chunk in response:
-                    if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
-                        content += chunk.choices[0].delta.content
-                
-                content = content.strip() if content else ""
-                
-            except Exception as e:
-                raise e
+            # 使用OpenAI兼容格式（DeepSeek等），带多密钥负载均衡
+            content = self._call_openai_compatible_api(system_prompt, user_text)
         
         try:
             # 提取JSON内容
@@ -297,24 +284,9 @@ class AIProcessor:
                 return self._create_fallback_assignment(user_text, f"❌ GPT API调用失败: {error_msg}，这不是文本填充功能的问题")
     
     def _call_liai_api(self, system_prompt: str, user_text: str) -> str:
-        """调用Liai API（支持智能负载均衡）"""
+        """调用Liai API（带故障转移的多密钥负载均衡）"""
         import requests
         import json
-        import os
-        
-        # 从环境变量获取API keys用于负载均衡
-        liai_api_keys = []
-        for i in range(1, 6):
-            key = os.getenv(f"LIAI_API_KEY_{i}")
-            if key:
-                liai_api_keys.append(key)
-        
-        # 如果没有找到多密钥，回退到单密钥
-        if not liai_api_keys:
-            if hasattr(self, 'api_key') and self.api_key:
-                liai_api_keys = [self.api_key]
-            else:
-                raise ValueError("未找到可用的Liai API密钥")
         
         model_info = self.config.get_model_info()
         base_url = model_info.get('base_url', '')
@@ -334,17 +306,18 @@ class AIProcessor:
             "files": []
         }
         
-        # 尝试所有可用密钥
+        # 尝试所有可用密钥（使用轮询）
         last_exception = None
-        for attempt, selected_key in enumerate(liai_api_keys):
+        for attempt in range(len(self.api_keys)):
+            current_api_key = self._get_next_api_key()
             headers = {
-                'Authorization': f'Bearer {selected_key}',
+                'Authorization': f'Bearer {current_api_key}',
                 'Content-Type': 'application/json; charset=utf-8',
                 'Connection': 'keep-alive'
             }
             
             try:
-                print(f"尝试使用Liai API密钥 {attempt + 1}/{len(liai_api_keys)} (末尾: ...{selected_key[-8:]})")
+                print(f"尝试使用Liai API密钥 {attempt + 1}/{len(self.api_keys)} (末尾: ...{current_api_key[-8:]})")
                 
                 # 确保payload中的中文字符正确编码
                 json_payload = json.dumps(payload, ensure_ascii=False)
@@ -382,16 +355,80 @@ class AIProcessor:
                 
             except Exception as e:
                 last_exception = e
-                print(f"❌ Liai API密钥 ...{selected_key[-8:]} 调用失败: {e}")
+                print(f"❌ Liai API密钥 ...{current_api_key[-8:]} 调用失败: {e}")
                 
                 # 如果还有其他密钥可以尝试，继续下一个
-                if attempt < len(liai_api_keys) - 1:
+                if attempt < len(self.api_keys) - 1:
                     print(f"⏳ 尝试下一个Liai API密钥...")
                     continue
         
         # 所有密钥都失败了
-        print(f"❌ 所有{len(liai_api_keys)}个Liai API密钥都失败了")
+        print(f"❌ 所有{len(self.api_keys)}个Liai API密钥都失败了")
         raise last_exception or Exception("所有Liai API密钥调用失败")
+    
+    def _call_openai_compatible_api(self, system_prompt: str, user_text: str) -> str:
+        """调用OpenAI兼容API（带故障转移的多密钥负载均衡）"""
+        model_info = self.config.get_model_info()
+        
+        # 获取实际模型名称
+        actual_model = model_info.get('actual_model', self.config.ai_model)
+        
+        # 尝试所有可用密钥
+        last_exception = None
+        for attempt in range(len(self.api_keys)):
+            current_api_key = self._get_next_api_key()
+            
+            try:
+                print(f"尝试使用API密钥 {attempt + 1}/{len(self.api_keys)} (末尾: ...{current_api_key[-8:]})")
+                
+                # 为当前密钥创建临时客户端
+                temp_client = OpenAI(
+                    api_key=current_api_key,
+                    base_url=self.base_url,
+                    timeout=120
+                )
+                
+                # 确保消息内容使用UTF-8编码
+                system_content = system_prompt
+                user_content = user_text
+                if isinstance(system_prompt, str):
+                    system_content = system_prompt.encode('utf-8', errors='ignore').decode('utf-8')
+                if isinstance(user_text, str):
+                    user_content = user_text.encode('utf-8', errors='ignore').decode('utf-8')
+                
+                response = temp_client.chat.completions.create(
+                    model=actual_model,
+                    messages=[
+                        {"role": "system", "content": system_content},
+                        {"role": "user", "content": user_content}
+                    ],
+                    temperature=self.config.ai_temperature,
+                    max_tokens=self.config.ai_max_tokens,
+                    stream=True
+                )
+                
+                # 收集流式响应内容
+                content = ""
+                for chunk in response:
+                    if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
+                        content += chunk.choices[0].delta.content
+                
+                content = content.strip() if content else ""
+                print(f"✅ API密钥 {attempt + 1} 调用成功")
+                return content
+                
+            except Exception as e:
+                print(f"❌ API密钥 {attempt + 1} 调用失败: {str(e)}")
+                last_exception = e
+                
+                # 如果不是最后一个密钥，继续尝试下一个
+                if attempt < len(self.api_keys) - 1:
+                    print(f"⏭️ 尝试下一个API密钥...")
+                    continue
+        
+        # 所有密钥都失败了
+        print(f"❌ 所有{len(self.api_keys)}个API密钥都失败了")
+        raise last_exception or Exception("所有API密钥调用失败")
     
     def batch_process_liai_requests(self, requests_data: List[Dict], batch_size: int = 5) -> List[Dict]:
         """
@@ -966,145 +1003,14 @@ class PPTProcessor:
         self.beautifier = PPTBeautifier(presentation)
         self.filled_placeholders = {}  # 记录已填充的占位符
         
-        # 初始化高级分析器
-        self.advanced_analysis = create_advanced_ppt_analysis(presentation)
-        self.structure_analyzer = self.advanced_analysis['analyzers']['structure_analyzer'] if 'analyzers' in self.advanced_analysis else None
-        self.position_extractor = self.advanced_analysis['analyzers']['position_extractor'] if 'analyzers' in self.advanced_analysis else None
-        self.layout_adjuster = self.advanced_analysis['analyzers']['layout_adjuster'] if 'analyzers' in self.advanced_analysis else None
         
-        # 视觉分析器（需要API密钥时才初始化）
-        self.visual_analyzer = None
-        self.visual_optimizer = None
     
     def get_enhanced_structure_info(self) -> Dict[str, Any]:
-        """获取增强的PPT结构信息"""
-        if not self.structure_analyzer:
-            return self.ppt_structure
-        
-        # 合并基础分析和高级分析结果
-        enhanced_info = {
-            'basic_structure': self.ppt_structure,
-            'advanced_analysis': self.advanced_analysis.get('structure_analysis', {}),
-            'position_analysis': self.advanced_analysis.get('position_analysis', {}),
-            'layout_suggestions': []
-        }
-        
-        # 为每张幻灯片生成布局建议
-        if self.layout_adjuster and 'structure_analysis' in self.advanced_analysis:
-            slide_layouts = self.advanced_analysis['structure_analysis'].get('slide_layouts', [])
-            for i, layout in enumerate(slide_layouts):
-                # 模拟一些内容来生成建议
-                mock_content = {}
-                if i < len(self.ppt_structure['slides']):
-                    slide_info = self.ppt_structure['slides'][i]
-                    for placeholder in slide_info.get('placeholders', {}).keys():
-                        mock_content[placeholder] = f"示例内容_{placeholder}"
-                
-                if mock_content:
-                    suggestions = self.layout_adjuster.suggest_optimal_layout(i, mock_content)
-                    enhanced_info['layout_suggestions'].append({
-                        'slide_index': i,
-                        'suggestions': suggestions
-                    })
-        
-        return enhanced_info
+        """获取PPT结构信息（简化版）"""
+        return self.ppt_structure
     
-    def initialize_visual_analyzer(self, api_key: str) -> bool:
-        """
-        初始化视觉分析器（仅在启用视觉分析时）
-        
-        Args:
-            api_key: OpenAI API密钥
-            
-        Returns:
-            bool: 初始化是否成功
-        """
-        # 检查配置是否启用视觉分析
-        config = get_config()
-        if not config.enable_visual_analysis:
-            print(f"[INFO] 当前模型 {config.ai_model} 不支持视觉分析，跳过视觉分析器初始化")
-            self.visual_analyzer = None
-            self.visual_optimizer = None
-            return True  # 返回True表示按配置正确初始化
-        
-        try:
-            self.visual_analyzer = PPTVisualAnalyzer(api_key)
-            self.visual_optimizer = VisualLayoutOptimizer(self.visual_analyzer)
-            print(f"[INFO] 视觉分析器初始化成功，使用模型: {config.ai_model}")
-            return True
-        except Exception as e:
-            print("视觉分析器初始化失败: %s", str(e))
-            return False
     
-    def analyze_visual_quality(self, ppt_path: str) -> Dict[str, Any]:
-        """
-        分析PPT视觉质量（如果启用了视觉分析功能）
-        
-        Args:
-            ppt_path: PPT文件路径
-            
-        Returns:
-            Dict: 视觉分析结果
-        """
-        config = get_config()
-        
-        if not config.enable_visual_analysis:
-            # 视觉分析被禁用，返回简单的默认分析结果
-            return {
-                "analysis_skipped": True,
-                "reason": f"当前使用的模型 {config.ai_model} 不支持视觉分析功能",
-                "slides_analysis": [],
-                "overall_quality": {
-                    "visual_appeal": 0.5,
-                    "content_balance": 0.5,
-                    "consistency": 0.5
-                }
-            }
-        
-        if not self.visual_analyzer:
-            return {"error": "视觉分析器未初始化，请先提供API密钥"}
-        
-        try:
-            return self.visual_analyzer.analyze_presentation_visual_quality(ppt_path)
-        except Exception as e:
-            return {"error": f"视觉分析失败: {e}"}
     
-    def apply_visual_optimizations(self, visual_analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        应用视觉优化建议
-        
-        Args:
-            visual_analysis: 视觉分析结果
-            
-        Returns:
-            Dict: 优化结果
-        """
-        if not self.visual_optimizer:
-            return {"error": "视觉优化器未初始化"}
-        
-        try:
-            slide_analyses = visual_analysis.get("slide_analyses", [])
-            optimization_results = []
-            
-            for slide_analysis in slide_analyses:
-                slide_index = slide_analysis.get("slide_index", 0)
-                result = self.visual_optimizer.optimize_slide_layout(
-                    self.presentation, slide_index, slide_analysis
-                )
-                optimization_results.append(result)
-            
-            return {
-                "success": True,
-                "optimization_results": optimization_results,
-                "total_optimizations": sum(
-                    len(r.get("optimizations_applied", [])) 
-                    for r in optimization_results 
-                    if r.get("success")
-                )
-            }
-            
-        except Exception as e:
-            return {"error": f"视觉优化失败: {e}"}
     
     def apply_assignments(self, assignments: Dict[str, Any], user_text: str = "") -> List[str]:
         """
@@ -1416,21 +1322,17 @@ class PPTProcessor:
         
         return slide_texts
     
-    def beautify_presentation(self, enable_visual_optimization: bool = False, ppt_path: str = None) -> Dict[str, Any]:
+    def beautify_presentation(self) -> Dict[str, Any]:
         """
         美化演示文稿，清理未填充的占位符并重新排版
         
-        Args:
-            enable_visual_optimization: 是否启用视觉优化
-            ppt_path: PPT文件路径（视觉分析需要）
-            
         Returns:
             Dict: 美化结果
         """
         beautify_results = self.beautifier.cleanup_and_beautify(self.filled_placeholders)
         optimization_results = self.beautifier.optimize_slide_sequence()
         
-        # 基础美化结果
+        # 美化结果
         result = {
             'beautify_results': beautify_results,
             'optimization_results': optimization_results,
@@ -1443,28 +1345,6 @@ class PPTProcessor:
                 'final_slide_count': optimization_results['final_slide_count']
             }
         }
-        
-        # 如果启用视觉优化且视觉分析器可用
-        if enable_visual_optimization and self.visual_analyzer and ppt_path:
-            try:
-                print("🎨 执行视觉质量分析...")
-                visual_analysis = self.analyze_visual_quality(ppt_path)
-                
-                if "error" not in visual_analysis:
-                    print("🔧 应用视觉优化建议...")
-                    visual_optimization = self.apply_visual_optimizations(visual_analysis)
-                    
-                    result['visual_analysis'] = visual_analysis
-                    result['visual_optimization'] = visual_optimization
-                    result['summary']['visual_optimizations_applied'] = visual_optimization.get('total_optimizations', 0)
-                    
-                    overall_score = visual_analysis.get('overall_analysis', {}).get('weighted_score', 0)
-                    result['summary']['visual_quality_score'] = overall_score
-                else:
-                    result['visual_analysis'] = {"error": visual_analysis.get("error")}
-                    
-            except Exception as e:
-                result['visual_analysis'] = {"error": f"视觉分析过程中出错: {e}"}
         
         return result
     

@@ -34,7 +34,6 @@ class Config:
         "deepseek-v3": {
             "name": "DeepSeek V3（非保密场景请选择此模型）",
             "description": "火山引擎提供的DeepSeek V3模型，支持中英文对话，性能优异，支持多密钥负载均衡",
-            "supports_vision": False,
             "cost": "",
             "base_url": "https://ark.cn-beijing.volces.com/api/v3",
             "api_provider": "Volces",
@@ -46,7 +45,6 @@ class Config:
         "liai-chat": {
             "name": "Liai Chat（保密信息请选择此模型）",
             "description": "Liai智能对话模型，支持多模态输入",
-            "supports_vision": True,
             "cost": "",
             "base_url": "https://liai-app.chj.cloud/v1",
             "api_provider": "Liai",
@@ -58,8 +56,6 @@ class Config:
         },
     })
     
-    # 根据模型自动启用/禁用视觉分析
-    enable_visual_analysis: bool = True
     
     # 文件处理配置
     max_file_size_mb: int = 50
@@ -127,20 +123,12 @@ class Config:
             except OSError:
                 pass  # 无法创建目录，稍后在验证中处理
         
-        # 根据当前选择的模型自动设置视觉分析功能
-        self._update_visual_analysis_setting()
     
-    def _update_visual_analysis_setting(self):
-        """根据当前模型自动设置视觉分析功能"""
-        if self.ai_model in self.available_models:
-            model_info = self.available_models[self.ai_model]
-            self.enable_visual_analysis = model_info.get('supports_vision', False)
     
     def set_model(self, model_name: str):
-        """设置AI模型并自动更新相关设置"""
+        """设置AI模型"""
         if model_name in self.available_models:
             self.ai_model = model_name
-            self._update_visual_analysis_setting()
         else:
             raise ValueError(f"不支持的模型: {model_name}。支持的模型: {list(self.available_models.keys())}")
     

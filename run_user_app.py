@@ -29,6 +29,7 @@ def main():
         print(f"[ERROR] 启动失败: {e}")
         print("请确保已安装streamlit: pip install streamlit")
     except KeyboardInterrupt:
+        
         print("\n[INFO] 应用已停止")
     except Exception as e:
         print(f"[ERROR] 意外错误: {e}")

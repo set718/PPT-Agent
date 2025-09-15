@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-AI智能分页模块
-将用户输入的长文本智能分割为适合PPT展示的多个页面
+AI智能分页模块（测试版本）
+专门用于测试两次调用策略的独立版本
 """
 
 import re
@@ -13,8 +13,8 @@ from openai import OpenAI
 from config import get_config
 from logger import log_user_action
 
-class AIPageSplitter:
-    """AI智能分页处理器"""
+class AIPageSplitterTest:
+    """AI智能分页处理器（测试版本）"""
     
     def __init__(self, api_key: Optional[str] = None):
         """初始化AI分页处理器"""
@@ -103,7 +103,7 @@ class AIPageSplitter:
     
     def split_text_to_pages(self, user_text: str, target_pages: Optional[int] = None) -> Dict[str, Any]:
         """
-        将用户文本智能分割为多个PPT页面（使用两次调用策略）
+        将用户文本智能分割为多个PPT页面（测试版本 - 固定使用两次调用策略）
         
         Args:
             user_text: 用户输入的原始文本
@@ -112,16 +112,283 @@ class AIPageSplitter:
         Returns:
             Dict: 分页结果，包含每页的内容和分析
         """
-        log_user_action("AI智能分页", f"文本长度: {len(user_text)}, 两次调用策略")
+        log_user_action("AI智能分页测试", f"文本长度: {len(user_text)}, 两次调用策略")
         
         try:
-            # 使用两次调用策略
+            # 固定使用两次调用策略
             return self._split_with_two_pass(user_text, target_pages)
             
         except Exception as e:
             print(f"AI分页分析失败: {e}")
             raise e
     
+    def _split_with_two_pass(self, user_text: str, target_pages: Optional[int]) -> Dict[str, Any]:
+        """两次调用分页策略：第一次注重逻辑性，第二次注重分页数"""
+        print(f"🔄 开始两次调用AI分页策略，目标页数: {target_pages}")
+        
+        # 第一次调用：注重逻辑结构，不强制页数
+        print("📝 第一次调用：分析内容逻辑结构...")
+        first_system_prompt = self._build_logical_structure_prompt()
+        first_content = self._call_api_with_prompt(first_system_prompt, user_text)
+        first_result = self._parse_ai_response_without_ending(first_content, user_text)  # 不添加结尾页
+        
+        print(f"✅ 第一次调用完成，生成 {first_result['analysis']['total_pages']} 页")
+        
+        # 第二次调用：基于第一次结果，调整页数
+        if target_pages:
+            print(f"🎯 第二次调用：调整页数至目标 {target_pages} 页...")
+        else:
+            print(f"🎯 第二次调用：优化页数（当前 {first_result['analysis']['total_pages']} 页，减少过度分页）...")
+        second_system_prompt = self._build_page_adjustment_prompt(target_pages)
+        
+        # 将第一次的结果作为上下文传给第二次调用
+        first_result_text = self._format_first_result_for_second_call(first_result)
+        second_content = self._call_api_with_prompt(second_system_prompt, first_result_text)
+        second_result = self._parse_ai_response(second_content, user_text)
+        
+        print(f"✅ 第二次调用完成，最终生成 {second_result['analysis']['total_pages']} 页")
+        
+        # 标记为两次调用结果
+        second_result['is_two_pass_result'] = True
+        second_result['first_pass_pages'] = first_result['analysis']['total_pages'] + 1  # 第一次页数 + 结尾页
+        second_result['final_pass_pages'] = second_result['analysis']['total_pages']  # 第二次页数已包含结尾页
+        
+        return second_result
+    
+    def _call_api_with_prompt(self, system_prompt: str, user_text: str) -> str:
+        """根据配置调用相应的API"""
+        model_info = self.config.get_model_info()
+        if model_info.get('request_format') == 'dify_compatible':
+            # 使用Liai API格式
+            return self._call_liai_api(system_prompt, user_text)
+        elif model_info.get('request_format') == 'streaming_compatible':
+            # 使用火山引擎DeepSeek API格式
+            return self._call_deepseek_api(system_prompt, user_text)
+        else:
+            # 标准OpenAI API格式
+            request_timeout = 60
+            actual_model = model_info.get('actual_model', self.config.ai_model)
+            
+            # 创建临时客户端（如果还没有）
+            if not hasattr(self, 'client'):
+                from openai import OpenAI
+                self.client = OpenAI(
+                    api_key=self._get_next_api_key(),
+                    base_url=self.base_url,
+                    timeout=request_timeout
+                )
+            
+            response = self.client.chat.completions.create(
+                model=actual_model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_text}
+                ],
+                temperature=self.config.ai_temperature,
+                max_tokens=self.config.ai_max_tokens,
+                stream=True,
+                timeout=request_timeout
+            )
+            
+            # 收集流式响应内容
+            content = ""
+            for chunk in response:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    content += chunk.choices[0].delta.content
+            
+            return content.strip() if content else ""
+    
+    def _build_logical_structure_prompt(self) -> str:
+        """构建第一次调用的逻辑结构分析提示（不强制页数）"""
+        return f"""你是一个专业的PPT内容分析专家：你的任务是分析文本的逻辑结构，将内容按最合理的逻辑主题分割。
+
+**核心原则：**
+1. **逻辑结构优先**：按内容的自然逻辑主题分页
+2. **内容完整性**：每个主题必须内容完整，不截断
+3. **主题相关性**：相关主题适度合并，避免过度分散
+
+**分页策略：**
+- **标题页（第1页）**：PPT封面页，不对应任何原文内容，自动生成标题和日期
+- **目录页（第2页）**：AI根据内容结构生成完整目录
+- **内容页（第3页开始）**：处理所有原文内容，按逻辑结构分页
+- **结尾页**：不生成结尾页（使用预设模板）
+
+**标题页处理规则：**
+- 标题页是PPT的封面，生成合适的PPT标题
+- 自动生成标题（基于内容主题）
+- original_text_segment与title相同，包含PPT标题
+- 所有原文内容都从第2页（目录）和第3页开始处理
+
+**页面类型说明：**
+- `title`: 标题页，仅包含文档标题和日期
+- `table_of_contents`: 目录页，必须包含各章节标题（不含页码）
+- `content`: 内容页，具体的要点和详细内容（分页重点）
+
+**字段要求：**
+pages字段里只需要包含：page_number/page_type/title/original_text_segment字段
+- **title字段**：必须准确概括该页内容（用于生成目录）
+- **original_text_segment字段最重要**：必须包含该页对应的完整原文片段，不能遗漏或截断
+
+**关键注意事项：**
+- **标题页original_text_segment**：与title相同，包含PPT标题
+- **目录页original_text_segment**：包含各章节标题，每行一个标题
+- **内容页original_text_segment**：包含该页面对应的所有原文内容，确保完整性
+- 不要生成结尾页，系统将使用预设的固定结尾页模板
+
+**输出格式要求：**
+严格按照以下JSON格式返回：
+
+```json
+[
+  {{{{
+    "page_number": 1,
+    "page_type": "title",
+    "title": "PPT标题（基于内容主题生成）",
+    "original_text_segment": "PPT标题（基于内容主题生成）"
+  }}}},
+  {{{{
+    "page_number": 2,
+    "page_type": "table_of_contents",
+    "title": "目录",
+    "original_text_segment": "主题一\n主题二\n主题三"
+  }}}},
+  {{{{
+    "page_number": 3,
+    "page_type": "content",
+    "title": "主题一标题",
+    "original_text_segment": "完整的主题一内容..."
+  }}}}
+]
+```
+
+只返回JSON格式，不要其他文字。"""
+
+    def _build_page_adjustment_prompt(self, target_pages: Optional[int]) -> str:
+        """构建第二次调用的页数调整提示"""
+        if target_pages:
+            # 有指定目标页数：精确调整
+            ai_pages = target_pages - 1  # AI生成页数 = 总页数 - 结尾页
+            return f"""你是PPT页数精确调整专家。用户明确要求PPT总共{target_pages}页，你必须严格满足这个需求。
+
+【严格要求】你只需生成{ai_pages}页内容，系统会自动添加第{target_pages}页结尾页！
+
+**PPT页数调整任务：**
+基于第一次AI分析结果，重新组织PPT内容以精确满足用户的{target_pages}页要求：
+
+**页面分配：**
+- 你负责生成：{ai_pages}页内容（第1页到第{ai_pages}页）
+- 系统自动添加：第{target_pages}页结尾页
+- 最终PPT总页数：{target_pages}页（完全符合用户要求）
+
+**调整策略：**
+- 保持标题页(第1页)和目录页(第2页)不变
+- 内容页范围：第3页到第{ai_pages}页
+- 通过合并或拆分内容页来精确达到{ai_pages}页
+- 确保每页内容充实，符合PPT展示标准
+
+**字段要求：**
+pages字段里只需要包含：page_number/page_type/title/original_text_segment字段
+- **title字段**：必须准确概括该页内容
+- **original_text_segment字段**：包含该页对应的完整原文片段，不能遗漏
+
+严格按JSON格式返回，必须生成{ai_pages}页：
+
+```json
+[
+  {{{{
+    "page_number": 1,
+    "page_type": "title",
+    "title": "PPT标题",
+    "original_text_segment": "PPT标题"
+  }}}},
+  {{{{
+    "page_number": 2,
+    "page_type": "table_of_contents",
+    "title": "目录",
+    "original_text_segment": "目录内容"
+  }}}},
+  {{{{
+    "page_number": 3,
+    "page_type": "content",
+    "title": "内容页标题",
+    "original_text_segment": "页面内容"
+  }}}}
+]
+```
+
+只返回JSON，不要其他文字。"""
+        else:
+            # 无指定目标页数：优化减少页数
+            return f"""你是PPT内容优化专家。基于第一次AI分析结果，优化PPT页数分配，解决过度分页问题。
+
+【PPT分页优化任务】
+PPT制作中，AI容易过度分页导致页面内容稀薄。你需要通过合并相关主题的内容页来优化页数：
+
+**分页原则：**
+- 保持标题页(第1页)和目录页(第2页)不变
+- 合并逻辑相关的内容页（如"产品介绍"+"产品特点"合并为一页）
+- 保持完全不同主题的独立性（如"技术原理"和"市场前景"不要合并）
+- 确保每页内容充实，避免内容过少或过多
+- 优化后的AI生成页数应比第一次结果更少（系统会自动添加结尾页）
+
+**字段要求：**
+pages字段里只需要包含：page_number/page_type/title/original_text_segment字段
+- **title字段**：必须准确概括该页内容
+- **original_text_segment字段**：包含该页对应的完整原文片段，不能遗漏
+
+严格按JSON格式返回：
+
+```json
+[
+  {{{{
+    "page_number": 1,
+    "page_type": "title",
+    "title": "PPT标题",
+    "original_text_segment": "PPT标题"
+  }}}},
+  {{{{
+    "page_number": 2,
+    "page_type": "table_of_contents",
+    "title": "目录",
+    "original_text_segment": "目录内容"
+  }}}},
+  {{{{
+    "page_number": 3,
+    "page_type": "content",
+    "title": "内容页标题",
+    "original_text_segment": "页面内容"
+  }}}}
+]
+```
+
+只返回JSON，不要其他文字。"""
+
+    def _format_first_result_for_second_call(self, first_result: Dict[str, Any]) -> str:
+        """将第一次调用结果格式化为第二次调用的输入"""
+        formatted_text = "【第一次AI分析结果】\n\n"
+        
+        # 添加分析信息
+        analysis = first_result.get('analysis', {})
+        formatted_text += f"原始分析：总页数{analysis.get('total_pages', 0)}页，{analysis.get('split_strategy', '未知策略')}\n\n"
+        
+        # 添加每页的详细内容
+        pages = first_result.get('pages', [])
+        formatted_text += "【页面详情】\n"
+        for page in pages:
+            page_num = page.get('page_number', 0)
+            page_type = page.get('page_type', 'content')
+            title = page.get('title', '无标题')
+            original_text = page.get('original_text_segment', '')
+            
+            formatted_text += f"\n第{page_num}页 ({page_type}): {title}\n"
+            formatted_text += f"内容: {original_text}\n"
+            formatted_text += "---\n"
+        
+        # 添加原始文本
+        formatted_text += f"\n【原始文本】\n{first_result.get('original_text', '')}"
+        
+        return formatted_text
+
     def _call_liai_api(self, system_prompt: str, user_text: str) -> str:
         """调用Liai API（支持多密钥负载均衡）"""
         model_info = self.config.get_model_info()
@@ -272,367 +539,6 @@ class AIPageSplitter:
         print(f"❌ 所有{len(self.api_keys)}个OpenRouter API密钥都失败了")
         raise last_exception or Exception("所有OpenRouter API密钥调用失败")
     
-    def _split_with_two_pass(self, user_text: str, target_pages: Optional[int]) -> Dict[str, Any]:
-        """两次调用分页策略：第一次注重逻辑性，第二次注重分页数"""
-        print(f"🔄 开始两次调用AI分页策略，目标页数: {target_pages}")
-        
-        # 第一次调用：注重逻辑结构，不强制页数
-        print("📝 第一次调用：分析内容逻辑结构...")
-        first_system_prompt = self._build_logical_structure_prompt()
-        first_content = self._call_api_with_prompt(first_system_prompt, user_text)
-        first_result = self._parse_ai_response_without_ending(first_content, user_text)  # 不添加结尾页
-        
-        print(f"✅ 第一次调用完成，生成 {first_result['analysis']['total_pages']} 页")
-        
-        # 第二次调用：基于第一次结果，调整页数
-        if target_pages:
-            print(f"🎯 第二次调用：调整页数至目标 {target_pages} 页...")
-        else:
-            print(f"🎯 第二次调用：优化页数（当前 {first_result['analysis']['total_pages']} 页，减少过度分页）...")
-        second_system_prompt = self._build_page_adjustment_prompt(target_pages)
-        
-        # 将第一次的结果作为上下文传给第二次调用
-        first_result_text = self._format_first_result_for_second_call(first_result)
-        second_content = self._call_api_with_prompt(second_system_prompt, first_result_text)
-        second_result = self._parse_ai_response(second_content, user_text)
-        
-        print(f"✅ 第二次调用完成，最终生成 {second_result['analysis']['total_pages']} 页")
-        
-        # 标记为两次调用结果
-        second_result['is_two_pass_result'] = True
-        second_result['first_pass_pages'] = first_result['analysis']['total_pages'] + 1  # 第一次页数 + 结尾页
-        second_result['final_pass_pages'] = second_result['analysis']['total_pages']  # 第二次页数已包含结尾页
-        
-        return second_result
-    
-    def _call_api_with_prompt(self, system_prompt: str, user_text: str) -> str:
-        """根据配置调用相应的API"""
-        model_info = self.config.get_model_info()
-        if model_info.get('request_format') == 'dify_compatible':
-            # 使用Liai API格式
-            return self._call_liai_api(system_prompt, user_text)
-        elif model_info.get('request_format') == 'streaming_compatible':
-            # 使用火山引擎DeepSeek API格式
-            return self._call_deepseek_api(system_prompt, user_text)
-        else:
-            # 标准OpenAI API格式
-            request_timeout = 60
-            actual_model = model_info.get('actual_model', self.config.ai_model)
-            
-            # 创建临时客户端（如果还没有）
-            if not hasattr(self, 'client'):
-                from openai import OpenAI
-                self.client = OpenAI(
-                    api_key=self._get_next_api_key(),
-                    base_url=self.base_url,
-                    timeout=request_timeout
-                )
-            
-            response = self.client.chat.completions.create(
-                model=actual_model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_text}
-                ],
-                temperature=self.config.ai_temperature,
-                max_tokens=self.config.ai_max_tokens,
-                stream=True,
-                timeout=request_timeout
-            )
-            
-            # 收集流式响应内容
-            content = ""
-            for chunk in response:
-                if chunk.choices and chunk.choices[0].delta.content:
-                    content += chunk.choices[0].delta.content
-            
-            return content.strip() if content else ""
-    
-    def _build_logical_structure_prompt(self) -> str:
-        """构建第一次调用的逻辑结构分析提示（不强制页数）"""
-        return f"""你是一个专业的PPT内容分析专家：你的任务是分析文本的逻辑结构，将内容按最合理的逻辑主题分割。
-
-**核心原则：**
-1. **逻辑结构优先**：按内容的自然逻辑主题分页
-2. **内容完整性**：每个主题必须内容完整，不截断
-3. **主题相关性**：相关主题适度合并，避免过度分散
-
-**分页策略：**
-- **标题页（第1页）**：PPT封面页，不对应任何原文内容，自动生成标题和日期
-- **目录页（第2页）**：AI根据内容结构生成完整目录
-- **内容页（第3页开始）**：处理所有原文内容，按逻辑结构分页
-- **结尾页**：不生成结尾页（使用预设模板）
-
-**标题页处理规则：**
-- 标题页是PPT的封面，生成合适的PPT标题
-- 自动生成标题（基于内容主题）
-- original_text_segment与title相同，包含PPT标题
-- 所有原文内容都从第2页（目录）和第3页开始处理
-
-**页面类型说明：**
-- `title`: 标题页，仅包含文档标题和日期
-- `table_of_contents`: 目录页，必须包含各章节标题（不含页码）
-- `content`: 内容页，具体的要点和详细内容（分页重点）
-
-**字段要求：**
-pages字段里只需要包含：page_number/page_type/title/original_text_segment字段
-- **title字段**：必须准确概括该页内容（用于生成目录）
-- **original_text_segment字段最重要**：必须包含该页对应的完整原文片段，不能遗漏或截断
-
-**关键注意事项：**
-- **标题页original_text_segment**：与title相同，包含PPT标题
-- **目录页original_text_segment**：包含各章节标题，每行一个标题
-- **内容页original_text_segment**：包含该页面对应的所有原文内容，确保完整性
-- 不要生成结尾页，系统将使用预设的固定结尾页模板
-
-**输出格式要求：**
-严格按照以下JSON格式返回：
-
-```json
-[
-  {{
-    "page_number": 1,
-    "page_type": "title",
-    "title": "PPT标题（基于内容主题生成）",
-    "original_text_segment": "PPT标题（基于内容主题生成）"
-  }},
-  {{
-    "page_number": 2,
-    "page_type": "table_of_contents",
-    "title": "目录",
-    "original_text_segment": "主题一\n主题二\n主题三"
-  }},
-  {{
-    "page_number": 3,
-    "page_type": "content",
-    "title": "主题一标题",
-    "original_text_segment": "完整的主题一内容..."
-  }}
-]
-```
-
-只返回JSON格式，不要其他文字。"""
-
-    def _build_page_adjustment_prompt(self, target_pages: Optional[int]) -> str:
-        """构建第二次调用的页数调整提示"""
-        if target_pages:
-            # 有指定目标页数：精确调整
-            ai_pages = target_pages - 1  # AI生成页数 = 总页数 - 结尾页
-            return f"""你是PPT页数精确调整专家。用户明确要求PPT总共{target_pages}页，你必须严格满足这个需求。
-
-【严格要求】你只需生成{ai_pages}页内容，系统会自动添加第{target_pages}页结尾页！
-
-**PPT页数调整任务：**
-基于第一次AI分析结果，重新组织PPT内容以精确满足用户的{target_pages}页要求：
-
-**页面分配：**
-- 你负责生成：{ai_pages}页内容（第1页到第{ai_pages}页）
-- 系统自动添加：第{target_pages}页结尾页
-- 最终PPT总页数：{target_pages}页（完全符合用户要求）
-
-**调整策略：**
-- 保持标题页(第1页)和目录页(第2页)不变
-- 内容页范围：第3页到第{ai_pages}页
-- 通过合并或拆分内容页来精确达到{ai_pages}页
-- 确保每页内容充实，符合PPT展示标准
-
-**字段要求：**
-pages字段里只需要包含：page_number/page_type/title/original_text_segment字段
-- **title字段**：必须准确概括该页内容
-- **original_text_segment字段**：包含该页对应的完整原文片段，不能遗漏
-
-严格按JSON格式返回，必须生成{ai_pages}页：
-
-```json
-[
-  {{
-    "page_number": 1,
-    "page_type": "title",
-    "title": "PPT标题",
-    "original_text_segment": "PPT标题"
-  }},
-  {{
-    "page_number": 2,
-    "page_type": "table_of_contents",
-    "title": "目录",
-    "original_text_segment": "目录内容"
-  }},
-  {{
-    "page_number": 3,
-    "page_type": "content",
-    "title": "内容页标题",
-    "original_text_segment": "页面内容"
-  }}
-]
-```
-
-只返回JSON，不要其他文字。"""
-        else:
-            # 无指定目标页数：优化减少页数
-            return f"""你是PPT内容优化专家。基于第一次AI分析结果，优化PPT页数分配，解决过度分页问题。
-
-【PPT分页优化任务】
-PPT制作中，AI容易过度分页导致页面内容稀薄。你需要通过合并相关主题的内容页来优化页数：
-
-**分页原则：**
-- 保持标题页(第1页)和目录页(第2页)不变
-- 合并逻辑相关的内容页（如"产品介绍"+"产品特点"合并为一页）
-- 保持完全不同主题的独立性（如"技术原理"和"市场前景"不要合并）
-- 确保每页内容充实，避免内容过少或过多
-- 优化后的AI生成页数应比第一次结果更少（系统会自动添加结尾页）
-
-**字段要求：**
-pages字段里只需要包含：page_number/page_type/title/original_text_segment字段
-- **title字段**：必须准确概括该页内容
-- **original_text_segment字段**：包含该页对应的完整原文片段，不能遗漏
-
-严格按JSON格式返回：
-
-```json
-[
-  {{
-    "page_number": 1,
-    "page_type": "title",
-    "title": "PPT标题",
-    "original_text_segment": "PPT标题"
-  }},
-  {{
-    "page_number": 2,
-    "page_type": "table_of_contents",
-    "title": "目录",
-    "original_text_segment": "目录内容"
-  }},
-  {{
-    "page_number": 3,
-    "page_type": "content",
-    "title": "内容页标题",
-    "original_text_segment": "页面内容"
-  }}
-]
-```
-
-只返回JSON，不要其他文字。"""
-
-    def _format_first_result_for_second_call(self, first_result: Dict[str, Any]) -> str:
-        """将第一次调用结果格式化为第二次调用的输入"""
-        formatted_text = "【第一次AI分析结果】\n\n"
-        
-        # 添加分析信息
-        analysis = first_result.get('analysis', {})
-        formatted_text += f"原始分析：总页数{analysis.get('total_pages', 0)}页，{analysis.get('split_strategy', '未知策略')}\n\n"
-        
-        # 添加每页的详细内容
-        pages = first_result.get('pages', [])
-        formatted_text += "【页面详情】\n"
-        for page in pages:
-            page_num = page.get('page_number', 0)
-            page_type = page.get('page_type', 'content')
-            title = page.get('title', '无标题')
-            original_text = page.get('original_text_segment', '')
-            
-            formatted_text += f"\n第{page_num}页 ({page_type}): {title}\n"
-            formatted_text += f"内容: {original_text}\n"
-            formatted_text += "---\n"
-        
-        # 添加原始文本
-        formatted_text += f"\n【原始文本】\n{first_result.get('original_text', '')}"
-        
-        return formatted_text
-
-    def _build_system_prompt(self, target_pages: Optional[int] = None) -> str:
-        """构建AI系统提示"""
-        target_instruction = ""
-        if target_pages:
-            target_instruction = f"目标分为{target_pages}页，"
-        
-        return f"""你是一个专业的PPT内容分析专家。你的任务是将用户提供的文本内容智能分割为适合PPT展示的多个页面。
-
-**核心原则：**
-1. **逻辑结构优先**：按内容的逻辑主题分页，同一主题和相关主题必须合并
-2. **内容充实性**：每页必须有足够内容量，严禁薄页面，AI倾向过度分页需主动抵制
-3. **强制合并策略**：相似、相关、关联主题必须合并，只有完全不同主题才分页
-4. **信息完整性**：不遗漏重要信息，保持逻辑完整
-
-**分页策略：**
-- **标题页（第1页）**：仅提取文档标题和日期信息，其他所有文本内容都延后到第三页开始处理
-- **目录页（第2页）**：AI必须生成完整的目录内容，包括各章节标题，格式如"第一章节\n第二章节\n第三章节"
-- **内容页（第3页开始）**：从第三页开始处理所有实际内容，按主要观点、时间顺序或逻辑结构分页
-- **结尾页**：不生成结尾页（使用预设的固定结尾页模板）
-
-**标题页处理规则：**
-- 只从文本开头提取标题信息（通常是第一行或最醒目的文字）
-- 自动生成或提取日期信息
-- 其余所有文本内容（包括副标题、简介、正文等）都保留给后续内容页处理
-- 标题页的original_text_segment只包含提取的标题部分
-
-**页面内容要求：**
-- 每页应该有清晰的**主题**（通过title字段体现）
-- **优先按逻辑分配**：属于同一个主题、概念或章节的内容应该放在同一页
-- **重点保留原文**：original_text_segment字段必须包含该页对应的完整原文片段
-- **内容量优先级**：适中 >> 过多 >> 过少（宁可内容多一些，也不要让页面显得空洞）
-- 保持内容的**连贯性**和**完整性**
-
-**分页建议（极简策略 - 最大化内容合并）：**
-- 极短文本（<300字）：仅1页内容（全部内容放在一页）
-- 短文本（300-1000字）：1页内容（强制合并为1页）
-- 中等文本（1000-2000字）：1-2页内容（优先合并为1页，仅在逻辑完全不相关时分为2页）
-- 长文本（2000-4000字）：2-3页内容（按主要章节分页，大量合并小节）
-- 超长文本（>4000字）：3-6页内容（仅按主要章节分页，严格合并子主题）
-- **核心原则：能合并必须合并，宁可单页内容丰富也不要页面分散**
-- **最小阈值：每页至少300字，低于此阈值必须与相邻页面合并**
-
-{target_instruction}请分析用户文本的结构和内容，按逻辑主题智能分割为合适的页面数量。
-
-**输出格式要求：**
-请严格按照以下JSON格式返回：
-
-```json
-{{{{
-  "analysis": {{{{
-    "total_pages": 4,
-    "content_type": "技术介绍",
-    "split_strategy": "按发展阶段分页",
-    "reasoning": "文本描述了技术发展的多个阶段，适合按时间线分页展示"
-  }}}},
-  "pages": [
-    {{{{
-      "page_number": 1,
-      "page_type": "title",
-      "title": "人工智能发展历程",
-      "date": "2024年7月",
-      "original_text_segment": "人工智能发展历程"
-    }}}},
-    {{{{
-      "page_number": 2,
-      "page_type": "table_of_contents",
-      "title": "目录",
-      "original_text_segment": "AI发展概述\n技术突破阶段\n当前发展趋势\n未来展望"
-    }}}},
-    {{{{
-      "page_number": 3,
-      "page_type": "content", 
-      "title": "AI发展概述",
-      "original_text_segment": "人工智能技术发展经历了多个重要阶段。从1950年代的符号主义开始，到1980年代专家系统的兴起，再到2010年代深度学习的突破，以及当前大语言模型时代的到来..."
-    }}}}
-  ]
-}}}}
-```
-
-**页面类型说明：**
-- `title`: 标题页，仅包含文档标题和日期
-- `table_of_contents`: 目录页，必须包含各章节标题（不含页码）
-- `content`: 内容页，具体的要点和详细内容（分页重点）
-
-**关键注意事项：**
-- **title字段**：必须准确概括该页内容（用于生成目录）
-- **original_text_segment字段最重要**：必须包含该页对应的完整原文片段，不能遗漏或截断
-- **标题页original_text_segment**：只包含提取的标题部分
-- **目录页original_text_segment**：包含各章节标题，每行一个标题
-- **内容页original_text_segment**：包含该页面对应的所有原文内容，确保完整性
-- 不要生成结尾页，系统将使用预设的固定结尾页模板
-
-只返回JSON格式，不要其他文字。"""
-    
     def _parse_ai_response_without_ending(self, content: str, user_text: str) -> Dict[str, Any]:
         """解析AI响应结果（不添加结尾页）"""
         result = self._parse_ai_response_base(content, user_text)
@@ -708,15 +614,11 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
             json_str_safe = json_str[:500] if 'json_str' in locals() else '未获取到'
             error_msg = f"JSON解析失败: {e}\n尝试解析的内容: {json_str_safe}"
             print(f"❌ {error_msg}")
-            
-            
             raise ValueError(error_msg)
         except Exception as e:
             content_safe = content[:500] if content else 'N/A'
             error_msg = f"AI分页解析失败: {e}\n原始AI返回内容: {content_safe}..."
             print(f"❌ {error_msg}")
-            
-            
             raise e
     
     def _validate_split_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
@@ -759,142 +661,6 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
         except Exception as e:
             return {'is_valid': False, 'error': f'验证过程中出现异常: {str(e)}'}
     
-    def _create_fallback_split(self, user_text: str) -> Dict[str, Any]:
-        """创建备用分页方案"""
-        # 按行分割，找到标题
-        lines = [line.strip() for line in user_text.split('\n') if line.strip()]
-        if not lines:
-            lines = [user_text.strip()]
-        
-        # 提取标题（通常是第一行，且相对较短）
-        title = lines[0] if lines else "内容展示"
-        if len(title) > 50:  # 如果第一行太长，可能不是标题，截取前面部分
-            title = title[:30] + "..."
-        
-        pages = []
-        
-        # 创建标题页（仅包含从文本开头提取的标题和日期）
-        import datetime
-        current_date = datetime.datetime.now().strftime("%Y年%m月")
-        
-        pages.append({
-            "page_number": 1,
-            "page_type": "title", 
-            "title": title,
-            "date": current_date,
-            "original_text_segment": title  # 只包含标题部分
-        })
-        
-        # 将除标题外的所有内容分配到第3页开始的内容页（第2页是固定目录页）
-        # 重新组织内容：去掉标题行后的所有文本
-        remaining_text = user_text
-        if lines and len(lines) > 1:
-            # 去掉第一行（标题），保留其余内容
-            title_end_pos = user_text.find(lines[0]) + len(lines[0])
-            remaining_text = user_text[title_end_pos:].strip()
-        
-        # 按段落分割剩余内容
-        remaining_paragraphs = [p.strip() for p in remaining_text.split('\n\n') if p.strip()]
-        if not remaining_paragraphs and remaining_text:
-            remaining_paragraphs = [remaining_text]
-        
-        page_num = 3  # 从第3页开始（第2页是固定目录页）
-        if remaining_paragraphs:
-            for i, paragraph in enumerate(remaining_paragraphs):
-                # 限制总页数不超过23页（为目录页和结尾页预留空间）
-                if page_num > 23:
-                    print(f"警告：内容过多，已达到23页上限，剩余{len(remaining_paragraphs) - i}段内容将被省略")
-                    break
-                    
-                pages.append({
-                    "page_number": page_num,
-                    "page_type": "content",
-                    "title": f"内容 {page_num - 2}",
-                    "original_text_segment": paragraph
-                })
-                page_num += 1
-        else:
-            # 如果没有剩余内容，至少创建一个空的内容页
-            pages.append({
-                "page_number": 3,
-                "page_type": "content",
-                "title": "内容页",
-                "original_text_segment": "无额外内容"
-            })
-        
-        result = {
-            "success": True,
-            "analysis": {
-                "total_pages": len(pages),
-                "content_type": "通用内容",
-                "split_strategy": "按段落分页",
-                "reasoning": "采用备用分页策略，按段落自动分割"
-            },
-            "pages": pages,
-            "original_text": user_text,
-            "is_fallback": True
-        }
-        
-        # 添加固定的目录页和结尾页
-        self._add_table_of_contents_page(result)
-        self._add_ending_page(result)
-        
-        return result
-    
-    def _add_table_of_contents_page(self, result: Dict[str, Any]) -> None:
-        """添加动态目录页（第2页）"""
-        import os
-        
-        pages = result.get('pages', [])
-        if not pages:
-            return
-        
-        # 调整现有页面的页码（为目录页腾出第2页位置）
-        for page in pages:
-            if page.get('page_number', 1) > 1:
-                page['page_number'] = page['page_number'] + 1
-        
-        # 提取所有内容页的标题信息，生成动态目录
-        content_titles = []
-        for page in pages:
-            if page.get('page_type') == 'content' and page.get('title'):
-                page_number = page.get('page_number', 0)
-                title = page.get('title', '').strip()
-                subtitle = page.get('subtitle', '').strip()
-                
-                # 构建目录项
-                if subtitle:
-                    toc_item = f"{page_number}. {title} - {subtitle}"
-                else:
-                    toc_item = f"{page_number}. {title}"
-                content_titles.append(toc_item)
-        
-        # 如果没有提取到标题，使用默认目录
-        if not content_titles:
-            content_titles = [
-                "演示内容导航",
-                "章节结构预览"
-            ]
-        
-        # 创建动态目录页信息
-        table_of_contents_page = {
-            "page_number": 2,
-            "page_type": "table_of_contents",
-            "title": "目录",
-            "original_text_segment": "",
-            "template_path": os.path.join("templates", "table_of_contents_slides.pptx"),
-            "is_toc_page": True,  # 标记为目录页
-            "skip_dify_api": True,  # 不需要调用Dify API，但内容已动态提取
-            "toc_items": content_titles  # 将目录项单独存储
-        }
-        
-        # 将目录页插入到第2位
-        pages.insert(1, table_of_contents_page)
-        
-        # 更新分析信息中的总页数
-        if 'analysis' in result:
-            result['analysis']['total_pages'] = len(pages)
-    
     def _add_ending_page(self, result: Dict[str, Any]) -> None:
         """添加固定的结尾页"""
         import os
@@ -922,53 +688,3 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
         # 更新总页数
         if 'analysis' in result:
             result['analysis']['total_pages'] = len(pages)
-
-class PageContentFormatter:
-    """页面内容格式化工具"""
-    
-    @staticmethod
-    def format_page_preview(page: Dict[str, Any]) -> str:
-        """格式化页面预览文本"""
-        page_type_map = {
-            "title": "🏷️ 标题页",
-            "overview": "📋 概述页",
-            "table_of_contents": "📑 目录页", 
-            "content": "📄 内容页",
-            "ending": "🔚 结束页"
-        }
-        
-        page_type_display = page_type_map.get(page.get('page_type', 'content'), "📄 内容页")
-        
-        preview = f"**{page_type_display} - 第{page.get('page_number', 1)}页**\n\n"
-        preview += f"**标题：** {page.get('title', '未设置标题')}\n"
-        
-        # 标题页特殊处理
-        if page.get('page_type') == 'title':
-            if page.get('date'):
-                preview += f"**日期：** {page.get('date')}\n"
-            preview += f"**说明：** 标题页使用固定模板，其他内容（作者、机构等）将自动填充\n\n"
-        
-        # 显示原文片段
-        original_text = page.get('original_text_segment', '')
-        if original_text and original_text.strip():
-            preview += "**原文内容：**\n"
-            # 如果原文太长，显示前200字符
-            if len(original_text) > 200:
-                preview += f"{original_text[:200]}...\n"
-            else:
-                preview += f"{original_text}\n"
-        
-        return preview
-    
-    @staticmethod
-    def format_analysis_summary(analysis: Dict[str, Any]) -> str:
-        """格式化分析摘要"""
-        summary = f"**📊 分页分析结果**\n\n"
-        summary += f"• **总页数：** {analysis.get('total_pages', 0)} 页\n"
-        summary += f"• **内容类型：** {analysis.get('content_type', '未知')}\n"
-        summary += f"• **分页策略：** {analysis.get('split_strategy', '未知')}\n"
-        
-        if analysis.get('reasoning'):
-            summary += f"• **分析说明：** {analysis.get('reasoning')}\n"
-        
-        return summary 

@@ -710,7 +710,26 @@ def main():
     # 模型选择区域
     st.markdown("### 🤖 选择AI模型")
     
-    available_models = config.available_models
+    # 获取配置（在函数内重新获取）
+    from config import get_config
+    config = get_config()
+    available_models = getattr(config, 'available_models', {})
+    
+    # 如果没有可用模型，使用默认配置
+    if not available_models:
+        available_models = {
+            "deepseek-v3": {
+                "name": "DeepSeek V3（非保密场景请选择此模型）",
+                "description": "火山引擎提供的DeepSeek V3模型，支持中英文对话，性能优异",
+                "cost": "",
+                "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+                "api_provider": "Volces",
+                "api_key_env": "ARK_API_KEY",
+                "actual_model": "deepseek-v3-250324",
+                "request_format": "streaming_compatible"
+            }
+        }
+    
     model_options = {}
     for model_key, model_info in available_models.items():
         # 只对有成本信息的模型显示成本
@@ -1045,7 +1064,7 @@ def main():
         tab1, tab_watermark = st.tabs(["🎨 智能PPT生成", "🧽 PPT去水印工具"])
     else:
         # 开发者角色：显示全部功能
-        tab1, tab_watermark, tab3, tab_table, tab_format = st.tabs(["🎨 智能PPT生成", "🧽 PPT去水印工具", "🧪 自定义模板测试", "📊 表格文本填充", "🔍 PPT格式读取展示"])
+        tab1, tab_watermark, tab3, tab_table, tab_format, tab_ai_test = st.tabs(["🎨 智能PPT生成", "🧽 PPT去水印工具", "🧪 自定义模板测试", "📊 表格文本填充", "🔍 PPT格式读取展示", "🤖 AI分页测试"])
     
     with tab1:
         # 智能PPT生成功能 - AI分页 + 模板匹配
@@ -1105,23 +1124,26 @@ def main():
             
             col1, col2 = st.columns([1, 1])
             with col1:
-                target_pages = st.number_input(
-                    "目标页面数量（可选）",
-                    min_value=0,
-                    max_value=25,
-                    value=0,
-                    help="设置为0时AI自动判断，手动设置时最少3页（封面+目录+结尾）"
+                # 使用与AI分页测试一致的下拉选择框
+                page_options = ["AI自动判断"] + [str(i) for i in range(4, 26)]
+                selected_option = st.selectbox(
+                    "目标页面数量",
+                    options=page_options,
+                    index=0,
+                    help="选择AI自动判断或手动设置页面数量（最少4页：封面+目录+内容+结尾）",
+                    key="smart_ppt_page_count"
                 )
+                target_pages = 0 if selected_option == "AI自动判断" else int(selected_option)
             
             with col2:
                 # 页面数量限制提醒 - 移至右侧
-                st.info("📋 **页面限制：**最多生成25页")
+                st.info("📋 页面限制：最少4页（封面+目录+内容+结尾），最多25页")
             
             # 页数建议 - 使用更简洁的布局
             st.markdown("""
             <div style="background-color: #f0f2f6; padding: 0.75rem; border-radius: 0.5rem; margin: 0.5rem 0;">
             <small>💡 <strong>页数建议：</strong>
-            5分钟演示：3-5页 • 10分钟演示：5-8页 • 15分钟演示：8-12页 • 30分钟演示：15-20页 • 学术报告：20-25页</small>
+            5分钟演示：4-6页 • 10分钟演示：6-8页 • 15分钟演示：8-12页 • 30分钟演示：15-20页 • 学术报告：20-25页</small>
             </div>
             """, unsafe_allow_html=True)
             
@@ -1150,9 +1172,9 @@ def main():
                 
                 from ai_page_splitter import AIPageSplitter
                 page_splitter = AIPageSplitter(api_key)
-                # 验证页面数设置：手动设置时最少3页（封面+目录+结尾）
-                if target_pages > 0 and target_pages < 3:
-                    st.error("❌ 页面数量不能少于3页（封面页+目录页+结尾页）")
+                # 验证页面数设置：手动设置时最少4页（封面+目录+内容+结尾）
+                if target_pages > 0 and target_pages < 4:
+                    st.error("❌ 页面数量不能少于4页（封面页+目录页+内容页+结尾页）")
                     return
                 target_page_count = int(target_pages) if target_pages > 0 else None
                 split_result = page_splitter.split_text_to_pages(user_text.strip(), target_page_count)
@@ -3006,6 +3028,159 @@ AI将分析您的文本结构，并智能地将内容分配到该模板的 {file
                 st.markdown("👆 请先上传PPT文件并点击去水印按钮")
                 
 
+    # 开发者专用功能：AI分页测试
+    if user_role == "开发者":
+        with tab_ai_test:
+            # AI分页测试功能
+            st.markdown("### 🤖 AI分页测试")
+            st.markdown('<div class="info-box">🎯 <strong>功能说明</strong><br>此功能专门用于测试AI分页算法。系统默认使用两次调用策略：第一次AI专注内容逻辑分析，第二次AI优化页数控制（指定页数时精确调整，未指定时减少过度分页）。您可以观察完整的AI分页过程和结果对比。</div>', unsafe_allow_html=True)
+            
+            # 文本输入区域
+            st.markdown("#### 📝 输入测试文本")
+            test_text = st.text_area(
+                "请输入您要测试的文本内容：",
+                height=200,
+                placeholder="请输入要测试AI分页的文本内容...",
+                key="ai_paging_test_text"
+            )
+            
+            # 页面数量选择
+            st.markdown("#### ⚙️ 分页选项")
+            col1, col2, col3 = st.columns([1, 1, 1])
+            
+            with col1:
+                # 创建有效的页面数选项（与主功能保持一致）
+                page_options = ["AI自动判断"] + [str(i) for i in range(4, 26)]
+                selected_option = st.selectbox(
+                    "目标页面数量",
+                    options=page_options,
+                    index=0,
+                    help="选择AI自动判断或手动设置页面数量",
+                    key="ai_test_page_count"
+                )
+                test_target_pages = 0 if selected_option == "AI自动判断" else int(selected_option)
+            
+            with col2:
+                # 直接使用两次调用策略，不需要用户选择
+                st.info("🔄 默认使用两次调用策略：第一次注重逻辑性，第二次优化页数")
+            
+            with col3:
+                st.info("📋 测试说明：此功能将显示AI分页的完整过程和结果")
+            
+            # 测试按钮
+            if st.button("🚀 开始AI分页测试", type="primary", key="start_ai_paging_test"):
+                st.write("🔧 按钮被点击，开始执行测试...")
+                if test_text.strip():
+                    st.write(f"🔍 调试信息：文本长度 {len(test_text)} 字符，目标页数 {test_target_pages}，两次调用策略")
+                    with st.spinner("正在调用AI分页算法..."):
+                        try:
+                            # 获取API配置
+                            from config import get_config
+                            config = get_config()
+                            model_info = config.get_model_info()
+                            
+                            # 创建AI分页处理器（使用测试版本，不传递API密钥，让它从环境变量获取）
+                            st.write("🔧 正在初始化AI分页处理器...")
+                            from ai_page_splitter_test import AIPageSplitterTest
+                            page_splitter = AIPageSplitterTest()
+                            st.write("✅ AI分页处理器初始化成功")
+                            
+                            # 调用AI分页
+                            target_page_count = int(test_target_pages) if test_target_pages > 0 else None
+                            result = page_splitter.split_text_to_pages(test_text.strip(), target_page_count)
+                            
+                            # 显示结果
+                            if result.get('success'):
+                                # 检查是否使用了备用方案
+                                if result.get('is_fallback'):
+                                    st.warning("⚠️ AI分页失败，已使用备用分页方案")
+                                else:
+                                    st.success("✅ AI分页测试完成！")
+                                
+                                # 显示两次调用策略的信息
+                                if result.get('is_two_pass_result'):
+                                    first_pages = result.get('first_pass_pages')
+                                    final_pages = result.get('final_pass_pages')
+                                    if test_target_pages > 0:
+                                        st.info(f"🔄 使用了两次调用策略（精确调整）：第一次生成 {first_pages} 页 → 第二次调整为 {final_pages} 页")
+                                    else:
+                                        if final_pages < first_pages:
+                                            st.info(f"🔄 使用了两次调用策略（页数优化）：第一次生成 {first_pages} 页 → 第二次优化为 {final_pages} 页，减少了 {first_pages - final_pages} 页")
+                                        else:
+                                            st.info(f"🔄 使用了两次调用策略（页数优化）：第一次生成 {first_pages} 页 → 第二次保持 {final_pages} 页（已是合理分页）")
+                                
+                                # 显示分析结果
+                                st.markdown("#### 📊 分页分析结果")
+                                analysis = result.get('analysis', {})
+                                
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric("总页面数", analysis.get('total_pages', 'N/A'))
+                                with col2:
+                                    st.metric("内容类型", analysis.get('content_type', 'N/A'))
+                                with col3:
+                                    st.metric("分割策略", analysis.get('split_strategy', 'N/A'))
+                                
+                                if analysis.get('reasoning'):
+                                    st.markdown(f"**分页原因：** {analysis.get('reasoning')}")
+                                
+                                # 显示每页详情
+                                st.markdown("#### 📄 页面详情")
+                                pages = result.get('pages', [])
+                                
+                                for i, page in enumerate(pages):
+                                    page_type = page.get('page_type', 'content')
+                                    page_number = page.get('page_number', i + 1)
+                                    
+                                    # 根据页面类型设置标题
+                                    if page_type == 'title':
+                                        title = f"第{page_number}页 - 📋 封面页"
+                                    elif page_type == 'table_of_contents':
+                                        title = f"第{page_number}页 - 📑 目录页"
+                                    elif page_type == 'ending':
+                                        title = f"第{page_number}页 - 🔚 结尾页"
+                                    else:
+                                        title = f"第{page_number}页 - 📄 内容页"
+                                    
+                                    with st.expander(title, expanded=i < 2):
+                                        # 显示页面基本信息
+                                        st.markdown(f"**页面标题：** {page.get('title', '无')}")
+                                        st.markdown(f"**页面类型：** {page_type}")
+                                        if page.get('date'):
+                                            st.markdown(f"**日期：** {page.get('date')}")
+                                        
+                                        # 显示原文内容
+                                        original_text = page.get('original_text_segment', '')
+                                        if original_text:
+                                            st.markdown("**原文内容：**")
+                                            st.text_area(
+                                                "原文内容",
+                                                value=original_text,
+                                                height=min(max(len(original_text) // 10, 60), 200),
+                                                disabled=True,
+                                                key=f"page_content_{page_number}_{i}",
+                                                label_visibility="collapsed"
+                                            )
+                                        else:
+                                            st.markdown("**原文内容：** 无（使用固定模板）")
+                                
+                                # 显示完整的AI返回结果（JSON格式）
+                                with st.expander("🔍 查看完整AI返回结果（JSON）", expanded=False):
+                                    st.json(result)
+                            else:
+                                st.error("❌ AI分页测试失败，请检查输入内容和配置")
+                                if 'error' in result:
+                                    st.error(f"错误详情：{result['error']}")
+                        
+                        except Exception as e:
+                            st.error(f"❌ AI分页测试过程中出现异常: {str(e)}")
+                            # 显示详细错误信息帮助调试
+                            with st.expander("🔧 错误详情", expanded=True):
+                                st.code(str(e))
+                                import traceback
+                                st.code(traceback.format_exc())
+                else:
+                    st.warning("⚠️ 请输入要测试的文本内容")
     
     # 页脚信息 - 显示在所有功能页面下方
     st.markdown("---")

@@ -136,38 +136,88 @@ def show_results_section(pages, page_results):
     if st.session_state.ppt_merge_result:
         merge_result = st.session_state.ppt_merge_result
         
-        # 显示整合结果
-        st.success("🎉 PPT整合成功！")
+        # 检查是否为分批处理结果
+        is_batch_result = merge_result.get("batch_files") is not None
         
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric("📄 总页数", merge_result["total_pages"])
-        with col2:
-            st.metric("✅ 成功页面", merge_result["processed_pages"])
-        with col3:
-            st.metric("⚠️ 跳过页面", merge_result["skipped_pages"])
-        with col4:
-            ppt_size_mb = len(merge_result["presentation_bytes"]) / (1024 * 1024)
-            st.metric("📦 文件大小", f"{ppt_size_mb:.2f}MB")
-        
-        # 提供下载
-        if merge_result["presentation_bytes"]:
+        if is_batch_result:
+            # 分批处理结果显示
+            st.success("🎉 PPT分批整合成功！")
+            
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.metric("📄 总页数", merge_result["total_pages"])
+            with col2:
+                st.metric("✅ 成功页面", merge_result["processed_pages"])
+            with col3:
+                st.metric("📦 成功批次", merge_result.get("successful_batches", 0))
+            with col4:
+                st.metric("🔄 总批次数", merge_result.get("batch_count", 0))
+            
+            # 显示分批处理说明
+            st.info(f"📋 由于页面数超过10页，系统自动分批处理（每批最多10页），生成了 {len(merge_result['batch_files'])} 个PPT文件")
+            
+            # 显示所有批次文件的下载按钮
+            st.markdown("### 📥 下载分批文件")
             from datetime import datetime
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            filename = f"AI智能生成PPT_{timestamp}.pptx"
             
-            col1, col2, col3 = st.columns([1, 2, 1])
+            for batch_info in merge_result["batch_files"]:
+                batch_index = batch_info["batch_index"]
+                batch_name = batch_info["batch_name"]
+                file_size_mb = batch_info["file_size_mb"]
+                pages_in_batch = batch_info["pages_in_batch"]
+                presentation_bytes = batch_info["presentation_bytes"]
+                actual_start_page = batch_info.get("actual_start_page", (batch_index - 1) * 10 + 1)
+                actual_end_page = batch_info.get("actual_end_page", min(batch_index * 10, merge_result["total_pages"]))
+                
+                with st.container():
+                    col1, col2 = st.columns([3, 1])
+                    with col1:
+                        st.write(f"**第{batch_index}批次: 第{actual_start_page}-{actual_end_page}页** ({pages_in_batch}页, {file_size_mb:.2f}MB)")
+                    with col2:
+                        filename = f"AI智能生成PPT_第{actual_start_page}-{actual_end_page}页_{timestamp}.pptx"
+                        st.download_button(
+                            label=f"📥 下载第{actual_start_page}-{actual_end_page}页",
+                            data=presentation_bytes,
+                            file_name=filename,
+                            mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                            key=f"download_batch_{batch_index}"
+                        )
+            
+            st.markdown('<div class="success-box">🎉 <strong>PPT分批生成完成！</strong><br><br><strong>1. 分批说明：</strong>由于页面超过10页，系统自动分批处理以确保最佳质量，请分别下载各批次文件。<br><strong>2. 备注查看提示：</strong>您提供的原始文本已完整放置在每一页PPT的"备注"栏中，方便您核对和修改内容。<br><strong>3. 文本缩略说明：</strong>出于美观，部分填充处会限制填充字数，以...代替。因此您的原始文本会被截断，您可以根据备注里保留的原始文本自行调整。<br><strong>4. 水印处理提示：</strong>下载的PPT文件包含水印。请前往【PPT去水印工具】功能页面上传文件进行处理。</div>', unsafe_allow_html=True)
+        else:
+            # 单文件结果显示（原有逻辑）
+            st.success("🎉 PPT整合成功！")
+            
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.metric("📄 总页数", merge_result["total_pages"])
             with col2:
-                st.download_button(
-                    label="📥 下载完整PPT文件",
-                    data=merge_result["presentation_bytes"],
-                    file_name=filename,
-                    mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                    use_container_width=True,
-                    key="download_merged_ppt"
-                )
+                st.metric("✅ 成功页面", merge_result["processed_pages"])
+            with col3:
+                st.metric("⚠️ 跳过页面", merge_result["skipped_pages"])
+            with col4:
+                ppt_size_mb = len(merge_result["presentation_bytes"]) / (1024 * 1024)
+                st.metric("📦 文件大小", f"{ppt_size_mb:.2f}MB")
             
-            st.markdown('<div class="success-box">🎉 <strong>PPT自动生成完成！</strong><br><br><strong>1. 备注查看提示：</strong>您提供的原始文本已完整放置在每一页PPT的"备注"栏中，方便您核对和修改内容。<br><strong>2. 文本缩略说明：</strong>出于美观，部分填充处会限制填充字数，以...代替。因此您的原始文本会被截断，您可以根据备注里保留的原始文本自行调整。<br><strong>3. 水印处理提示：</strong>下载的PPT文件包含水印。请前往【PPT去水印工具】功能页面上传文件进行处理。</div>', unsafe_allow_html=True)
+            # 提供下载
+            if merge_result["presentation_bytes"]:
+                from datetime import datetime
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                filename = f"AI智能生成PPT_{timestamp}.pptx"
+                
+                col1, col2, col3 = st.columns([1, 2, 1])
+                with col2:
+                    st.download_button(
+                        label="📥 下载完整PPT文件",
+                        data=merge_result["presentation_bytes"],
+                        file_name=filename,
+                        mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                        use_container_width=True,
+                        key="download_merged_ppt"
+                    )
+                
+                st.markdown('<div class="success-box">🎉 <strong>PPT自动生成完成！</strong><br><br><strong>1. 备注查看提示：</strong>您提供的原始文本已完整放置在每一页PPT的"备注"栏中，方便您核对和修改内容。<br><strong>2. 文本缩略说明：</strong>出于美观，部分填充处会限制填充字数，以...代替。因此您的原始文本会被截断，您可以根据备注里保留的原始文本自行调整。<br><strong>3. 水印处理提示：</strong>下载的PPT文件包含水印。请前往【PPT去水印工具】功能页面上传文件进行处理。</div>', unsafe_allow_html=True)
         
         # 显示错误信息（如果有）
         if merge_result.get("errors"):

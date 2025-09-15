@@ -420,6 +420,7 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
             ai_pages = target_pages - 1  # AI生成页数 = 总页数 - 结尾页
             return f"""你是PPT页数精确调整专家。用户明确要求PPT总共{target_pages}页，你必须严格满足这个需求。
 
+【系统限制】PPT最多25页（含封面+目录+内容+结尾），AI最多生成24页内容！
 【严格要求】你只需生成{ai_pages}页内容，系统会自动添加第{target_pages}页结尾页！
 
 **PPT页数调整任务：**
@@ -471,6 +472,7 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
             # 无指定目标页数：优化减少页数
             return f"""你是PPT内容优化专家。基于第一次AI分析结果，优化PPT页数分配，解决过度分页问题。
 
+【系统限制】PPT最多25页（含封面+目录+内容+结尾），AI最多生成24页内容！
 【PPT分页优化任务】
 PPT制作中，AI容易过度分页导致页面内容稀薄。你需要通过合并相关主题的内容页来优化页数：
 
@@ -480,6 +482,7 @@ PPT制作中，AI容易过度分页导致页面内容稀薄。你需要通过合
 - 保持完全不同主题的独立性（如"技术原理"和"市场前景"不要合并）
 - 确保每页内容充实，避免内容过少或过多
 - 优化后的AI生成页数应比第一次结果更少（系统会自动添加结尾页）
+- 【重要】AI生成页数不得超过24页（总体25页限制减去结尾页）
 
 **字段要求：**
 pages字段里只需要包含：page_number/page_type/title/original_text_segment字段

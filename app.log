@@ -5401,3 +5401,315 @@
 2025-09-15 14:17:32 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250915_141732.pptx
 2025-09-15 14:17:32 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 0页
 2025-09-15 14:17:32 - ppt_generator - INFO - Spire合并成功
+2025-09-15 14:47:38 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 237, 两次调用策略
+2025-09-15 14:47:57 - ppt_generator - INFO - Liai M2M认证管理器初始化成功
+2025-09-15 14:47:57 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-15 14:47:57 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-15 14:47:57 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-15 14:47:57 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 84字符
+2025-09-15 14:47:57 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 14:47:57 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-15 14:47:57 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-15 14:48:17 - ppt_generator - INFO - 成功获取模板编号: 237 (响应时间: 19.85s)
+2025-09-15 14:48:17 - ppt_generator - INFO - Dify API返回模板编号: 237
+2025-09-15 14:48:17 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_237.pptx
+2025-09-15 14:48:17 - ppt_generator - INFO - 成功获取模板文件: split_presentations_237.pptx (102.8KB)
+2025-09-15 14:48:17 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 19.86秒
+2025-09-15 14:48:17 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 14:48:17 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间19.85s, 健康分数0.73
+2025-09-15 14:48:17 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 152字符
+2025-09-15 14:48:17 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 14:48:17 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-15 14:48:19 - ppt_generator - WARNING - API密钥请求失败: app-ECqUfZo82mnwgHHJ... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 14:48:19 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 14:48:21 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)，使用密钥索引: 2
+2025-09-15 14:48:31 - ppt_generator - WARNING - API密钥请求失败: app-Pu5cQEPflosB3MsI... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 14:48:31 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 14:48:35 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 3/5)，使用密钥索引: 3
+2025-09-15 14:48:44 - ppt_generator - WARNING - API密钥请求失败: app-DwDPF3dCx19HgiMH... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 14:48:44 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 14:48:52 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 4/5)，使用密钥索引: 4
+2025-09-15 14:49:02 - ppt_generator - WARNING - API密钥请求失败: app-herMPsFeXDpQgX3B... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 14:49:02 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 14:49:18 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 5/5)，使用密钥索引: 0
+2025-09-15 14:49:27 - ppt_generator - WARNING - API密钥请求失败: app-riHQ722n1xYctciP... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 14:49:27 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 14:49:51 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 14:49:51 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 14:49:51 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 14:49:51 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 14:49:52 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 14:49:52 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 14:49:52 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 14:49:52 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 14:49:52 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 根据页面数量(5页)智能选择合并器
+2025-09-15 14:49:52 - ppt_generator - INFO - 页面数量5页(≤10页)，使用Spire.Presentation合并器
+2025-09-15 14:49:52 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并5个模板页面
+2025-09-15 14:49:52 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-15 14:49:52 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-15 14:49:52 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_237.pptx
+2025-09-15 14:49:53 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_ending_slides.pptx
+2025-09-15 14:49:53 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250915_144953.pptx
+2025-09-15 14:49:53 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 4页, 跳过: 1页
+2025-09-15 14:49:53 - ppt_generator - INFO - Spire合并成功
+2025-09-15 15:06:36 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 3126, 两次调用策略
+2025-09-15 15:08:16 - ppt_generator - INFO - Liai M2M认证管理器初始化成功
+2025-09-15 15:08:16 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-15 15:08:16 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-15 15:08:16 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-15 15:08:16 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-15 15:08:16 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 1387字符
+2025-09-15 15:08:16 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:08:16 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-15 15:08:16 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-15 15:08:31 - ppt_generator - WARNING - API密钥请求失败: app-riHQ722n1xYctciP... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:08:31 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:08:33 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)，使用密钥索引: 1
+2025-09-15 15:08:44 - ppt_generator - WARNING - API密钥请求失败: app-ECqUfZo82mnwgHHJ... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:08:44 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:08:48 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 3/5)，使用密钥索引: 2
+2025-09-15 15:09:00 - ppt_generator - WARNING - API密钥请求失败: app-Pu5cQEPflosB3MsI... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:09:00 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:09:08 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 4/5)，使用密钥索引: 3
+2025-09-15 15:09:18 - ppt_generator - WARNING - API密钥请求失败: app-DwDPF3dCx19HgiMH... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:09:18 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:09:34 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 5/5)，使用密钥索引: 4
+2025-09-15 15:09:51 - ppt_generator - WARNING - API密钥请求失败: app-herMPsFeXDpQgX3B... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:09:51 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:09:51 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 992字符
+2025-09-15 15:09:51 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:09:51 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-15 15:10:02 - ppt_generator - WARNING - API密钥请求失败: app-riHQ722n1xYctciP... (连续失败: 2, 错误类型: parse_error)
+2025-09-15 15:10:02 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:10:04 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)，使用密钥索引: 1
+2025-09-15 15:10:14 - ppt_generator - INFO - 成功获取模板编号: 158 (响应时间: 10.15s)
+2025-09-15 15:10:14 - ppt_generator - INFO - Dify API返回模板编号: 158
+2025-09-15 15:10:14 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_158.pptx
+2025-09-15 15:10:14 - ppt_generator - INFO - 成功获取模板文件: split_presentations_158.pptx (77.9KB)
+2025-09-15 15:10:14 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 23.04秒
+2025-09-15 15:10:14 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:10:14 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 2次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:10:14 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 2次请求, 成功率50.0%, 平均响应时间10.15s, 健康分数0.38
+2025-09-15 15:10:14 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:10:14 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:10:14 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 1次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:10:14 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 785字符
+2025-09-15 15:10:14 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:10:14 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-15 15:10:27 - ppt_generator - INFO - 成功获取模板编号: 97 (响应时间: 12.94s)
+2025-09-15 15:10:27 - ppt_generator - INFO - Dify API返回模板编号: 97
+2025-09-15 15:10:27 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_97.pptx
+2025-09-15 15:10:27 - ppt_generator - INFO - 成功获取模板文件: split_presentations_97.pptx (922.6KB)
+2025-09-15 15:10:27 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.96秒
+2025-09-15 15:10:27 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:10:27 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 2次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:10:27 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 2次请求, 成功率50.0%, 平均响应时间10.15s, 健康分数0.38
+2025-09-15 15:10:27 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 2次请求, 成功率50.0%, 平均响应时间12.94s, 健康分数0.38
+2025-09-15 15:10:27 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 1次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:10:27 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 1次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 优先使用Spire合并器，页面数量(6页)
+2025-09-15 15:11:11 - ppt_generator - INFO - 页面数量6页(≤10页)，使用Spire.Presentation合并器
+2025-09-15 15:11:11 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并6个模板页面
+2025-09-15 15:11:11 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-15 15:11:12 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-15 15:11:12 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_158.pptx
+2025-09-15 15:11:13 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_split_presentations_97.pptx
+2025-09-15 15:11:13 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_ending_slides.pptx
+2025-09-15 15:11:13 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250915_151113.pptx
+2025-09-15 15:11:13 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 5页, 跳过: 1页
+2025-09-15 15:11:13 - ppt_generator - INFO - Spire合并成功
+2025-09-15 15:17:46 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 4102, 两次调用策略
+2025-09-15 15:19:25 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-15 15:19:25 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 292字符
+2025-09-15 15:19:25 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:19:25 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-15 15:19:25 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-09-15 15:19:45 - ppt_generator - INFO - 成功获取模板编号: 25 (响应时间: 19.62s)
+2025-09-15 15:19:45 - ppt_generator - INFO - Dify API返回模板编号: 25
+2025-09-15 15:19:45 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_25.pptx
+2025-09-15 15:19:45 - ppt_generator - INFO - 成功获取模板文件: split_presentations_25.pptx (943.2KB)
+2025-09-15 15:19:45 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 19.65秒
+2025-09-15 15:19:45 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:19:45 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 2次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:19:45 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 2次请求, 成功率50.0%, 平均响应时间10.15s, 健康分数0.38
+2025-09-15 15:19:45 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 2次请求, 成功率50.0%, 平均响应时间12.94s, 健康分数0.38
+2025-09-15 15:19:45 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 2次请求, 成功率50.0%, 平均响应时间19.62s, 健康分数0.38
+2025-09-15 15:19:45 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 1次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:19:45 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 206字符
+2025-09-15 15:19:45 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:19:45 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 4
+2025-09-15 15:19:56 - ppt_generator - INFO - 成功获取模板编号: 152 (响应时间: 10.84s)
+2025-09-15 15:19:56 - ppt_generator - INFO - Dify API返回模板编号: 152
+2025-09-15 15:19:56 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_152.pptx
+2025-09-15 15:19:56 - ppt_generator - INFO - 成功获取模板文件: split_presentations_152.pptx (920.2KB)
+2025-09-15 15:19:56 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.86秒
+2025-09-15 15:19:56 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:19:56 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 2次请求, 成功率0.0%, 平均响应时间0.00s, 健康分数0.30
+2025-09-15 15:19:56 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 2次请求, 成功率50.0%, 平均响应时间10.15s, 健康分数0.38
+2025-09-15 15:19:56 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 2次请求, 成功率50.0%, 平均响应时间12.94s, 健康分数0.38
+2025-09-15 15:19:56 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 2次请求, 成功率50.0%, 平均响应时间19.62s, 健康分数0.38
+2025-09-15 15:19:56 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 2次请求, 成功率50.0%, 平均响应时间10.84s, 健康分数0.38
+2025-09-15 15:19:56 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 278字符
+2025-09-15 15:19:56 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:19:56 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-15 15:19:57 - ppt_generator - WARNING - API密钥请求失败: app-riHQ722n1xYctciP... (连续失败: 3, 错误类型: parse_error)
+2025-09-15 15:19:57 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:20:00 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)，使用密钥索引: 1
+2025-09-15 15:20:10 - ppt_generator - WARNING - API密钥请求失败: app-ECqUfZo82mnwgHHJ... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:20:10 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:20:14 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 3/5)，使用密钥索引: 2
+2025-09-15 15:20:45 - ppt_generator - WARNING - API请求超时 (尝试 3)
+2025-09-15 15:20:45 - ppt_generator - WARNING - API密钥请求失败: app-Pu5cQEPflosB3MsI... (连续失败: 1, 错误类型: timeout)
+2025-09-15 15:20:45 - ppt_generator - WARNING - API密钥多次超时: app-Pu5cQEPflosB3MsI...
+2025-09-15 15:20:53 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 4/5)，使用密钥索引: 3
+2025-09-15 15:20:57 - ppt_generator - WARNING - API密钥请求失败: app-DwDPF3dCx19HgiMH... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:20:57 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:21:13 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 5/5)，使用密钥索引: 4
+2025-09-15 15:21:22 - ppt_generator - WARNING - API密钥请求失败: app-herMPsFeXDpQgX3B... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:21:22 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:21:22 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 189字符
+2025-09-15 15:21:22 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:21:22 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-15 15:21:34 - ppt_generator - INFO - 成功获取模板编号: 107 (响应时间: 12.34s)
+2025-09-15 15:21:34 - ppt_generator - INFO - Dify API返回模板编号: 107
+2025-09-15 15:21:34 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_107.pptx
+2025-09-15 15:21:34 - ppt_generator - INFO - 成功获取模板文件: split_presentations_107.pptx (72.6KB)
+2025-09-15 15:21:34 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.36秒
+2025-09-15 15:21:34 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:21:34 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 4次请求, 成功率25.0%, 平均响应时间12.34s, 健康分数0.20
+2025-09-15 15:21:34 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 3次请求, 成功率33.3%, 平均响应时间10.15s, 健康分数0.26
+2025-09-15 15:21:34 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 3次请求, 成功率33.3%, 平均响应时间12.94s, 健康分数0.26
+2025-09-15 15:21:34 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 3次请求, 成功率33.3%, 平均响应时间19.62s, 健康分数0.26
+2025-09-15 15:21:34 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 3次请求, 成功率33.3%, 平均响应时间10.84s, 健康分数0.26
+2025-09-15 15:21:34 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 377字符
+2025-09-15 15:21:34 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:21:34 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-15 15:21:48 - ppt_generator - INFO - 成功获取模板编号: 216 (响应时间: 14.60s)
+2025-09-15 15:21:48 - ppt_generator - INFO - Dify API返回模板编号: 216
+2025-09-15 15:21:48 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_216.pptx
+2025-09-15 15:21:49 - ppt_generator - INFO - 成功获取模板文件: split_presentations_216.pptx (967.4KB)
+2025-09-15 15:21:49 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.63秒
+2025-09-15 15:21:49 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:21:49 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 4次请求, 成功率25.0%, 平均响应时间12.34s, 健康分数0.20
+2025-09-15 15:21:49 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 4次请求, 成功率50.0%, 平均响应时间11.48s, 健康分数0.38
+2025-09-15 15:21:49 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 3次请求, 成功率33.3%, 平均响应时间12.94s, 健康分数0.26
+2025-09-15 15:21:49 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 3次请求, 成功率33.3%, 平均响应时间19.62s, 健康分数0.26
+2025-09-15 15:21:49 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 3次请求, 成功率33.3%, 平均响应时间10.84s, 健康分数0.26
+2025-09-15 15:21:51 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 795字符
+2025-09-15 15:21:51 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:21:51 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-15 15:21:53 - ppt_generator - WARNING - API密钥请求失败: app-Pu5cQEPflosB3MsI... (连续失败: 2, 错误类型: parse_error)
+2025-09-15 15:21:53 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:21:55 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)，使用密钥索引: 3
+2025-09-15 15:21:59 - ppt_generator - WARNING - API密钥请求失败: app-DwDPF3dCx19HgiMH... (连续失败: 2, 错误类型: parse_error)
+2025-09-15 15:21:59 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:22:03 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 3/5)，使用密钥索引: 4
+2025-09-15 15:22:06 - ppt_generator - WARNING - API密钥请求失败: app-herMPsFeXDpQgX3B... (连续失败: 2, 错误类型: parse_error)
+2025-09-15 15:22:06 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:22:14 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 4/5)，使用密钥索引: 0
+2025-09-15 15:22:25 - ppt_generator - WARNING - API密钥请求失败: app-riHQ722n1xYctciP... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:22:25 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:22:41 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 5/5)，使用密钥索引: 1
+2025-09-15 15:22:50 - ppt_generator - WARNING - API密钥请求失败: app-ECqUfZo82mnwgHHJ... (连续失败: 1, 错误类型: parse_error)
+2025-09-15 15:22:50 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:22:50 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 588字符
+2025-09-15 15:22:50 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:22:50 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-15 15:23:04 - ppt_generator - INFO - 成功获取模板编号: 152 (响应时间: 14.05s)
+2025-09-15 15:23:04 - ppt_generator - INFO - Dify API返回模板编号: 152
+2025-09-15 15:23:04 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_152.pptx
+2025-09-15 15:23:04 - ppt_generator - INFO - 成功获取模板文件: split_presentations_152.pptx (920.2KB)
+2025-09-15 15:23:04 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.08秒
+2025-09-15 15:23:04 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:23:04 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 5次请求, 成功率20.0%, 平均响应时间12.34s, 健康分数0.17
+2025-09-15 15:23:04 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 5次请求, 成功率40.0%, 平均响应时间11.48s, 健康分数0.31
+2025-09-15 15:23:04 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 5次请求, 成功率40.0%, 平均响应时间13.27s, 健康分数0.31
+2025-09-15 15:23:04 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 4次请求, 成功率25.0%, 平均响应时间19.62s, 健康分数0.20
+2025-09-15 15:23:04 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 4次请求, 成功率25.0%, 平均响应时间10.84s, 健康分数0.20
+2025-09-15 15:23:04 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 991字符
+2025-09-15 15:23:04 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:23:04 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 3
+2025-09-15 15:23:15 - ppt_generator - INFO - 成功获取模板编号: 146 (响应时间: 10.97s)
+2025-09-15 15:23:15 - ppt_generator - INFO - Dify API返回模板编号: 146
+2025-09-15 15:23:15 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_146.pptx
+2025-09-15 15:23:15 - ppt_generator - INFO - 成功获取模板文件: split_presentations_146.pptx (91.0KB)
+2025-09-15 15:23:15 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 10.98秒
+2025-09-15 15:23:15 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:23:15 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 5次请求, 成功率20.0%, 平均响应时间12.34s, 健康分数0.17
+2025-09-15 15:23:15 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 5次请求, 成功率40.0%, 平均响应时间11.48s, 健康分数0.31
+2025-09-15 15:23:15 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 5次请求, 成功率40.0%, 平均响应时间13.27s, 健康分数0.31
+2025-09-15 15:23:15 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 5次请求, 成功率40.0%, 平均响应时间17.02s, 健康分数0.31
+2025-09-15 15:23:15 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 4次请求, 成功率25.0%, 平均响应时间10.84s, 健康分数0.20
+2025-09-15 15:23:15 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 408字符
+2025-09-15 15:23:15 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-15 15:23:15 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 4
+2025-09-15 15:23:17 - ppt_generator - WARNING - API密钥请求失败: app-herMPsFeXDpQgX3B... (连续失败: 3, 错误类型: parse_error)
+2025-09-15 15:23:17 - ppt_generator - WARNING - API响应中未找到有效数字: 
+2025-09-15 15:23:19 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 2/5)，使用密钥索引: 0
+2025-09-15 15:23:30 - ppt_generator - INFO - 成功获取模板编号: 117 (响应时间: 10.65s)
+2025-09-15 15:23:30 - ppt_generator - INFO - Dify API返回模板编号: 117
+2025-09-15 15:23:30 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_117.pptx
+2025-09-15 15:23:30 - ppt_generator - INFO - 成功获取模板文件: split_presentations_117.pptx (77.8KB)
+2025-09-15 15:23:30 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.60秒
+2025-09-15 15:23:30 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-15 15:23:30 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 6次请求, 成功率33.3%, 平均响应时间11.83s, 健康分数0.26
+2025-09-15 15:23:30 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 5次请求, 成功率40.0%, 平均响应时间11.48s, 健康分数0.31
+2025-09-15 15:23:30 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 5次请求, 成功率40.0%, 平均响应时间13.27s, 健康分数0.31
+2025-09-15 15:23:30 - ppt_generator - INFO -   app-DwDPF3dCx19HgiMH...: 5次请求, 成功率40.0%, 平均响应时间17.02s, 健康分数0.31
+2025-09-15 15:23:30 - ppt_generator - INFO -   app-herMPsFeXDpQgX3B...: 5次请求, 成功率20.0%, 平均响应时间10.84s, 健康分数0.17
+2025-09-15 15:25:27 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:27 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 优先使用Spire合并器，页面数量(12页)
+2025-09-15 15:25:28 - ppt_generator - INFO - 页面数量12页(>10页)，使用Spire分批合并策略
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: Spire分批合并 - 将12页分成2个批次处理
+2025-09-15 15:25:28 - ppt_generator - INFO - 开始Spire分批合并：12页 → 2个批次（每批最多10页）
+2025-09-15 15:25:28 - ppt_generator - INFO - 处理第1/2批次：页面1-10
+2025-09-15 15:25:28 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并10个模板页面
+2025-09-15 15:25:28 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-15 15:25:29 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-15 15:25:29 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_25.pptx
+2025-09-15 15:25:29 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_152.pptx
+2025-09-15 15:25:29 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_split_presentations_107.pptx
+2025-09-15 15:25:30 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_7_split_presentations_216.pptx
+2025-09-15 15:25:30 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_9_split_presentations_152.pptx
+2025-09-15 15:25:30 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_12_ending_slides.pptx
+2025-09-15 15:25:30 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250915_152530.pptx
+2025-09-15 15:25:30 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 8页, 跳过: 2页
+2025-09-15 15:25:30 - ppt_generator - INFO - 第1批次合并成功，包含10页
+2025-09-15 15:25:30 - ppt_generator - INFO - 处理第2/2批次：页面11-12
+2025-09-15 15:25:30 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并2个模板页面
+2025-09-15 15:25:31 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_10_split_presentations_146.pptx
+2025-09-15 15:25:31 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_11_split_presentations_117.pptx
+2025-09-15 15:25:31 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250915_152531.pptx
+2025-09-15 15:25:31 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 2页, 跳过: 0页
+2025-09-15 15:25:31 - ppt_generator - INFO - 第2批次合并成功，包含2页
+2025-09-15 15:25:31 - ppt_generator - INFO - Spire分批合并完成：成功2/2个批次，处理10/12页
+2025-09-15 15:25:31 - ppt_generator - INFO - Spire分批合并成功

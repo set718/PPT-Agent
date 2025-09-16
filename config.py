@@ -27,7 +27,7 @@ class Config:
     # AI配置
     ai_model: str = "deepseek-v3"
     ai_temperature: float = 0.3
-    ai_max_tokens: int = 10000
+    ai_max_tokens: int = None  # 取消token限制
     
     # 模型选择配置
     available_models: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {

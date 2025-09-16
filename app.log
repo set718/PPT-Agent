@@ -6057,3 +6057,160 @@
 2025-09-15 16:34:19 - ppt_generator - INFO - 使用AppendBySlide合并: processed_1_20250915_163418.pptx
 2025-09-15 16:34:19 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250915_163419.pptx
 2025-09-15 16:34:19 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 2页, 跳过: 0页
+2025-09-16 13:32:57 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 13:32:57 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-16 13:32:57 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp2ay_wlio.pptx
+2025-09-16 13:32:57 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-09-16 13:32:57 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 96字符
+2025-09-16 13:33:09 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 6
+2025-09-16 13:33:09 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-16 13:33:09 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-16 13:33:09 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-16 13:33:09 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 13:33:09 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-16 13:33:09 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp1ormosb8.pptx
+2025-09-16 13:33:09 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.08s
+2025-09-16 13:33:09 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 273字符
+2025-09-16 13:33:20 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 5
+2025-09-16 13:33:20 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-16 13:33:20 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-16 13:33:20 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-16 13:33:21 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并2个模板页面
+2025-09-16 13:33:21 - ppt_generator - INFO - 使用第一个模板作为基础: processed_0_20250916_133309.pptx
+2025-09-16 13:33:22 - ppt_generator - INFO - 使用AppendBySlide合并: processed_1_20250916_133320.pptx
+2025-09-16 13:33:22 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250916_133322.pptx
+2025-09-16 13:33:22 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 2页, 跳过: 0页
+2025-09-16 13:35:21 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 13:35:21 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-16 13:35:21 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp30_xs43v.pptx
+2025-09-16 13:35:21 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.09s
+2025-09-16 13:35:21 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 273字符
+2025-09-16 13:35:42 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 14
+2025-09-16 13:35:42 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-16 13:35:42 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-16 13:35:42 - ppt_generator - INFO - 删除幻灯片 1 中的未填充占位符: ['number_2']
+2025-09-16 13:35:42 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-16 13:35:42 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 13:35:42 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-16 13:35:42 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp7nbjg0bm.pptx
+2025-09-16 13:35:42 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-09-16 13:35:42 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 269字符
+2025-09-16 13:35:54 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 5
+2025-09-16 13:35:54 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-16 13:35:54 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-16 13:35:54 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-16 13:35:54 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并2个模板页面
+2025-09-16 13:35:54 - ppt_generator - INFO - 使用第一个模板作为基础: processed_0_20250916_133542.pptx
+2025-09-16 13:35:55 - ppt_generator - INFO - 使用AppendBySlide合并: processed_1_20250916_133554.pptx
+2025-09-16 13:35:55 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250916_133555.pptx
+2025-09-16 13:35:55 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 2页, 跳过: 0页
+2025-09-16 13:36:55 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 13:36:55 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-16 13:36:55 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmphxvxrc8j.pptx
+2025-09-16 13:36:55 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.04s
+2025-09-16 13:36:55 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 273字符
+2025-09-16 13:37:06 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 5
+2025-09-16 13:37:06 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-16 13:37:06 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-16 13:37:06 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-16 13:37:06 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 13:37:06 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-16 13:37:06 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmp9e_l8kez.pptx
+2025-09-16 13:37:06 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.05s
+2025-09-16 13:37:06 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 221字符
+2025-09-16 13:37:19 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 6
+2025-09-16 13:37:19 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-16 13:37:19 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-16 13:37:19 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-16 13:37:19 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并2个模板页面
+2025-09-16 13:37:19 - ppt_generator - INFO - 使用第一个模板作为基础: processed_0_20250916_133706.pptx
+2025-09-16 13:37:20 - ppt_generator - INFO - 使用AppendBySlide合并: processed_1_20250916_133719.pptx
+2025-09-16 13:37:20 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250916_133720.pptx
+2025-09-16 13:37:20 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 2页, 跳过: 0页
+2025-09-16 13:39:21 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 13:39:21 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-16 13:39:21 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpxm_ueb6n.pptx
+2025-09-16 13:39:21 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.06s
+2025-09-16 13:39:21 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 273字符
+2025-09-16 13:39:33 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 5
+2025-09-16 13:39:33 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-16 13:39:33 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-16 13:39:33 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-16 13:39:33 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 13:39:33 - ppt_generator - INFO - 开始操作: 用户界面加载PPT文件
+2025-09-16 13:39:33 - ppt_generator - INFO - 文件操作成功: load_ppt_user - C:\Users\jiayihan\AppData\Local\Temp\tmpeix21p6v.pptx
+2025-09-16 13:39:33 - ppt_generator - INFO - 操作完成: 用户界面加载PPT文件 耗时 0.07s
+2025-09-16 13:39:33 - ppt_generator - INFO - 用户操作: 用户界面AI文本分析 - 文本长度: 266字符
+2025-09-16 13:39:45 - ppt_generator - INFO - 用户操作: 用户界面应用文本分配 - 分配数量: 5
+2025-09-16 13:39:45 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 1
+2025-09-16 13:39:45 - ppt_generator - INFO - 用户操作: 用户界面基础美化
+2025-09-16 13:39:45 - ppt_generator - INFO - 幻灯片优化完成: 1 -> 1
+2025-09-16 13:39:45 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并2个模板页面
+2025-09-16 13:39:45 - ppt_generator - INFO - 使用第一个模板作为基础: processed_0_20250916_133933.pptx
+2025-09-16 13:39:46 - ppt_generator - INFO - 使用AppendBySlide合并: processed_1_20250916_133945.pptx
+2025-09-16 13:39:46 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250916_133946.pptx
+2025-09-16 13:39:46 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 2页, 跳过: 0页
+2025-09-16 14:36:43 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 96, 两次调用策略
+2025-09-16 14:37:04 - ppt_generator - INFO - Liai M2M认证管理器初始化成功
+2025-09-16 14:37:04 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-16 14:37:04 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-16 14:37:04 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-16 14:37:04 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-16 14:37:04 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 55字符
+2025-09-16 14:37:04 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-16 14:37:04 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-16 14:37:04 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-16 14:37:21 - ppt_generator - INFO - 成功获取模板编号: 12 (响应时间: 16.50s)
+2025-09-16 14:37:21 - ppt_generator - INFO - Dify API返回模板编号: 12
+2025-09-16 14:37:21 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_12.pptx
+2025-09-16 14:37:21 - ppt_generator - INFO - 成功获取模板文件: split_presentations_12.pptx (126.3KB)
+2025-09-16 14:37:21 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 16.53秒
+2025-09-16 14:37:21 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-16 14:37:21 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间16.50s, 健康分数0.73
+2025-09-16 14:37:21 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 49字符
+2025-09-16 14:37:21 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-16 14:37:21 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-16 14:37:35 - ppt_generator - INFO - 成功获取模板编号: 88 (响应时间: 14.04s)
+2025-09-16 14:37:35 - ppt_generator - INFO - Dify API返回模板编号: 88
+2025-09-16 14:37:35 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_88.pptx
+2025-09-16 14:37:35 - ppt_generator - INFO - 成功获取模板文件: split_presentations_88.pptx (923.3KB)
+2025-09-16 14:37:35 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 14.08秒
+2025-09-16 14:37:35 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-16 14:37:35 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间16.50s, 健康分数0.73
+2025-09-16 14:37:35 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间14.04s, 健康分数0.73
+2025-09-16 14:37:35 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 31字符
+2025-09-16 14:37:35 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-16 14:37:35 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-16 14:37:48 - ppt_generator - INFO - 成功获取模板编号: 94 (响应时间: 12.79s)
+2025-09-16 14:37:48 - ppt_generator - INFO - Dify API返回模板编号: 94
+2025-09-16 14:37:48 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_94.pptx
+2025-09-16 14:37:48 - ppt_generator - INFO - 成功获取模板文件: split_presentations_94.pptx (927.8KB)
+2025-09-16 14:37:48 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 12.81秒
+2025-09-16 14:37:48 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-16 14:37:48 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间16.50s, 健康分数0.73
+2025-09-16 14:37:48 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间14.04s, 健康分数0.73
+2025-09-16 14:37:48 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间12.79s, 健康分数0.73
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户界面初始化PPT生成器
+2025-09-16 14:38:18 - ppt_generator - INFO - 用户操作: 用户界面清理占位符 - 已填充: 0
+2025-09-16 14:38:19 - ppt_generator - INFO - 用户操作: 增强版PPT合并 - 优先使用Spire合并器，页面数量(6页)
+2025-09-16 14:38:19 - ppt_generator - INFO - 页面数量6页(≤10页)，使用Spire.Presentation合并器
+2025-09-16 14:38:19 - ppt_generator - INFO - 用户操作: PPT Spire合并 - 开始合并6个模板页面
+2025-09-16 14:38:19 - ppt_generator - INFO - 使用第一个模板作为基础: filled_temp_1_title_slides.pptx
+2025-09-16 14:38:19 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_2_table_of_contents_slides.pptx
+2025-09-16 14:38:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_3_split_presentations_12.pptx
+2025-09-16 14:38:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_4_split_presentations_88.pptx
+2025-09-16 14:38:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_5_split_presentations_94.pptx
+2025-09-16 14:38:20 - ppt_generator - INFO - 使用AppendBySlide合并: filled_temp_6_ending_slides.pptx
+2025-09-16 14:38:21 - ppt_generator - INFO - Spire PPT文件已保存: C:\Users\jiayihan\AppData\Local\Temp\merged_presentation_spire_20250916_143820.pptx
+2025-09-16 14:38:21 - ppt_generator - INFO - 用户操作: PPT Spire合并完成 - 成功: 6页, 跳过: 0页
+2025-09-16 14:38:21 - ppt_generator - INFO - Spire合并成功

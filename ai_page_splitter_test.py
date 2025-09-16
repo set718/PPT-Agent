@@ -185,7 +185,6 @@ class AIPageSplitterTest:
                     {"role": "user", "content": user_text}
                 ],
                 temperature=self.config.ai_temperature,
-                max_tokens=self.config.ai_max_tokens,
                 stream=True,
                 timeout=request_timeout
             )
@@ -507,7 +506,6 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
                         {"role": "user", "content": user_text}
                     ],
                     temperature=self.config.ai_temperature,
-                    max_tokens=self.config.ai_max_tokens,
                     stream=True,  # 使用流式响应，类似Liai
                     extra_headers=extra_headers,
                     extra_body={},  # OpenRouter兼容

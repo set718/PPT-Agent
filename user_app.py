@@ -484,7 +484,6 @@ class UserPPTGenerator:
                         {"role": "user", "content": f"{ppt_description}\n\n用户文本：\n{user_text}"}
                     ],
                     temperature=0.3,
-                    max_tokens=4000,
                     stream=True
                 )
                 
@@ -1146,7 +1145,11 @@ def main():
         
             # 文本输入
             st.markdown("#### 📝 输入您的内容")
-            
+
+            # 检查当前选择的模型是否是Liai
+            current_model_info = config.get_model_info()
+            is_liai_model = current_model_info.get('api_provider') == 'Liai'
+
             user_text = st.text_area(
                 "请输入您想要制作成PPT的文本内容：",
                 height=250,
@@ -1168,6 +1171,32 @@ def main():
 人工智能将继续向更加智能化、人性化的方向发展，实现更好的人机协作，为人类社会带来更多便利和创新可能性。同时需要关注AI安全和伦理问题。""",
                 help="AI将分析文本结构进行智能分页，每页内容调用AI模型获取对应模板"
             )
+
+            # 如果是Liai模型，显示字数统计和限制
+            if is_liai_model and user_text:
+                # 计算中文字符数（排除空格、换行、标点符号等）
+                chinese_char_count = len([char for char in user_text if '\u4e00' <= char <= '\u9fff'])
+                total_char_count = len(user_text.strip())
+
+                # 显示字数统计
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    if chinese_char_count > 3000:
+                        st.error(f"⚠️ Liai模型限制：当前中文字数 {chinese_char_count} 字，超出3000字限制，请删减内容")
+                    elif chinese_char_count > 2500:  # 接近限制时显示警告
+                        st.warning(f"⚠️ 字数接近限制：当前中文字数 {chinese_char_count}/3000 字")
+                    else:
+                        st.info(f"📊 字数统计：中文字数 {chinese_char_count}/3000 字，总字符数 {total_char_count} 个")
+
+                with col2:
+                    if chinese_char_count > 3000:
+                        st.markdown("🚫 **超出限制**")
+                    else:
+                        progress = min(chinese_char_count / 3000, 1.0)
+                        st.progress(progress)
+
+            elif is_liai_model:
+                st.info("💡 提示：由于私有化模型功能限制，输入文本的中文字数限制为3000字")
 
             # 分页选项 - 简化布局
             st.markdown("#### ⚙️ 分页选项")
@@ -1201,20 +1230,35 @@ def main():
             st.markdown("---")
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
+                # 检查是否可以处理（考虑Liai模型的字数限制）
+                can_process = user_text.strip()
+                if is_liai_model and user_text:
+                    chinese_char_count = len([char for char in user_text if '\u4e00' <= char <= '\u9fff'])
+                    can_process = can_process and chinese_char_count <= 3000
+
                 process_button = st.button(
                     "🚀 开始生成PPT",
                     type="primary",
                     use_container_width=True,
-                    disabled=not user_text.strip(),
-                    help="AI智能分页 → 模板匹配 → 自动整合PPT → 可直接下载"
+                    disabled=not can_process,
+                    help="AI智能分页 → 模板匹配 → 自动整合PPT → 可直接下载" if can_process
+                         else ("请先输入文本内容" if not user_text.strip()
+                               else "请减少文本内容至3000中文字以内")
                 )
         
         
         # 处理逻辑 - AI分页 + 智能模板匹配
         if process_button and user_text.strip():
+            # 如果是Liai模型，首先检查字数限制
+            if is_liai_model:
+                chinese_char_count = len([char for char in user_text if '\u4e00' <= char <= '\u9fff'])
+                if chinese_char_count > 3000:
+                    st.error(f"❌ 无法处理：Liai模型限制中文字数不超过3000字，当前为{chinese_char_count}字，请删减后重试")
+                    return
+
             progress_bar = st.progress(0)
             status_text = st.empty()
-            
+
             try:
                 # 步骤1：AI智能分页
                 status_text.text("🤖 AI正在分析文本结构并进行智能分页...")

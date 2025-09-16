@@ -403,7 +403,6 @@ class AIProcessor:
                         {"role": "user", "content": user_content}
                     ],
                     temperature=self.config.ai_temperature,
-                    max_tokens=self.config.ai_max_tokens,
                     stream=True
                 )
                 

@@ -163,7 +163,6 @@ class TableTextFiller:
                         {"role": "user", "content": f"表格结构信息：\n{table_structure_info}\n\n用户文本：\n{user_text}"}
                     ],
                     temperature=0.3,
-                    max_tokens=4000,
                     stream=True
                 )
                 

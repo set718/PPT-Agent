@@ -97,18 +97,18 @@ def _remove_watermark_from_slide(slide_xml_path: str) -> bool:
         for shape in shape_elements:
             # 检查是否为水印形状
             if _is_spire_watermark(shape, namespaces):
-                # 找到父元素并移除这个形状
-                parent = root.find('.//p:sp/..', namespaces)
-                if parent is None:
-                    # 如果没有找到直接父元素，在整个树中搜索
-                    for elem in root.iter():
-                        if shape in list(elem):
-                            elem.remove(shape)
-                            removed = True
-                            break
-                else:
-                    parent.remove(shape)
-                    removed = True
+                # 直接在整个树中搜索并移除这个特定形状
+                found_and_removed = False
+                for elem in root.iter():
+                    if shape in list(elem):
+                        elem.remove(shape)
+                        removed = True
+                        found_and_removed = True
+                        logger.info(f"成功移除水印形状，文本内容: {_get_shape_text(shape, namespaces)[:50]}...")
+                        break
+                
+                if not found_and_removed:
+                    logger.warning(f"未找到水印形状的父元素，文本内容: {_get_shape_text(shape, namespaces)[:50]}...")
         
         # 如果移除了水印，保存文件
         if removed:
@@ -132,49 +132,88 @@ def _is_spire_watermark(shape_element, namespaces: dict) -> bool:
         是否为Spire水印
     """
     try:
-        # 检查1: 查找文本内容
+        # 获取所有文本内容
         text_elements = shape_element.findall('.//a:t', namespaces)
+        all_text = ""
         for text_elem in text_elements:
-            if text_elem.text and 'Spire.Presentation' in text_elem.text:
-                logger.debug(f"找到Spire水印文本: {text_elem.text}")
+            if text_elem.text:
+                all_text += text_elem.text + " "
+        all_text = all_text.strip()
+        
+        # 检查1: 直接包含Spire相关文本
+        spire_keywords = ['Spire.Presentation', 'Spire.Office', 'spire.presentation']
+        for keyword in spire_keywords:
+            if keyword in all_text:
+                logger.debug(f"找到Spire水印文本: {all_text[:100]}...")
                 return True
         
-        # 检查2: 查找红色文本 (FF0000)
-        color_elements = shape_element.findall('.//a:srgbClr[@val="FF0000"]', namespaces)
-        if color_elements:
-            # 进一步检查是否包含相关文本
-            for text_elem in text_elements:
-                if text_elem.text and ('Evaluation Warning' in text_elem.text or 'document was created' in text_elem.text):
-                    logger.debug("找到红色的评估警告文本")
-                    return True
+        # 检查2: 评估警告文本模式
+        evaluation_patterns = [
+            'Evaluation Warning',
+            'document was created with Spire',
+            'Created with an evaluation copy',
+            'Evaluation version'
+        ]
+        for pattern in evaluation_patterns:
+            if pattern in all_text:
+                logger.debug(f"找到评估警告文本: {all_text[:100]}...")
+                return True
         
-        # 检查3: 查找具有特定锁定属性的形状
+        # 检查3: 红色文本 + 警告文本组合
+        color_elements = shape_element.findall('.//a:srgbClr[@val="FF0000"]', namespaces)
+        if color_elements and any(word in all_text.lower() for word in ['warning', 'evaluation', 'created', 'document']):
+            logger.debug(f"找到红色警告文本: {all_text[:100]}...")
+            return True
+        
+        # 检查4: 锁定属性 + 可疑文本
         lock_elements = shape_element.findall('.//a:spLocks', namespaces)
         for lock_elem in lock_elements:
-            if (lock_elem.get('noSelect') == '1' and 
-                lock_elem.get('noMove') == '1' and 
-                lock_elem.get('noResize') == '1' and 
-                lock_elem.get('noTextEdit') == '1'):
-                # 如果有锁定属性，再检查是否包含相关文本
-                for text_elem in text_elements:
-                    if text_elem.text and ('Warning' in text_elem.text or 'Evaluation' in text_elem.text):
-                        logger.debug("找到锁定的警告形状")
-                        return True
+            # 检查是否有多个锁定属性
+            locked_count = sum(1 for attr in ['noSelect', 'noMove', 'noResize', 'noTextEdit'] 
+                             if lock_elem.get(attr) == '1')
+            
+            if locked_count >= 3:  # 至少有3个锁定属性
+                # 检查是否包含可疑文本
+                suspicious_words = ['warning', 'evaluation', 'trial', 'version', 'created', 'document']
+                if any(word in all_text.lower() for word in suspicious_words):
+                    logger.debug(f"找到锁定的可疑形状: {all_text[:100]}...")
+                    return True
         
-        # 检查4: 查找名称为"New shape"且包含警告文本的形状
+        # 检查5: 形状名称 + 可疑文本
         name_elements = shape_element.findall('.//p:cNvPr', namespaces)
         for name_elem in name_elements:
-            if name_elem.get('name') == 'New shape':
-                for text_elem in text_elements:
-                    if text_elem.text and 'Warning' in text_elem.text:
-                        logger.debug("找到名为'New shape'的警告形状")
-                        return True
+            shape_name = name_elem.get('name', '').lower()
+            if 'new shape' in shape_name or 'watermark' in shape_name:
+                if any(word in all_text.lower() for word in ['warning', 'evaluation', 'spire']):
+                    logger.debug(f"找到命名可疑的形状: {shape_name}, 文本: {all_text[:100]}...")
+                    return True
         
         return False
         
     except Exception as e:
         logger.error(f"判断水印时发生错误: {e}")
         return False
+
+def _get_shape_text(shape_element, namespaces: dict) -> str:
+    """
+    获取形状元素中的文本内容
+    
+    Args:
+        shape_element: 形状XML元素
+        namespaces: XML命名空间字典
+    
+    Returns:
+        形状中的文本内容
+    """
+    try:
+        text_elements = shape_element.findall('.//a:t', namespaces)
+        texts = []
+        for text_elem in text_elements:
+            if text_elem.text:
+                texts.append(text_elem.text)
+        return " ".join(texts)
+    except:
+        return ""
 
 def _create_pptx_from_directory(source_dir: str, output_path: str):
     """

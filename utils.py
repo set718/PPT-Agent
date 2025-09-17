@@ -223,10 +223,7 @@ class AIProcessor:
         self._ensure_client()
         
         # 创建PPT结构描述
-        if enhanced_info:
-            ppt_description = self._create_enhanced_ppt_description(enhanced_info)
-        else:
-            ppt_description = self._create_ppt_description(ppt_structure)
+        ppt_description = self._create_ppt_description(ppt_structure)
         
         # 构建系统提示
         system_prompt = self._build_system_prompt(ppt_description)
@@ -803,84 +800,6 @@ class AIProcessor:
         else:
             return f"灵活型页面，根据实际占位符({list(placeholders.keys())})智能安排内容"
     
-    def _create_enhanced_ppt_description(self, enhanced_info: Dict[str, Any]) -> str:
-        """创建增强的PPT结构描述"""
-        basic_structure = enhanced_info.get('basic_structure', {})
-        advanced_analysis = enhanced_info.get('advanced_analysis', {})
-        position_analysis = enhanced_info.get('position_analysis', {})
-        layout_suggestions = enhanced_info.get('layout_suggestions', [])
-        
-        # 基础信息
-        total_slides = basic_structure.get('total_slides', 0)
-        description = f"现有PPT共有{total_slides}张幻灯片，高级结构分析如下:\n"
-        
-        # 添加整体结构分析
-        if advanced_analysis:
-            overall_structure = advanced_analysis.get('overall_structure', {})
-            if overall_structure:
-                description += f"\n【整体设计分析】\n"
-                description += f"• 整体风格：{overall_structure.get('overall_style', '未知')}\n"
-                description += f"• 设计一致性：{overall_structure.get('design_consistency', 0):.2f}/1.0\n"
-                
-                avg_metrics = overall_structure.get('average_metrics', {})
-                if avg_metrics:
-                    description += f"• 平均内容密度：{avg_metrics.get('content_density', 0):.2f}/1.0\n"
-                    description += f"• 平均视觉平衡度：{avg_metrics.get('visual_balance', 0):.2f}/1.0\n"
-                    description += f"• 平均层次清晰度：{avg_metrics.get('hierarchy_clarity', 0):.2f}/1.0\n"
-                
-                layout_dist = overall_structure.get('layout_distribution', {})
-                if layout_dist:
-                    description += f"• 布局类型分布：{layout_dist}\n"
-        
-        # 添加详细的幻灯片分析
-        slide_layouts = advanced_analysis.get('slide_layouts', [])
-        for i, slide_layout in enumerate(slide_layouts):
-            description += f"\n第{i+1}页详细分析：\n"
-            description += f"• 布局类型：{slide_layout.layout_type}\n"
-            description += f"• 设计意图：{slide_layout.design_intent}\n"
-            description += f"• 内容密度：{slide_layout.content_density:.2f}/1.0\n"
-            description += f"• 视觉平衡度：{slide_layout.visual_balance:.2f}/1.0\n"
-            description += f"• 层次清晰度：{slide_layout.hierarchy_clarity:.2f}/1.0\n"
-            
-            # 添加元素信息
-            elements = slide_layout.elements
-            if elements:
-                description += f"• 包含{len(elements)}个元素：\n"
-                for element in elements:
-                    if element.placeholder_name:
-                        description += f"  - {{{element.placeholder_name}}} [{element.element_type}] 视觉权重:{element.visual_weight}/5\n"
-                        description += f"    位置:(x:{element.position.left:.0f}, y:{element.position.top:.0f}, w:{element.position.width:.0f}, h:{element.position.height:.0f})\n"
-            
-            # 添加视觉区域分析
-            visual_regions = slide_layout.visual_regions
-            if visual_regions:
-                description += f"• 视觉区域分布：\n"
-                for region_name, region_elements in visual_regions.items():
-                    if region_elements:
-                        description += f"  - {region_name}区域：{len(region_elements)}个元素\n"
-        
-        # 添加布局建议
-        if layout_suggestions:
-            description += f"\n【布局优化建议】\n"
-            for suggestion in layout_suggestions:
-                slide_idx = suggestion.get('slide_index', 0)
-                suggestions = suggestion.get('suggestions', {})
-                
-                layout_sugg = suggestions.get('layout_suggestions', [])
-                if layout_sugg:
-                    description += f"第{slide_idx+1}页建议：\n"
-                    for sugg in layout_sugg:
-                        description += f"• {sugg.get('description', '')}\n"
-        
-        # 添加位置分析摘要
-        if position_analysis:
-            description += f"\n【空间布局分析】\n"
-            spatial_relationships = position_analysis.get('spatial_relationships', {})
-            if spatial_relationships:
-                description += f"• 幻灯片间布局一致性分析已完成\n"
-                # 可以添加更多空间关系的描述
-        
-        return description
     
     def _build_system_prompt(self, ppt_description: str) -> str:
         """构建系统提示"""
@@ -899,6 +818,7 @@ class AIProcessor:
 3. 可以对文本进行适当的优化、精简或重新组织
 4. 根据占位符的语义含义和布局位置选择最合适的内容片段
 5. 不是所有占位符都必须填充，只填充有合适内容的占位符
+6. **数字占位符约束**：对于number、percentage、count、amount、quantity、rate等数字类占位符，必须填入纯数字，不能填入文字描述
 
 现有PPT深度结构分析：
 %s""" % ppt_description + """
@@ -926,13 +846,12 @@ class AIProcessor:
 - 只使用用户提供的信息，不生成新内容
 - 保持原文核心含义不变
 - 优先填充重要占位符
-- **严格遵守Token限制**：当占位符有max_token_N限制时，必须截断超长内容并添加"..."，绝不能因为内容超长而选择不填充
+- **Token限制处理**：当占位符有max_token_N限制时，截断超长内容并添加"..."，绝不跳过不填
 
 **处理原则：**
 - 根据占位符名称的语义含义智能匹配内容类型
 - 控制内容长度，标题简洁、要点明确、描述适中
 - 保持语言风格一致，避免重复和冗长
-- **Token限制优先处理**：遇到max_token限制时，先填充核心内容到限制范围内，然后添加"..."，而不是选择跳过不填
 
 **输出格式：**
 只返回JSON，包含assignments数组：

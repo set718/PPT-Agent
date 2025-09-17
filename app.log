@@ -6745,3 +6745,59 @@
 2025-09-17 10:05:46 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 1033, 两次调用策略
 2025-09-17 10:07:50 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 1033, 两次调用策略
 2025-09-17 10:36:10 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 1033, 两次调用策略
+2025-09-17 11:20:21 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 1033, 两次调用策略
+2025-09-17 11:23:15 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 1033, 两次调用策略
+2025-09-17 11:26:11 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 387, 两次调用策略
+2025-09-17 13:14:27 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 2111, 两次调用策略
+2025-09-17 13:18:12 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 4102, 两次调用策略
+2025-09-17 13:20:49 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 4102, 两次调用策略
+2025-09-17 14:16:08 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 4102, 两次调用策略
+2025-09-17 14:18:07 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 4102, 两次调用策略
+2025-09-17 14:20:24 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 4102, 两次调用策略
+2025-09-17 14:34:37 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 3854, 两次调用策略
+2025-09-17 14:55:05 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 3854, 两次调用策略
+2025-09-17 14:58:26 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 3854, 两次调用策略
+2025-09-17 15:17:44 - ppt_generator - INFO - 用户操作: AI智能分页 - 文本长度: 3854, 两次调用策略, AI内容整理
+2025-09-17 15:19:48 - ppt_generator - INFO - Liai M2M认证管理器初始化成功
+2025-09-17 15:19:48 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-17 15:19:48 - ppt_generator - INFO - Dify API配置初始化完成，共5个密钥可用
+2025-09-17 15:19:48 - ppt_generator - INFO - 初始化智能API密钥轮询器，共5个密钥
+2025-09-17 15:19:48 - ppt_generator - INFO - 初始化Dify模板桥接器（单例），模板目录: D:\Code\AI大赛相关Code\templates\ppt_template
+2025-09-17 15:19:48 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 1016字符
+2025-09-17 15:19:48 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-17 15:19:48 - ppt_generator - INFO - API密钥健康检查: 5/5 个密钥健康
+2025-09-17 15:19:48 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 0
+2025-09-17 15:20:08 - ppt_generator - INFO - 成功获取模板编号: 25 (响应时间: 20.02s)
+2025-09-17 15:20:08 - ppt_generator - INFO - Dify API返回模板编号: 25
+2025-09-17 15:20:08 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_25.pptx
+2025-09-17 15:20:08 - ppt_generator - INFO - 成功获取模板文件: split_presentations_25.pptx (943.2KB)
+2025-09-17 15:20:08 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 20.07秒
+2025-09-17 15:20:08 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-17 15:20:08 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间20.02s, 健康分数0.73
+2025-09-17 15:20:08 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 1397字符
+2025-09-17 15:20:08 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-17 15:20:08 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 1
+2025-09-17 15:20:33 - ppt_generator - INFO - 成功获取模板编号: 36 (响应时间: 24.99s)
+2025-09-17 15:20:33 - ppt_generator - INFO - Dify API返回模板编号: 36
+2025-09-17 15:20:33 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_36.pptx
+2025-09-17 15:20:33 - ppt_generator - INFO - 成功获取模板文件: split_presentations_36.pptx (981.4KB)
+2025-09-17 15:20:33 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 25.01秒
+2025-09-17 15:20:33 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-17 15:20:33 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间20.02s, 健康分数0.73
+2025-09-17 15:20:33 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间24.99s, 健康分数0.73
+2025-09-17 15:20:33 - ppt_generator - INFO - 用户操作: Dify模板桥接测试 - 输入文本长度: 904字符
+2025-09-17 15:20:33 - ppt_generator - INFO - 步骤1: 调用streaming_compatibleAPI获取模板编号
+2025-09-17 15:20:33 - ppt_generator - INFO - 调用Dify API获取模板编号 (尝试 1/5)，使用密钥索引: 2
+2025-09-17 15:20:47 - ppt_generator - INFO - 成功获取模板编号: 97 (响应时间: 13.70s)
+2025-09-17 15:20:47 - ppt_generator - INFO - Dify API返回模板编号: 97
+2025-09-17 15:20:47 - ppt_generator - INFO - 步骤2: 查找模板文件 split_presentations_97.pptx
+2025-09-17 15:20:47 - ppt_generator - INFO - 成功获取模板文件: split_presentations_97.pptx (922.6KB)
+2025-09-17 15:20:47 - ppt_generator - INFO - Dify模板桥接测试成功完成，耗时: 13.72秒
+2025-09-17 15:20:47 - ppt_generator - INFO - Dify API密钥健康状态报告:
+2025-09-17 15:20:47 - ppt_generator - INFO -   app-riHQ722n1xYctciP...: 1次请求, 成功率100.0%, 平均响应时间20.02s, 健康分数0.73
+2025-09-17 15:20:47 - ppt_generator - INFO -   app-ECqUfZo82mnwgHHJ...: 1次请求, 成功率100.0%, 平均响应时间24.99s, 健康分数0.73
+2025-09-17 15:20:47 - ppt_generator - INFO -   app-Pu5cQEPflosB3MsI...: 1次请求, 成功率100.0%, 平均响应时间13.70s, 健康分数0.73
+2025-09-17 15:22:10 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 3854, 两次调用策略
+2025-09-17 15:32:53 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 3854, 两次调用策略
+2025-09-17 15:35:29 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 3854, 两次调用策略
+2025-09-17 15:40:31 - ppt_generator - INFO - 用户操作: AI智能分页测试 - 文本长度: 3854, 两次调用策略

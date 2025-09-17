@@ -104,11 +104,11 @@ class AIPageSplitterTest:
     def split_text_to_pages(self, user_text: str, target_pages: Optional[int] = None) -> Dict[str, Any]:
         """
         将用户文本智能分割为多个PPT页面（测试版本 - 固定使用两次调用策略）
-        
+
         Args:
             user_text: 用户输入的原始文本
             target_pages: 目标页面数量（可选，由AI自动判断）
-            
+
         Returns:
             Dict: 分页结果，包含每页的内容和分析
         """
@@ -125,10 +125,10 @@ class AIPageSplitterTest:
     def _split_with_two_pass(self, user_text: str, target_pages: Optional[int]) -> Dict[str, Any]:
         """两次调用分页策略：第一次注重逻辑性，第二次注重分页数"""
         print(f"🔄 开始两次调用AI分页策略，目标页数: {target_pages}")
-        
+
         # 第一次调用：注重逻辑结构，不强制页数
-        print("📝 第一次调用：分析内容逻辑结构...")
-        first_system_prompt = self._build_logical_structure_prompt()
+        print("📝 第一次调用：分析内容逻辑结构...（AI内容整理模式）")
+        first_system_prompt = self._build_logical_structure_prompt_enhanced()
         first_content = self._call_api_with_prompt(first_system_prompt, user_text)
         first_result = self._parse_ai_response_without_ending(first_content, user_text)  # 不添加结尾页
         
@@ -197,8 +197,9 @@ class AIPageSplitterTest:
             
             return content.strip() if content else ""
     
-    def _build_logical_structure_prompt(self) -> str:
-        """构建第一次调用的逻辑结构分析提示（不强制页数）"""
+
+    def _build_logical_structure_prompt_enhanced(self) -> str:
+        """构建AI内容整理模式的提示（三步逻辑框架）"""
         return f"""你是一个资深PPT架构师。请按照以下**严格流程**将文本转化为PPT分页大纲：
 
 **第一步：全局分析**
@@ -249,28 +250,29 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
 
 ```json
 [
-  {{{{
+  {{
     "page_number": 1,
     "page_type": "title",
     "title": "PPT标题（基于内容主题生成）",
     "original_text_segment": "PPT标题（基于内容主题生成）"
-  }}}},
-  {{{{
+  }},
+  {{
     "page_number": 2,
     "page_type": "table_of_contents",
     "title": "目录",
     "original_text_segment": "主题一\n主题二\n主题三"
-  }}}},
-  {{{{
+  }},
+  {{
     "page_number": 3,
     "page_type": "content",
     "title": "主题一标题",
     "original_text_segment": "完整的主题一内容..."
-  }}}}
+  }}
 ]
 ```
 
 只返回JSON格式，不要其他文字。"""
+
 
     def _build_page_adjustment_prompt(self, target_pages: Optional[int]) -> str:
         """构建第二次调用的页数调整提示"""
@@ -294,7 +296,6 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
 - 内容页范围：第3页到第{ai_pages}页
 - 通过合并或拆分内容页来精确达到{ai_pages}页
 - 确保每页内容充实，符合PPT展示标准
-- **【严格300字限制】除了标题页、目录页和结尾页，所有内容页的original_text_segment必须包含至少300字原始文本，不足300字的页面必须与相邻页面合并**
 
 **字段要求：**
 pages字段里只需要包含：page_number/page_type/title/original_text_segment字段
@@ -337,7 +338,6 @@ PPT制作中，AI容易过度分页导致页面内容稀薄。你需要通过合
 **分页原则：**
 - 保持标题页(第1页)和目录页(第2页)不变
 - 合并逻辑相关的内容页（如"产品介绍"+"产品特点"合并为一页）
-- 确保每页内容充实，避免内容过少或过多
 - 优化后的AI生成页数应比第一次结果更少（系统会自动添加结尾页）
 - **【严格300字限制】除了标题页、目录页和结尾页，所有内容页的original_text_segment必须包含至少300字原始文本，不足300字的页面必须与相邻页面合并**
 
@@ -394,8 +394,7 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
             formatted_text += f"内容: {original_text}\n"
             formatted_text += "---\n"
         
-        # 添加原始文本
-        formatted_text += f"\n【原始文本】\n{first_result.get('original_text', '')}"
+        # 注：原始文本已在各页面的original_text_segment中包含，无需重复添加
         
         return formatted_text
 
@@ -615,8 +614,7 @@ pages字段里只需要包含：page_number/page_type/title/original_text_segmen
                 raise ValueError(error_detail)
             
             result['success'] = True
-            result['original_text'] = user_text
-            
+
             return result
                 
         except json.JSONDecodeError as e:

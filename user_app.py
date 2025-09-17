@@ -815,7 +815,7 @@ def main():
     with model_col2:
         st.markdown("**模型对比**")
         if selected_model == "liai-chat":
-            st.info("🏢 调用公司融合云AgentOps私有化模型\n🔒 数据安全保障\n🌐 需要连接公司网络使用")
+            st.info("🏢 调用公司融合云AgentOps私有化模型\n🔒 数据安全保障\n🌐 需要连接公司网络使用\n💰 免费")
         else:  # DeepSeek V3
             st.success("🚀 火山引擎DeepSeek V3模型\n⚡ 性能优异\n🌐 支持中英文对话")
     
@@ -1146,7 +1146,7 @@ def main():
         if 'current_page_results' not in st.session_state or 'current_pages' not in st.session_state:
             st.markdown('''<div class="info-box">📋 <strong>使用前请知悉</strong><br>
             <strong>1. 字数限制说明：</strong>如果您选择的是保密模型Liai，模型功能限制最多输入3000字，超出部分请您分多次输入。<br>
-            <strong>2. 文本生成说明：</strong>本产品专注于PPT样式的智能生成。您提供的原始文本将被直接使用，AI不会对其进行修改或扩充。如果您需要AI辅助撰写或优化文本，欢迎在后续的问卷中向我们反馈该需求。<br>
+            <strong>2. 文本生成说明：</strong>本产品专注于PPT样式的智能生成。您提供的原始文本将被直接使用，AI不会对其进行扩充。如果您需要AI辅助撰写文本，欢迎在后续的问卷中向我们反馈该需求。<br>
             <strong>3. 图表支持说明：</strong>请注意，当前版本暂不支持自动图表数据填充。如果您的文本中包含图表描述，生成后需要您手动补充相关数据。<br>
             <strong>4. 样式调整说明：</strong>出于兼容性考虑，生成PPT的字体、大小和颜色等样式可能有瑕疵，您可以在下载后手动进行美化调整。<br>
             <strong>5. 问题与支持：</strong>使用过程中如有任何问题或建议，请随时联系 @贾轶涵 获取帮助。
@@ -1206,6 +1206,7 @@ def main():
 
             elif is_liai_model:
                 st.info("💡 提示：由于私有化模型功能限制，输入文本的中文字数限制为3000字")
+
 
             # 分页选项 - 简化布局
             st.markdown("#### ⚙️ 分页选项")
@@ -2752,7 +2753,8 @@ AI将分析您的文本结构，并智能地将内容分配到该模板的 {file
                 placeholder="请输入要测试AI分页的文本内容...",
                 key="ai_paging_test_text"
             )
-            
+
+
             # 页面数量选择
             st.markdown("#### ⚙️ 分页选项")
             col1, col2, col3 = st.columns([1, 1, 1])
